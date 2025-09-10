@@ -123,6 +123,163 @@ module "firewall" {
   depends_on = [module.vpc]
 }
 
+# IAM Module
+module "iam" {
+  source = "../../modules/security/iam"
+  
+  project_id = local.project_id
+  
+  service_accounts = {
+    "terraform-sa" = {
+      account_id   = "terraform-sa"
+      display_name = "Terraform Service Account"
+      description  = "Service account for Terraform operations"
+    }
+    "gke-sa" = {
+      account_id   = "gke-sa"
+      display_name = "GKE Service Account"
+      description  = "Service account for GKE cluster"
+    }
+    "app-sa" = {
+      account_id   = "app-sa"
+      display_name = "Application Service Account"
+      description  = "Service account for applications"
+    }
+  }
+  
+  service_account_roles = {
+    "terraform-editor" = {
+      service_account_key = "terraform-sa"
+      role                = "roles/editor"
+    }
+    "gke-cluster-admin" = {
+      service_account_key = "gke-sa"
+      role                = "roles/container.clusterAdmin"
+    }
+    "app-storage-admin" = {
+      service_account_key = "app-sa"
+      role                = "roles/storage.admin"
+    }
+  }
+  
+  custom_roles = {
+    "terraform-custom-role" = {
+      role_id     = "terraform_custom_role"
+      title       = "Terraform Custom Role"
+      description = "Custom role for Terraform operations"
+      permissions = [
+        "compute.instances.create",
+        "compute.instances.delete",
+        "compute.networks.create",
+        "compute.subnetworks.create"
+      ]
+    }
+  }
+  
+  enable_workload_identity = true
+  workload_identity_pool_id = "github-actions"
+  workload_identity_display_name = "GitHub Actions Pool"
+  workload_identity_description = "Workload Identity Pool for GitHub Actions"
+  
+  depends_on = [google_project_service.required_apis]
+}
+
+# KMS Module
+module "kms" {
+  source = "../../modules/security/kms"
+  
+  project_id    = local.project_id
+  key_ring_name = "${local.project_id}-${local.environment}-keyring"
+  location      = local.region
+  
+  crypto_keys = {
+    "encryption-key" = {
+      name            = "encryption-key"
+      purpose         = "ENCRYPT_DECRYPT"
+      algorithm       = "GOOGLE_SYMMETRIC_ENCRYPTION"
+      rotation_period = "7776000s" # 90 days
+    }
+    "signing-key" = {
+      name            = "signing-key"
+      purpose         = "ASYMMETRIC_SIGN"
+      algorithm       = "EC_SIGN_P256_SHA256"
+      rotation_period = null
+    }
+  }
+  
+  crypto_key_iam_bindings = {
+    "encryption-key-encrypt-decrypt" = {
+      crypto_key_key = "encryption-key"
+      role           = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+      members        = [
+        "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+      ]
+    }
+    "signing-key-signer" = {
+      crypto_key_key = "signing-key"
+      role           = "roles/cloudkms.signer"
+      members        = [
+        "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}"
+      ]
+    }
+  }
+  
+  depends_on = [module.iam]
+}
+
+# Secret Manager Module
+module "secret_manager" {
+  source = "../../modules/security/secret-manager"
+  
+  project_id = local.project_id
+  
+  secrets = {
+    "database-password" = {
+      secret_id        = "database-password"
+      labels           = { environment = local.environment, type = "database" }
+      replication_type = "automatic"
+      replicas         = []
+    }
+    "api-key" = {
+      secret_id        = "api-key"
+      labels           = { environment = local.environment, type = "api" }
+      replication_type = "automatic"
+      replicas         = []
+    }
+  }
+  
+  secret_versions = {
+    "database-password-version" = {
+      secret_key  = "database-password"
+      secret_data = "initial-password-change-me"
+    }
+    "api-key-version" = {
+      secret_key  = "api-key"
+      secret_data = "initial-api-key-change-me"
+    }
+  }
+  
+  secret_iam_bindings = {
+    "database-password-access" = {
+      secret_key = "database-password"
+      role       = "roles/secretmanager.secretAccessor"
+      members    = [
+        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+      ]
+    }
+    "api-key-access" = {
+      secret_key = "api-key"
+      role       = "roles/secretmanager.secretAccessor"
+      members    = [
+        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+      ]
+    }
+  }
+  
+  depends_on = [module.iam]
+}
+
 # Output for Phase 0 validation
 output "phase_0_complete" {
   description = "Phase 0: Foundation Setup completed successfully"
@@ -132,6 +289,11 @@ output "phase_0_complete" {
 output "phase_1_complete" {
   description = "Phase 1: Networking Foundation completed successfully"
   value       = "✅ Networking foundation complete - VPC, subnets, and firewall rules created"
+}
+
+output "phase_2_complete" {
+  description = "Phase 2: Security & Identity completed successfully"
+  value       = "✅ Security & Identity complete - IAM, KMS, Secret Manager configured"
 }
 
 output "enabled_apis" {
@@ -167,4 +329,24 @@ output "vpc_self_link" {
 output "subnets" {
   description = "Created subnets"
   value       = module.subnets.subnets
+}
+
+output "service_accounts" {
+  description = "Created service accounts"
+  value       = module.iam.service_account_emails
+}
+
+output "kms_key_ring" {
+  description = "KMS key ring"
+  value       = module.kms.key_ring_id
+}
+
+output "crypto_keys" {
+  description = "KMS crypto keys"
+  value       = module.kms.crypto_key_ids
+}
+
+output "secrets" {
+  description = "Secret Manager secrets"
+  value       = module.secret_manager.secret_ids
 }
