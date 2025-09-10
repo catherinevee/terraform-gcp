@@ -1,0 +1,139 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/terraform-apply.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+      phase:
+        description: 'Phase to deploy (0-6)'
+        required: true
+        default: '0'
+        type: choice
+        options:
+        - '0'
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+
+env:
+  TF_VERSION: '1.5.0'
+  TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+  TF_VAR_region: 'us-central1'
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ env.TF_VAR_project_id }}
+    
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Configure gcloud
+      run: |
+        gcloud config set project ${{ env.TF_VAR_project_id }}
+        gcloud config set compute/region us-central1
+    
+    - name: Download Terraform Plan
+      uses: actions/download-artifact@v4
+      with:
+        name: terraform-plan-${{ github.event.inputs.environment || 'dev' }}
+        path: infrastructure/environments/${{ github.event.inputs.environment || 'dev' }}/
+    
+    - name: Terraform Init
+      run: |
+        cd infrastructure/environments/${{ github.event.inputs.environment || 'dev' }}
+        terraform init
+    
+    - name: Terraform Apply
+      run: |
+        cd infrastructure/environments/${{ github.event.inputs.environment || 'dev' }}
+        terraform apply -auto-approve tfplan-${{ github.event.inputs.environment || 'dev' }}
+      env:
+        TF_VAR_environment: ${{ github.event.inputs.environment || 'dev' }}
+    
+    - name: Run Phase Tests
+      run: |
+        chmod +x scripts/phase-testing/*.sh
+        ./scripts/phase-testing/phase-${{ github.event.inputs.phase || '0' }}-tests.sh
+      env:
+        PROJECT_ID: ${{ env.TF_VAR_project_id }}
+        ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
+        REGION: us-central1
+    
+    - name: Run Health Check
+      run: |
+        chmod +x scripts/automation/health-check.sh
+        ./scripts/automation/health-check.sh -p ${{ env.TF_VAR_project_id }} -e ${{ github.event.inputs.environment || 'dev' }} -f json -o health-check-${{ github.event.inputs.environment || 'dev' }}.json
+      env:
+        PROJECT_ID: ${{ env.TF_VAR_project_id }}
+        ENVIRONMENT: ${{ github.event.inputs.environment || 'dev' }}
+        REGION: us-central1
+    
+    - name: Upload Health Check Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: health-check-${{ github.event.inputs.environment || 'dev' }}
+        path: health-check-${{ github.event.inputs.environment || 'dev' }}.json
+        retention-days: 30
+    
+    - name: Notify Deployment Success
+      if: success()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.repos.createCommitStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            sha: context.sha,
+            state: 'success',
+            description: 'Terraform apply completed successfully',
+            context: 'terraform-apply-${{ github.event.inputs.environment || 'dev' }}'
+          });
+    
+    - name: Notify Deployment Failure
+      if: failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.repos.createCommitStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            sha: context.sha,
+            state: 'failure',
+            description: 'Terraform apply failed',
+            context: 'terraform-apply-${{ github.event.inputs.environment || 'dev' }}'
+          });
