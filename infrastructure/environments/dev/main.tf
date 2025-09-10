@@ -600,6 +600,114 @@ module "redis" {
   depends_on = [module.vpc, module.iam]
 }
 
+# Cloud Run Module
+module "cloud_run" {
+  source = "../../modules/compute/cloud-run"
+  
+  project_id                = local.project_id
+  service_account_email     = module.iam.service_account_emails["app-sa"]
+  private_vpc_connection    = module.vpc.private_vpc_connection
+  vpc_connector             = null # We'll use direct VPC access
+  
+  services = {
+    "web-service" = {
+      name                = "${local.project_id}-${local.environment}-web"
+      location            = local.region
+      image               = "gcr.io/cloudrun/hello"
+      container_port      = 8080
+      environment         = local.environment
+      cpu_limit           = "1"
+      memory_limit        = "512Mi"
+      cpu_idle            = true
+      min_instances       = 0
+      max_instances       = 10
+      timeout             = "300s"
+      health_check_path   = "/"
+      env_vars = []
+    }
+    
+    "api-service" = {
+      name                = "${local.project_id}-${local.environment}-api"
+      location            = local.region
+      image               = "gcr.io/cloudrun/hello"
+      container_port      = 8080
+      environment         = local.environment
+      cpu_limit           = "2"
+      memory_limit        = "1Gi"
+      cpu_idle            = true
+      min_instances       = 0
+      max_instances       = 5
+      timeout             = "300s"
+      health_check_path   = "/health"
+      env_vars = [
+        {
+          name  = "API_VERSION"
+          value = "v1"
+        }
+      ]
+    }
+  }
+  
+  depends_on = [module.vpc, module.iam]
+}
+
+# Container Registry Module
+module "container_registry" {
+  source = "../../modules/storage/container-registry"
+  
+  project_id = local.project_id
+  
+  repositories = {
+    "app-images" = {
+      location        = local.region
+      repository_id   = "${local.project_id}-${local.environment}-app-images"
+      description     = "Application container images"
+      format          = "DOCKER"
+      keep_count      = 10
+      retention_days  = "2592000s" # 30 days
+      labels = {
+        environment = local.environment
+        purpose     = "application-images"
+      }
+    }
+    "base-images" = {
+      location        = local.region
+      repository_id   = "${local.project_id}-${local.environment}-base-images"
+      description     = "Base container images"
+      format          = "DOCKER"
+      keep_count      = 5
+      retention_days  = "5184000s" # 60 days
+      labels = {
+        environment = local.environment
+        purpose     = "base-images"
+      }
+    }
+  }
+  
+  repository_iam_bindings = {
+    "app-images-access" = {
+      repository_key = "app-images"
+      role           = "roles/artifactregistry.reader"
+      members        = [
+        "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+      ]
+    }
+    "base-images-access" = {
+      repository_key = "base-images"
+      role           = "roles/artifactregistry.reader"
+      members        = [
+        "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+      ]
+    }
+  }
+  
+  enable_legacy_registry = false
+  
+  depends_on = [module.iam]
+}
+
 # Output for Phase 0 validation
 output "phase_0_complete" {
   description = "Phase 0: Foundation Setup completed successfully"
@@ -624,6 +732,11 @@ output "phase_3_complete" {
 output "phase_4_complete" {
   description = "Phase 4: Database & Caching completed successfully"
   value       = "✅ Database & Caching complete - Cloud SQL, Redis, and database management configured"
+}
+
+output "phase_5_complete" {
+  description = "Phase 5: Container Orchestration completed successfully"
+  value       = "✅ Container Orchestration complete - Cloud Run services, container registry, and container management configured"
 }
 
 output "enabled_apis" {
@@ -719,4 +832,24 @@ output "redis_instances" {
 output "redis_ports" {
   description = "Redis instance ports"
   value       = module.redis.instance_ports
+}
+
+output "cloud_run_services" {
+  description = "Created Cloud Run services"
+  value       = module.cloud_run.service_names
+}
+
+output "cloud_run_urls" {
+  description = "Cloud Run service URLs"
+  value       = module.cloud_run.service_urls
+}
+
+output "cloud_run_locations" {
+  description = "Cloud Run service locations"
+  value       = module.cloud_run.service_locations
+}
+
+output "container_repositories" {
+  description = "Created container repositories"
+  value       = module.container_registry.repository_names
 }
