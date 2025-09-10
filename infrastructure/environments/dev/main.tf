@@ -469,6 +469,137 @@ module "storage" {
   depends_on = [module.kms, module.iam]
 }
 
+# Database Module
+module "database" {
+  source = "../../modules/database/cloud-sql"
+  
+  project_id                = local.project_id
+  private_vpc_connection    = module.vpc.private_vpc_connection
+  
+  instances = {
+    "postgres-primary" = {
+      name                              = "${local.project_id}-${local.environment}-postgres"
+      database_version                  = "POSTGRES_15"
+      region                           = local.region
+      tier                             = "db-f1-micro"
+      availability_type                = "ZONAL"
+      disk_type                        = "PD_SSD"
+      disk_size                        = 20
+      disk_autoresize                  = true
+      disk_autoresize_limit            = 100
+      deletion_protection              = false
+      backup_enabled                   = true
+      backup_start_time                = "03:00"
+      backup_location                  = local.region
+      point_in_time_recovery_enabled   = true
+      transaction_log_retention_days   = 7
+      backup_retention_settings = {
+        retained_backups = 7
+        retention_unit   = "COUNT"
+      }
+      ipv4_enabled                                  = false
+      private_network                               = module.vpc.network_self_link
+      enable_private_path_for_google_cloud_services = true
+      require_ssl                                   = true
+      authorized_networks = []
+      database_flags = [
+        {
+          name  = "log_statement"
+          value = "all"
+        },
+        {
+          name  = "log_min_duration_statement"
+          value = "1000"
+        }
+      ]
+      insights_config = {
+        query_insights_enabled  = true
+        query_string_length     = 1024
+        record_application_tags = true
+        record_client_address   = true
+      }
+      maintenance_window = {
+        day          = 7
+        hour         = 3
+        update_track = "stable"
+      }
+    }
+  }
+  
+  databases = {
+    "app-db" = {
+      name         = "app_database"
+      instance_key = "postgres-primary"
+    }
+    "analytics-db" = {
+      name         = "analytics_database"
+      instance_key = "postgres-primary"
+    }
+  }
+  
+  users = {
+    "app-user" = {
+      name         = "app_user"
+      instance_key = "postgres-primary"
+      password     = "initial-password-change-me"
+    }
+    "readonly-user" = {
+      name         = "readonly_user"
+      instance_key = "postgres-primary"
+      password     = "readonly-password-change-me"
+    }
+  }
+  
+  ssl_certs = {
+    "app-ssl-cert" = {
+      common_name  = "app-ssl-cert"
+      instance_key = "postgres-primary"
+    }
+  }
+  
+  depends_on = [module.vpc, module.iam]
+}
+
+# Redis Module
+module "redis" {
+  source = "../../modules/database/redis"
+  
+  project_id                = local.project_id
+  private_vpc_connection    = module.vpc.private_vpc_connection
+  
+  instances = {
+    "cache-primary" = {
+      name                    = "${local.project_id}-${local.environment}-redis"
+      tier                    = "BASIC"
+      memory_size_gb          = 1
+      region                  = local.region
+      location_id             = "${local.region}-a"
+      alternative_location_id = null
+      redis_version           = "REDIS_7_0"
+      display_name            = "Application Cache"
+      reserved_ip_range       = "10.0.40.0/29"
+      auth_enabled            = true
+      maintenance_policy = {
+        day          = "SUNDAY"
+        start_hour   = 3
+        start_minute = 0
+        start_second = 0
+        start_nanos  = 0
+      }
+      persistence_config = {
+        persistence_mode    = "RDB"
+        rdb_snapshot_period = "TWELVE_HOURS"
+      }
+      redis_configs = {
+        "maxmemory-policy" = "allkeys-lru"
+        "timeout"          = "300"
+      }
+    }
+  }
+  
+  depends_on = [module.vpc, module.iam]
+}
+
 # Output for Phase 0 validation
 output "phase_0_complete" {
   description = "Phase 0: Foundation Setup completed successfully"
@@ -488,6 +619,11 @@ output "phase_2_complete" {
 output "phase_3_complete" {
   description = "Phase 3: Compute & Storage completed successfully"
   value       = "✅ Compute & Storage complete - VM instances, load balancer, and storage buckets created"
+}
+
+output "phase_4_complete" {
+  description = "Phase 4: Database & Caching completed successfully"
+  value       = "✅ Database & Caching complete - Cloud SQL, Redis, and database management configured"
 }
 
 output "enabled_apis" {
@@ -563,4 +699,24 @@ output "load_balancer_ip" {
 output "storage_buckets" {
   description = "Created storage buckets"
   value       = module.storage.bucket_names
+}
+
+output "database_instances" {
+  description = "Created Cloud SQL instances"
+  value       = module.database.instance_connection_names
+}
+
+output "database_private_ips" {
+  description = "Cloud SQL instance private IP addresses"
+  value       = module.database.instance_private_ip_addresses
+}
+
+output "redis_instances" {
+  description = "Created Redis instances"
+  value       = module.redis.instance_hosts
+}
+
+output "redis_ports" {
+  description = "Redis instance ports"
+  value       = module.redis.instance_ports
 }

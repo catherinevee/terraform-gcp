@@ -12,3 +12,8 @@ output "network_id" {
   description = "The ID of the VPC being created"
   value       = google_compute_network.vpc.id
 }
+
+output "private_vpc_connection" {
+  description = "The private VPC connection for Cloud SQL"
+  value       = google_service_networking_connection.private_vpc_connection.id
+}
