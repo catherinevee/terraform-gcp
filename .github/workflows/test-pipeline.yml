@@ -1,0 +1,23 @@
+name: Test Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Simple Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Test Step
+      run: |
+        echo "✅ Test pipeline is working!"
+        echo "Current time: $(date)"
+        echo "Repository: ${{ github.repository }}"
+        echo "Branch: ${{ github.ref_name }}"
+    
+    - name: Success
+      run: echo "🎉 Pipeline test completed successfully!"
