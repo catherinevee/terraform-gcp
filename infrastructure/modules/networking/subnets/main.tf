@@ -8,10 +8,9 @@ resource "google_compute_subnetwork" "subnets" {
   project       = var.project_id
   
   private_ip_google_access = each.value.subnet_private_access
-  enable_flow_logs         = each.value.subnet_flow_logs
   
   dynamic "secondary_ip_range" {
-    for_each = var.secondary_ranges[each.value.subnet_name] != null ? var.secondary_ranges[each.value.subnet_name] : []
+    for_each = contains(keys(var.secondary_ranges), each.value.subnet_name) ? var.secondary_ranges[each.value.subnet_name] : []
     content {
       range_name    = secondary_ip_range.value.range_name
       ip_cidr_range = secondary_ip_range.value.ip_cidr_range

@@ -76,28 +76,24 @@ module "subnets" {
       subnet_ip            = "10.0.1.0/24"
       subnet_region        = local.region
       subnet_private_access = true
-      subnet_flow_logs     = true
     },
     {
       subnet_name           = "${local.project_id}-${local.environment}-${local.region}-private"
       subnet_ip            = "10.0.10.0/24"
       subnet_region        = local.region
       subnet_private_access = true
-      subnet_flow_logs     = true
     },
     {
       subnet_name           = "${local.project_id}-${local.environment}-${local.region}-database"
       subnet_ip            = "10.0.20.0/24"
       subnet_region        = local.region
       subnet_private_access = true
-      subnet_flow_logs     = false
     },
     {
       subnet_name           = "${local.project_id}-${local.environment}-${local.region}-gke"
       subnet_ip            = "10.0.30.0/24"
       subnet_region        = local.region
       subnet_private_access = true
-      subnet_flow_logs     = true
     }
   ]
   

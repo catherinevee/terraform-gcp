@@ -15,7 +15,6 @@ variable "subnets" {
     subnet_ip            = string
     subnet_region        = string
     subnet_private_access = bool
-    subnet_flow_logs     = bool
   }))
 }
 
