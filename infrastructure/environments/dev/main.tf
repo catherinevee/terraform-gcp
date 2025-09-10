@@ -50,10 +50,92 @@ resource "google_project_service" "required_apis" {
   disable_on_destroy = false
 }
 
+# VPC Module
+module "vpc" {
+  source = "../../modules/networking/vpc"
+  
+  project_id   = local.project_id
+  network_name = "${local.project_id}-${local.environment}-vpc"
+  routing_mode = "REGIONAL"
+  
+  delete_default_routes_on_create = true
+  
+  depends_on = [google_project_service.required_apis]
+}
+
+# Subnets Module
+module "subnets" {
+  source = "../../modules/networking/subnets"
+  
+  project_id   = local.project_id
+  network_name = module.vpc.network_name
+  
+  subnets = [
+    {
+      subnet_name           = "${local.project_id}-${local.environment}-${local.region}-public"
+      subnet_ip            = "10.0.1.0/24"
+      subnet_region        = local.region
+      subnet_private_access = true
+      subnet_flow_logs     = true
+    },
+    {
+      subnet_name           = "${local.project_id}-${local.environment}-${local.region}-private"
+      subnet_ip            = "10.0.10.0/24"
+      subnet_region        = local.region
+      subnet_private_access = true
+      subnet_flow_logs     = true
+    },
+    {
+      subnet_name           = "${local.project_id}-${local.environment}-${local.region}-database"
+      subnet_ip            = "10.0.20.0/24"
+      subnet_region        = local.region
+      subnet_private_access = true
+      subnet_flow_logs     = false
+    },
+    {
+      subnet_name           = "${local.project_id}-${local.environment}-${local.region}-gke"
+      subnet_ip            = "10.0.30.0/24"
+      subnet_region        = local.region
+      subnet_private_access = true
+      subnet_flow_logs     = true
+    }
+  ]
+  
+  secondary_ranges = {
+    "${local.project_id}-${local.environment}-${local.region}-gke" = [
+      {
+        range_name    = "gke-pods"
+        ip_cidr_range = "10.1.0.0/16"
+      },
+      {
+        range_name    = "gke-services"
+        ip_cidr_range = "10.2.0.0/16"
+      }
+    ]
+  }
+  
+  depends_on = [module.vpc]
+}
+
+# Firewall Module
+module "firewall" {
+  source = "../../modules/networking/firewall"
+  
+  project_id   = local.project_id
+  network_name = module.vpc.network_name
+  
+  depends_on = [module.vpc]
+}
+
 # Output for Phase 0 validation
 output "phase_0_complete" {
   description = "Phase 0: Foundation Setup completed successfully"
   value       = "✅ Foundation setup complete - APIs enabled, project structure ready"
+}
+
+output "phase_1_complete" {
+  description = "Phase 1: Networking Foundation completed successfully"
+  value       = "✅ Networking foundation complete - VPC, subnets, and firewall rules created"
 }
 
 output "enabled_apis" {
@@ -74,4 +156,19 @@ output "environment" {
 output "region" {
   description = "GCP region"
   value       = local.region
+}
+
+output "vpc_name" {
+  description = "VPC network name"
+  value       = module.vpc.network_name
+}
+
+output "vpc_self_link" {
+  description = "VPC network self link"
+  value       = module.vpc.network_self_link
+}
+
+output "subnets" {
+  description = "Created subnets"
+  value       = module.subnets.subnets
 }
