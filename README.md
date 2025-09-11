@@ -7,6 +7,16 @@
 
 A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for ACME Corporation's e-commerce platform.
 
+## Architecture Overview
+
+### Comprehensive Architecture
+![GCP Architecture](gcp_architecture_diagram.png)
+
+### Simplified Overview
+![GCP Simplified](gcp_simplified_diagram.png)
+
+*These diagrams are automatically generated from the Terraform infrastructure code. See [docs/architecture-diagrams.md](docs/architecture-diagrams.md) for more details.*
+
 ## Overview
 
 This repository provides a complete infrastructure foundation for deploying and managing cloud resources on Google Cloud Platform. The infrastructure is organized into modular, reusable components that support multiple environments and follow industry best practices for security, scalability, and maintainability.
@@ -39,16 +49,6 @@ This infrastructure supports deployment across multiple GCP regions for high ava
 - **Primary Region**: us-central1 (Iowa)
 - **Secondary Region**: us-east1 (South Carolina)
 - **Global Resources**: Deployed once, accessible from all regions
-
-### Architecture Diagrams
-
-#### Comprehensive Architecture
-![GCP Architecture](gcp_architecture_diagram.png)
-
-#### Simplified Overview
-![GCP Simplified](gcp_simplified_diagram.png)
-
-*These diagrams are automatically generated from the Terraform infrastructure code. See [docs/architecture-diagrams.md](docs/architecture-diagrams.md) for more details.*
 
 ### Infrastructure Components
 
