@@ -69,14 +69,14 @@ jobs:
         soft_fail: true
     
     - name: Security Scan with Checkov
-      uses: bridgecrewio/checkov-action@master
+      uses: bridgecrewio/checkov-action@v12
       with:
         directory: infrastructure/environments/dev
         framework: terraform
         soft_fail: true
     
     - name: Security Scan with Terrascan
-      uses: accurics/terrascan-action@v1.0.0
+      uses: accurics/terrascan-action@v1.18.0
       with:
         iac_type: terraform
         iac_version: v14
@@ -103,16 +103,13 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
     
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Configure gcloud
       run: |
@@ -184,16 +181,13 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
     
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Run Terratest
       run: |
@@ -220,16 +214,13 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
     
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Configure gcloud
       run: |
@@ -280,16 +271,13 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
     
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Configure gcloud
       run: |
@@ -333,16 +321,13 @@ jobs:
       with:
         terraform_version: ${{ env.TF_VERSION }}
     
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Configure gcloud
       run: |
