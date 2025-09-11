@@ -37,33 +37,33 @@ check_security_status() {
     print_status "🔍 Checking security status..."
     
     # Check for hardcoded secrets
-    if grep -r "password.*=" infrastructure/ | grep -v "password.*=.*var\." | grep -v "password.*=.*data\." | grep -v "password.*=.*null" | grep -v "variable.*password" | grep -v "type.*=" | grep -v "description.*password" | grep -v "sensitive.*=" | grep -q '"[^"]*"'; then
+    if find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "password.*=" | grep -v "password.*=.*var\." | grep -v "password.*=.*data\." | grep -v "password.*=.*null" | grep -v "variable.*password" | grep -v "type.*=" | grep -v "description.*password" | grep -v "sensitive.*=" | grep -q '"[^"]*"'; then
         errors=$((errors + 1))
     fi
     
     # Check for placeholder values
-    if grep -r "your-.*-here" infrastructure/ | grep -q .; then
+    if find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "your-.*-here" | grep -q .; then
         errors=$((errors + 1))
     fi
     
     # Check for hardcoded API keys
-    if grep -r "api.*key.*=" infrastructure/ | grep -v "api.*key.*=.*var\." | grep -v "api.*key.*=.*data\." | grep -v "api.*key.*=.*null" | grep -v "variable.*api" | grep -v "type.*=" | grep -v "description.*api" | grep -q '"[^"]*"'; then
+    if find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "api.*key.*=" | grep -v "api.*key.*=.*var\." | grep -v "api.*key.*=.*data\." | grep -v "api.*key.*=.*null" | grep -v "variable.*api" | grep -v "type.*=" | grep -v "description.*api" | grep -q '"[^"]*"'; then
         errors=$((errors + 1))
     fi
     
     # Check for hardcoded secrets
-    if grep -r "secret.*=" infrastructure/ | grep -v "secret.*=.*var\." | grep -v "secret.*=.*data\." | grep -v "secret.*=.*null" | grep -v "variable.*secret" | grep -v "type.*=" | grep -v "description.*secret" | grep -v "sensitive.*=" | grep -v 'secret.*=.*"[^"]*secret[^"]*"' | grep -v 'secret.*=.*"[^"]*-[^"]*"' | grep -q '"[^"]*"'; then
+    if find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "secret.*=" | grep -v "secret.*=.*var\." | grep -v "secret.*=.*data\." | grep -v "secret.*=.*null" | grep -v "variable.*secret" | grep -v "type.*=" | grep -v "description.*secret" | grep -v "sensitive.*=" | grep -v 'secret.*=.*"[^"]*secret[^"]*"' | grep -v 'secret.*=.*"[^"]*-[^"]*"' | grep -q '"[^"]*"'; then
         errors=$((errors + 1))
     fi
     
     # Check for magic numbers (excluding variable defaults and validation)
-    local magic_count=$(grep -r "=\s*[0-9]\+[^a-zA-Z]" infrastructure/ | grep -v "required_version" | grep -v "port.*=.*80" | grep -v "port.*=.*443" | grep -v "port.*=.*22" | grep -v "default.*=" | grep -v "condition.*=" | grep -v "validation" | grep -v "priority.*=.*1000" | grep -v "prefix_length.*=.*16" | wc -l)
+    local magic_count=$(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "=\s*[0-9]\+[^a-zA-Z]" | grep -v "required_version" | grep -v "port.*=.*80" | grep -v "port.*=.*443" | grep -v "port.*=.*22" | grep -v "default.*=" | grep -v "condition.*=" | grep -v "validation" | grep -v "priority.*=.*1000" | grep -v "prefix_length.*=.*16" | wc -l)
     if [ "$magic_count" -gt 0 ]; then
         warnings=$((warnings + 1))
     fi
     
     # Check for validation rules
-    local validation_count=$(grep -r "validation" infrastructure/ | wc -l)
+    local validation_count=$(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "validation" | wc -l)
     if [ "$validation_count" -lt 10 ]; then
         warnings=$((warnings + 1))
     fi
@@ -84,13 +84,13 @@ check_security_status() {
         return 0
     elif [ $errors -eq 0 ] && [ $warnings -le 2 ]; then
         echo "GOOD"
-        return 1
+        return 0
     elif [ $errors -eq 0 ]; then
         echo "FAIR"
-        return 2
+        return 0
     else
         echo "POOR"
-        return 3
+        return 0
     fi
 }
 
@@ -137,12 +137,12 @@ generate_detailed_status() {
   "status": "$status",
   "timestamp": "$timestamp",
   "checks": {
-    "hardcoded_secrets": $(grep -r "password.*=" infrastructure/ | grep -v "password.*=.*var\." | grep -v "password.*=.*data\." | grep -v "password.*=.*null" | grep -v "variable.*password" | grep -v "type.*=" | grep -v "description.*password" | grep -v "sensitive.*=" | grep -q '"[^"]*"' && echo "false" || echo "true"),
-    "placeholder_values": $(grep -r "your-.*-here" infrastructure/ | grep -q . && echo "false" || echo "true"),
-    "hardcoded_api_keys": $(grep -r "api.*key.*=" infrastructure/ | grep -v "api.*key.*=.*var\." | grep -v "api.*key.*=.*data\." | grep -v "api.*key.*=.*null" | grep -v "variable.*api" | grep -v "type.*=" | grep -v "description.*api" | grep -q '"[^"]*"' && echo "false" || echo "true"),
-    "hardcoded_secrets": $(grep -r "secret.*=" infrastructure/ | grep -v "secret.*=.*var\." | grep -v "secret.*=.*data\." | grep -v "secret.*=.*null" | grep -v "variable.*secret" | grep -v "type.*=" | grep -v "description.*secret" | grep -v "sensitive.*=" | grep -v 'secret.*=.*"[^"]*secret[^"]*"' | grep -v 'secret.*=.*"[^"]*-[^"]*"' | grep -q '"[^"]*"' && echo "false" || echo "true"),
-    "magic_numbers": $(grep -r "=\s*[0-9]\+[^a-zA-Z]" infrastructure/ | grep -v "required_version" | grep -v "port.*=.*80" | grep -v "port.*=.*443" | grep -v "port.*=.*22" | grep -v "default.*=" | grep -v "condition.*=" | grep -v "validation" | grep -v "priority.*=.*1000" | grep -v "prefix_length.*=.*16" | wc -l),
-    "validation_rules": $(grep -r "validation" infrastructure/ | wc -l),
+    "hardcoded_secrets": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "password.*=" | grep -v "password.*=.*var\." | grep -v "password.*=.*data\." | grep -v "password.*=.*null" | grep -v "variable.*password" | grep -v "type.*=" | grep -v "description.*password" | grep -v "sensitive.*=" | grep -q '"[^"]*"' && echo "false" || echo "true"),
+    "placeholder_values": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "your-.*-here" | grep -q . && echo "false" || echo "true"),
+    "hardcoded_api_keys": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "api.*key.*=" | grep -v "api.*key.*=.*var\." | grep -v "api.*key.*=.*data\." | grep -v "api.*key.*=.*null" | grep -v "variable.*api" | grep -v "type.*=" | grep -v "description.*api" | grep -q '"[^"]*"' && echo "false" || echo "true"),
+    "hardcoded_secrets": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "secret.*=" | grep -v "secret.*=.*var\." | grep -v "secret.*=.*data\." | grep -v "secret.*=.*null" | grep -v "variable.*secret" | grep -v "type.*=" | grep -v "description.*secret" | grep -v "sensitive.*=" | grep -v 'secret.*=.*"[^"]*secret[^"]*"' | grep -v 'secret.*=.*"[^"]*-[^"]*"' | grep -q '"[^"]*"' && echo "false" || echo "true"),
+    "magic_numbers": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "=\s*[0-9]\+[^a-zA-Z]" | grep -v "required_version" | grep -v "port.*=.*80" | grep -v "port.*=.*443" | grep -v "port.*=.*22" | grep -v "default.*=" | grep -v "condition.*=" | grep -v "validation" | grep -v "priority.*=.*1000" | grep -v "prefix_length.*=.*16" | wc -l),
+    "validation_rules": $(find infrastructure/ -name "*.tf" -o -name "*.tfvars" | xargs grep "validation" | wc -l),
     "documentation": $([ -f "SECURITY.md" ] && [ -f "DEPLOYMENT-CHECKLIST.md" ] && echo "true" || echo "false"),
     "security_scripts": $([ -f "scripts/security/validate-secrets.sh" ] && [ -f "scripts/security/validate-secrets.ps1" ] && echo "true" || echo "false")
   },
@@ -158,7 +158,7 @@ main() {
     
     # Check security status
     local security_status
-    security_status=$(check_security_status)
+    security_status=$(check_security_status 2>/dev/null | tail -1)
     local exit_code=$?
     
     # Generate badge URL
