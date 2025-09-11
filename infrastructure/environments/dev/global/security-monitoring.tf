@@ -129,7 +129,7 @@ resource "google_monitoring_alert_policy" "database_security" {
   notification_channels = var.monitoring_alert_channels
 
   alert_strategy {
-    auto_close = "300s"
+    auto_close = "1800s"
   }
 }
 
@@ -171,6 +171,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
   dashboard_json = jsonencode({
     displayName = "Cataziza E-commerce Platform Security Dashboard"
     mosaicLayout = {
+      columns = 12
       tiles = [
         {
           width  = 6
@@ -180,7 +181,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/security_events\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/security_events\""
                 }
               }
             }
@@ -194,7 +195,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/auth_failures\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/auth_failures\""
                 }
               }
             }
@@ -257,7 +258,7 @@ resource "google_logging_project_sink" "security_logs" {
 # Storage bucket for security logs
 resource "google_storage_bucket" "security_logs" {
   name          = "cataziza-ecommerce-security-logs-${var.environment}-${random_id.bucket_suffix.hex}"
-  location      = "US"
+  location      = "europe-west1"
   force_destroy = false
 
   lifecycle_rule {
@@ -318,7 +319,7 @@ resource "google_monitoring_alert_policy" "security_policy_violations" {
     display_name = "Security policy violations detected"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/security_policy_violations\""
+      filter          = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/security_policy_violations\""
       comparison      = "COMPARISON_GT"
       threshold_value = 1
       duration        = "60s"

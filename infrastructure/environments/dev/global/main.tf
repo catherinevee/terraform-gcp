@@ -92,10 +92,10 @@ module "iam" {
 
   # Custom roles
   custom_roles = {
-    "terraform-custom-role" = {
-      role_id     = "terraform_custom_role"
-      title       = "Terraform Custom Role"
-      description = "Custom role for Terraform operations"
+    "terraform-custom-role-v2" = {
+      role_id     = "terraform_custom_role_v2"
+      title       = "Terraform Custom Role V2"
+      description = "Custom role for Terraform operations V2"
       permissions = [
         "compute.instances.create",
         "compute.instances.delete",
@@ -146,7 +146,7 @@ module "iam" {
   # Workload Identity Pool for GitHub Actions
   enable_workload_identity       = true
   workload_identity_pool_id      = "github-actions"
-  workload_identity_display_name = "GitHub Actions Workload Identity Pool"
+  workload_identity_display_name = "GitHub Actions WIP"
   workload_identity_description  = "Workload Identity Pool for GitHub Actions CI/CD"
 
   workload_identity_provider_id           = "github-actions-provider"
@@ -282,7 +282,7 @@ module "container_registry" {
       description    = "Application container images"
       format         = "DOCKER"
       keep_count     = var.container_registry_retention_count
-      retention_days = var.container_registry_retention_days
+      retention_days = "${var.container_registry_retention_days * 86400}s"
       labels = {
         environment = local.environment
         purpose     = "application-images"
@@ -295,7 +295,7 @@ module "container_registry" {
       description    = "Base container images"
       format         = "DOCKER"
       keep_count     = var.container_registry_retention_count
-      retention_days = var.container_registry_retention_days
+      retention_days = "${var.container_registry_retention_days * 86400}s"
       labels = {
         environment = local.environment
         purpose     = "base-images"

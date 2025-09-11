@@ -231,7 +231,7 @@ resource "google_monitoring_alert_policy" "compliance_violations" {
     display_name = "Compliance violation detected"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/compliance_violations\""
+      filter          = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/compliance_violations\""
       comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "60s"
@@ -255,6 +255,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
   dashboard_json = jsonencode({
     displayName = "Cataziza E-commerce Platform Compliance Dashboard"
     mosaicLayout = {
+      columns = 12
       tiles = [
         {
           width  = 12
@@ -264,7 +265,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/compliance_status\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/compliance_status\""
                 }
               }
             }
@@ -278,7 +279,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/soc2_compliance\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/soc2_compliance\""
                 }
               }
             }
@@ -292,7 +293,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/pci_dss_compliance\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/pci_dss_compliance\""
                 }
               }
             }
@@ -306,7 +307,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/hipaa_compliance\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/hipaa_compliance\""
                 }
               }
             }
@@ -320,7 +321,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
             scorecard = {
               timeSeriesQuery = {
                 timeSeriesFilter = {
-                  filter = "metric.type=\"logging.googleapis.com/user/iso27001_compliance\""
+                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/iso27001_compliance\""
                 }
               }
             }
