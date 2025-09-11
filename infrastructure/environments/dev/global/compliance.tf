@@ -179,7 +179,7 @@ resource "null_resource" "pci_dss_compliance_validation" {
 }
 
 resource "null_resource" "hipaa_compliance_validation" {
-  count = alltrue(values(local.hipaa_compliance_checks)) && alltrue(values(local.hipaa_compliance_checks.technical_safeguards)) ? 1 : 0
+  count = alltrue([local.hipaa_compliance_checks.administrative_safeguards, local.hipaa_compliance_checks.physical_safeguards, alltrue(values(local.hipaa_compliance_checks.technical_safeguards))]) ? 1 : 0
 
   provisioner "local-exec" {
     command = "echo '✅ HIPAA compliance validation passed'"
