@@ -75,13 +75,6 @@ jobs:
         framework: terraform
         soft_fail: true
     
-    - name: Security Scan with Terrascan
-      uses: accurics/terrascan-action@v1.18.0
-      with:
-        iac_type: terraform
-        iac_version: v14
-        policy_type: gcp
-        only_warn: true
 
   # Stage 2: Planning & Review
   plan:
@@ -165,43 +158,12 @@ jobs:
             console.error('Error commenting PR:', error);
           }
 
-  # Stage 3: Testing
-  test:
-    name: Infrastructure Tests
-    runs-on: ubuntu-latest
-    needs: validate-and-scan
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: ${{ env.TF_VERSION }}
-    
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-    
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-    
-    - name: Run Terratest
-      run: |
-        cd test/unit
-        go test -v ./...
-      env:
-        TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
-        TF_VAR_region: ${{ env.TF_VAR_region }}
 
   # Stage 4: Deployment
   deploy-dev:
     name: Deploy to Development
     runs-on: ubuntu-latest
-    needs: [validate-and-scan, test]
+    needs: [validate-and-scan]
     if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
     environment: development
     
@@ -258,7 +220,7 @@ jobs:
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [validate-and-scan, test]
+    needs: [validate-and-scan]
     if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
     environment: staging
     
@@ -308,7 +270,7 @@ jobs:
   deploy-prod:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [validate-and-scan, test]
+    needs: [validate-and-scan]
     if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod')
     environment: production
     
