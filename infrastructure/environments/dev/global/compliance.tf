@@ -276,4 +276,3 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
   })
 }
 
-}
