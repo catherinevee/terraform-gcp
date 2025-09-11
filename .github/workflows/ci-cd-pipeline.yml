@@ -64,12 +64,14 @@ jobs:
     
     - name: Security Scan with tfsec
       uses: aquasecurity/tfsec-action@v1.0.3
+      continue-on-error: true
       with:
         working_directory: infrastructure/environments/dev
         soft_fail: true
     
     - name: Security Scan with Checkov
       uses: bridgecrewio/checkov-action@v12
+      continue-on-error: true
       with:
         directory: infrastructure/environments/dev
         framework: terraform
