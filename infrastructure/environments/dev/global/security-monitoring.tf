@@ -274,7 +274,7 @@ resource "google_storage_bucket" "security_logs" {
   }
 
   encryption {
-    default_kms_key_name = module.kms.crypto_keys["security-logs"].id
+    default_kms_key_name = module.kms.crypto_keys["cataziza-ecommerce-data-encryption-key"].id
   }
 }
 

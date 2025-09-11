@@ -210,7 +210,7 @@ variable "resource_naming_convention" {
   type        = string
   default     = "^[a-z][a-z0-9-]{2,30}[a-z0-9]$"
   validation {
-    condition     = can(regex("^[a-z][a-z0-9-]{2,30}[a-z0-9]$", var.resource_naming_convention))
+    condition     = can(regex(var.resource_naming_convention, "test-name"))
     error_message = "Resource naming convention must be a valid regex pattern for lowercase alphanumeric names with hyphens."
   }
 }

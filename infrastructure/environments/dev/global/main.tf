@@ -73,8 +73,8 @@ module "iam" {
 
   # Service accounts for global resources
   service_accounts = {
-    "cataziza-ecommerce-terraform-sa" = {
-      account_id   = "cataziza-ecommerce-terraform-sa"
+    "cataziza-terraform-sa" = {
+      account_id   = "cataziza-terraform-sa"
       display_name = "Cataziza E-commerce Terraform Service Account"
       description  = "Service account for Terraform operations"
     }
@@ -123,7 +123,7 @@ module "iam" {
   service_account_roles = {
     "terraform-editor" = {
       role                = "roles/editor"
-      service_account_key = "cataziza-ecommerce-terraform-sa"
+      service_account_key = "cataziza-terraform-sa"
     }
     "app-storage-admin" = {
       role                = "roles/storage.admin"
@@ -139,7 +139,7 @@ module "iam" {
   project_iam_bindings = {
     "terraform-sa-editor" = {
       role   = "roles/editor"
-      member = "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+      member = "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
     }
   }
 
@@ -184,7 +184,7 @@ module "kms" {
     "encryption-key-encrypt-decrypt" = {
       role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
       members = [
-        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com",
+        "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com",
         "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
       crypto_key_key = "cataziza-ecommerce-data-encryption-key"
@@ -192,7 +192,7 @@ module "kms" {
     "signing-key-signer" = {
       role = "roles/cloudkms.signer"
       members = [
-        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
       crypto_key_key = "cataziza-ecommerce-signing-key"
     }
@@ -263,7 +263,7 @@ module "secret_manager" {
       secret_key = "vpn-shared-secret"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
   }
