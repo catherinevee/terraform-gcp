@@ -1,0 +1,34 @@
+name: Simple Test Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Basic Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: '1.5.0'
+    
+    - name: Terraform Format Check
+      run: |
+        cd infrastructure/environments/dev
+        terraform fmt -check -recursive
+    
+    - name: Terraform Validate
+      run: |
+        cd infrastructure/environments/dev
+        terraform init -backend=false
+        terraform validate
+    
+    - name: Success Message
+      run: echo "✅ Basic validation completed successfully!"
