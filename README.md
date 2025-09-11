@@ -40,6 +40,16 @@ This infrastructure supports deployment across multiple GCP regions for high ava
 - **Secondary Region**: us-east1 (South Carolina)
 - **Global Resources**: Deployed once, accessible from all regions
 
+### Architecture Diagrams
+
+#### Comprehensive Architecture
+![GCP Architecture](gcp_architecture_diagram.png)
+
+#### Simplified Overview
+![GCP Simplified](gcp_simplified_diagram.png)
+
+*These diagrams are automatically generated from the Terraform infrastructure code. See [docs/architecture-diagrams.md](docs/architecture-diagrams.md) for more details.*
+
 ### Infrastructure Components
 
 #### **Networking Foundation**
