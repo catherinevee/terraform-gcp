@@ -26,7 +26,7 @@ jobs:
         fetch-depth: 0
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@v0.30.0
+      uses: aquasecurity/trivy-action@v0.28.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
@@ -43,7 +43,7 @@ jobs:
         category: 'trivy-vulnerability'
 
     - name: Run Trivy secret scanner
-      uses: aquasecurity/trivy-action@v0.30.0
+      uses: aquasecurity/trivy-action@v0.28.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
@@ -60,7 +60,7 @@ jobs:
         category: 'trivy-secret'
 
     - name: Run Trivy IaC scanner
-      uses: aquasecurity/trivy-action@v0.30.0
+      uses: aquasecurity/trivy-action@v0.28.0
       with:
         scan-type: 'config'
         scan-ref: '.'
@@ -76,7 +76,7 @@ jobs:
         category: 'trivy-iac'
 
     - name: Generate Trivy report
-      uses: aquasecurity/trivy-action@v0.30.0
+      uses: aquasecurity/trivy-action@v0.28.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
