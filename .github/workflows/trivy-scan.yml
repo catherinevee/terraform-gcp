@@ -40,6 +40,7 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
+        category: 'trivy-vulnerability'
 
     - name: Run Trivy secret scanner
       uses: aquasecurity/trivy-action@master
@@ -56,6 +57,7 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-secrets.sarif'
+        category: 'trivy-secret'
 
     - name: Run Trivy IaC scanner
       uses: aquasecurity/trivy-action@master
@@ -71,6 +73,7 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-iac.sarif'
+        category: 'trivy-iac'
 
     - name: Generate Trivy report
       uses: aquasecurity/trivy-action@master
