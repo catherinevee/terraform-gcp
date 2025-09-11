@@ -114,7 +114,23 @@ module "iam" {
         "compute.instances.setShieldedInstanceIntegrityPolicy",
         "compute.instances.setShieldedVmIntegrityPolicy",
         "compute.instances.setShieldedInstanceIntegrityPolicy",
-        "compute.instances.setShieldedVmIntegrityPolicy"
+        "compute.instances.setShieldedVmIntegrityPolicy",
+        "cloudkms.cryptoKeys.create",
+        "cloudkms.cryptoKeys.delete",
+        "cloudkms.cryptoKeys.get",
+        "cloudkms.cryptoKeys.list",
+        "cloudkms.cryptoKeys.update",
+        "cloudkms.cryptoKeyVersions.create",
+        "cloudkms.cryptoKeyVersions.destroy",
+        "cloudkms.cryptoKeyVersions.get",
+        "cloudkms.cryptoKeyVersions.list",
+        "cloudkms.cryptoKeyVersions.update",
+        "cloudkms.keyRings.create",
+        "cloudkms.keyRings.delete",
+        "cloudkms.keyRings.get",
+        "cloudkms.keyRings.list",
+        "cloudkms.locations.get",
+        "cloudkms.locations.list"
       ]
     }
   }

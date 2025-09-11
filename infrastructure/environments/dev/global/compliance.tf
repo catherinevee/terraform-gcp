@@ -270,64 +270,10 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
               }
             }
           }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "SOC 2 Compliance"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/soc2_compliance\""
-                }
-              }
-            }
-          }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "PCI DSS Compliance"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/pci_dss_compliance\""
-                }
-              }
-            }
-          }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "HIPAA Compliance"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/hipaa_compliance\""
-                }
-              }
-            }
-          }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "ISO 27001 Compliance"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/iso27001_compliance\""
-                }
-              }
-            }
-          }
         }
       ]
     }
   })
+}
+
 }

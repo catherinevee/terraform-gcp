@@ -186,51 +186,6 @@ resource "google_monitoring_dashboard" "security_dashboard" {
               }
             }
           }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "Failed Authentication Attempts"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/auth_failures\""
-                }
-              }
-            }
-          }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "Network Activity"
-            xyChart = {
-              dataSets = [{
-                timeSeriesQuery = {
-                  timeSeriesFilter = {
-                    filter = "metric.type=\"compute.googleapis.com/instance/network/received_bytes_count\""
-                  }
-                }
-                plotType = "LINE"
-              }]
-            }
-          }
-        },
-        {
-          width  = 6
-          height = 4
-          widget = {
-            title = "Database Health"
-            scorecard = {
-              timeSeriesQuery = {
-                timeSeriesFilter = {
-                  filter = "metric.type=\"cloudsql.googleapis.com/database/up\""
-                }
-              }
-            }
-          }
         }
       ]
     }
