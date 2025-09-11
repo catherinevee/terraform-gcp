@@ -35,7 +35,7 @@ on:
 
 env:
   TF_VERSION: '1.9.0'
-  PROJECT_ID: 'cataziza-ecommerce-platform-dev'
+  PROJECT_ID: 'acme-ecommerce-platform-dev'
 
 jobs:
   # Stage 1: Validation
@@ -341,7 +341,7 @@ jobs:
         data "terraform_remote_state" "europe_west1" {
           backend = "gcs"
           config = {
-            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west1"
           }
         }
@@ -349,7 +349,7 @@ jobs:
         data "terraform_remote_state" "europe_west3" {
           backend = "gcs"
           config = {
-            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west3"
           }
         }
@@ -382,14 +382,14 @@ jobs:
         EOF
 
         cat > infrastructure/environments/dev/cross-region/terraform.tfvars << 'EOF'
-        project_id = "cataziza-ecommerce-platform-dev"
+        project_id = "acme-ecommerce-platform-dev"
         vpn_shared_secret = "cataziza-ecommerce-vpn-secret-2024"
         EOF
 
         cat > infrastructure/environments/dev/cross-region/backend.tf << 'EOF'
         terraform {
           backend "gcs" {
-            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/cross-region"
           }
         }
