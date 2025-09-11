@@ -225,6 +225,16 @@ variable "allowed_regions" {
   }
 }
 
+variable "monitoring_dashboard_columns" {
+  description = "Number of columns for monitoring dashboards"
+  type        = number
+  default     = 12
+  validation {
+    condition     = var.monitoring_dashboard_columns >= 1 && var.monitoring_dashboard_columns <= 48
+    error_message = "Dashboard columns must be between 1 and 48."
+  }
+}
+
 variable "network_cidr_blocks" {
   description = "CIDR blocks for network subnets"
   type        = list(string)
