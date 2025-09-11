@@ -92,7 +92,7 @@ jobs:
     - name: Terraform Init
       run: |
         cd infrastructure/environments/dev
-        terraform init
+        terraform init -reconfigure
     
     - name: Terraform Plan
       run: |
@@ -141,8 +141,13 @@ jobs:
     - name: Terraform Init
       run: |
         cd infrastructure/environments/dev
-        terraform init
-    
+        terraform init -reconfigure
+
+    - name: Create BigQuery Datasets for Logging
+      run: |
+        bq mk --dataset --location=US --description="Application logs dataset" ${{ secrets.GCP_PROJECT_ID }}:application_logs || true
+        bq mk --dataset --location=US --description="Security logs dataset" ${{ secrets.GCP_PROJECT_ID }}:security_logs || true
+
     - name: Terraform Apply
       if: github.event.inputs.operation != 'destroy'
       run: |
