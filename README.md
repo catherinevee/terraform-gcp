@@ -1,6 +1,6 @@
 # Terraform GCP Infrastructure
 
-![CI/CD Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/ci-cd-pipeline.yml/badge.svg)
+![CI/CD Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/simple-test.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
