@@ -1,6 +1,7 @@
 # Terraform GCP Infrastructure
 
 ![CI/CD Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/simple-test.yml/badge.svg)
+![Development Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/dev-pipeline.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
@@ -210,51 +211,67 @@ environment = "dev"
 
 ## CI/CD Pipeline
 
-### Unified CI/CD Workflow
+### Available Pipelines
 
-The project uses a comprehensive CI/CD pipeline that combines validation, security scanning, planning, testing, and deployment into a single workflow.
+The project includes multiple CI/CD workflows with different levels of functionality:
 
-#### **Pipeline Stages**
+#### **1. Simple Test Pipeline** ✅ **Working**
+- **File**: `simple-test.yml`
+- **Status**: Fully functional
+- **Features**:
+  - Terraform format and validation checks
+  - Basic configuration verification
+  - Quick syntax validation
 
-1. **Validation & Security**
-   - Terraform format and validation checks
-   - Security scanning with tfsec, checkov, and terrascan
-   - Code quality and compliance validation
+#### **2. Development Pipeline** ⚠️ **Needs GCP Setup**
+- **File**: `dev-pipeline.yml`
+- **Status**: Configuration valid, requires GCP project setup
+- **Features**:
+  - Full Terraform planning and deployment
+  - Security scanning with tfsec
+  - Development environment deployment
+  - Resource verification
 
-2. **Planning & Review**
-   - Terraform plan generation for all environments
-   - Automatic PR comments with execution plans
-   - Cost estimation and change analysis
+#### **3. Robust CI/CD Pipeline** ⚠️ **Needs GCP Setup**
+- **File**: `robust-ci-cd.yml`
+- **Status**: Configuration valid, requires GCP project setup
+- **Features**:
+  - Multi-environment support (dev, staging, prod)
+  - Comprehensive validation and deployment
+  - Security scanning and compliance checks
+  - Automated notifications
 
-3. **Testing**
-   - Infrastructure unit tests with Terratest
-   - Integration testing for develop branch
-   - Performance and compliance validation
+### Pipeline Status
 
-4. **Deployment**
-   - Environment-specific deployments (dev, staging, prod)
-   - Automated deployment to development
-   - Manual approval gates for staging and production
-
-5. **Monitoring & Notifications**
-   - Deployment success/failure notifications
-   - Infrastructure health verification
-   - Audit logging and compliance reporting
-
-#### **Environment Strategy**
-
-- **Development**: Automatic deployment on push to `develop` branch
-- **Staging**: Automatic deployment on push to `staging` branch
-- **Production**: Manual deployment on push to `main` branch with approval gates
+| Pipeline | Status | Description |
+|----------|--------|-------------|
+| Simple Test | ✅ Working | Basic validation and formatting |
+| Development | ⚠️ Needs Setup | Requires GCP project and service account |
+| Robust CI/CD | ⚠️ Needs Setup | Requires GCP project and service account |
 
 ### Manual Deployment
 
 ```bash
-# Trigger manual deployment
-gh workflow run ci-cd-pipeline.yml -f environment=dev -f operation=plan
-gh workflow run ci-cd-pipeline.yml -f environment=dev -f operation=apply
-gh workflow run ci-cd-pipeline.yml -f environment=prod -f operation=apply
+# Run simple validation (always works)
+gh workflow run simple-test.yml
+
+# Deploy to development (requires GCP setup)
+gh workflow run dev-pipeline.yml -f operation=plan
+
+# Deploy to specific environment (requires GCP setup)
+gh workflow run robust-ci-cd.yml -f environment=dev -f operation=plan
 ```
+
+### GCP Setup Requirements
+
+To use the full deployment pipelines, you need:
+
+1. **GCP Project**: Create a project with billing enabled
+2. **Service Account**: Create a service account with required permissions
+3. **GitHub Secrets**: Configure the following secrets:
+   - `GCP_SA_KEY`: Service account JSON key
+   - `GCP_PROJECT_ID`: Target GCP project ID
+   - `GCP_REGION`: Default GCP region
 
 ## Modules
 
