@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.5.0"
-  
+
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -14,7 +14,7 @@ locals {
   environment = "dev"
   project_id  = var.project_id
   region      = var.region
-  
+
   common_labels = {
     environment = local.environment
     project     = "terraform-gcp"
@@ -43,60 +43,60 @@ resource "google_project_service" "required_apis" {
     "iam.googleapis.com",
     "servicenetworking.googleapis.com",
   ])
-  
+
   project = local.project_id
   service = each.value
-  
+
   disable_on_destroy = false
 }
 
 # VPC Module
 module "vpc" {
   source = "../../modules/networking/vpc"
-  
+
   project_id   = local.project_id
   network_name = "acme-ecommerce-platform-vpc-${local.environment}"
   routing_mode = "REGIONAL"
-  
+
   delete_default_routes_on_create = true
-  
+
   depends_on = [google_project_service.required_apis]
 }
 
 # Subnets Module
 module "subnets" {
   source = "../../modules/networking/subnets"
-  
+
   project_id   = local.project_id
   network_name = module.vpc.network_name
-  
+
   subnets = [
     {
       subnet_name           = "acme-ecommerce-web-tier-${local.environment}"
-      subnet_ip            = "10.0.1.0/24"
-      subnet_region        = local.region
+      subnet_ip             = "10.0.1.0/24"
+      subnet_region         = local.region
       subnet_private_access = true
     },
     {
       subnet_name           = "acme-ecommerce-app-tier-${local.environment}"
-      subnet_ip            = "10.0.10.0/24"
-      subnet_region        = local.region
+      subnet_ip             = "10.0.10.0/24"
+      subnet_region         = local.region
       subnet_private_access = true
     },
     {
       subnet_name           = "acme-ecommerce-database-tier-${local.environment}"
-      subnet_ip            = "10.0.20.0/24"
-      subnet_region        = local.region
+      subnet_ip             = "10.0.20.0/24"
+      subnet_region         = local.region
       subnet_private_access = true
     },
     {
       subnet_name           = "acme-ecommerce-kubernetes-tier-${local.environment}"
-      subnet_ip            = "10.0.30.0/24"
-      subnet_region        = local.region
+      subnet_ip             = "10.0.30.0/24"
+      subnet_region         = local.region
       subnet_private_access = true
     }
   ]
-  
+
   secondary_ranges = {
     "${local.project_id}-${local.environment}-${local.region}-gke" = [
       {
@@ -109,26 +109,26 @@ module "subnets" {
       }
     ]
   }
-  
+
   depends_on = [module.vpc]
 }
 
 # Firewall Module
 module "firewall" {
   source = "../../modules/networking/firewall"
-  
+
   project_id   = local.project_id
   network_name = module.vpc.network_name
-  
+
   depends_on = [module.vpc]
 }
 
 # IAM Module
 module "iam" {
   source = "../../modules/security/iam"
-  
+
   project_id = local.project_id
-  
+
   service_accounts = {
     "acme-ecommerce-terraform-sa" = {
       account_id   = "acme-ecommerce-terraform-sa"
@@ -146,7 +146,7 @@ module "iam" {
       description  = "Service account for orders processing service"
     }
   }
-  
+
   service_account_roles = {
     "terraform-editor" = {
       service_account_key = "acme-ecommerce-terraform-sa"
@@ -161,7 +161,7 @@ module "iam" {
       role                = "roles/storage.admin"
     }
   }
-  
+
   custom_roles = {
     "terraform-custom-role" = {
       role_id     = "terraform_custom_role"
@@ -175,23 +175,23 @@ module "iam" {
       ]
     }
   }
-  
-  enable_workload_identity = true
-  workload_identity_pool_id = "github-actions"
+
+  enable_workload_identity       = true
+  workload_identity_pool_id      = "github-actions"
   workload_identity_display_name = "GitHub Actions Pool"
-  workload_identity_description = "Workload Identity Pool for GitHub Actions"
-  
+  workload_identity_description  = "Workload Identity Pool for GitHub Actions"
+
   depends_on = [google_project_service.required_apis]
 }
 
 # KMS Module
 module "kms" {
   source = "../../modules/security/kms"
-  
+
   project_id    = local.project_id
   key_ring_name = "acme-ecommerce-platform-keyring-${local.environment}"
   location      = local.region
-  
+
   crypto_keys = {
     "acme-ecommerce-data-encryption-key" = {
       name            = "acme-ecommerce-data-encryption-key"
@@ -206,12 +206,12 @@ module "kms" {
       rotation_period = null
     }
   }
-  
+
   crypto_key_iam_bindings = {
     "encryption-key-encrypt-decrypt" = {
       crypto_key_key = "encryption-key"
       role           = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-      members        = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}",
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
@@ -219,21 +219,21 @@ module "kms" {
     "signing-key-signer" = {
       crypto_key_key = "signing-key"
       role           = "roles/cloudkms.signer"
-      members        = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}"
       ]
     }
   }
-  
+
   depends_on = [module.iam]
 }
 
 # Secret Manager Module
 module "secret_manager" {
   source = "../../modules/security/secret-manager"
-  
+
   project_id = local.project_id
-  
+
   secrets = {
     "database-password" = {
       secret_id        = "database-password"
@@ -248,7 +248,7 @@ module "secret_manager" {
       replicas         = []
     }
   }
-  
+
   secret_versions = {
     "database-password-version" = {
       secret_key  = "database-password"
@@ -259,47 +259,47 @@ module "secret_manager" {
       secret_data = "initial-api-key-change-me"
     }
   }
-  
+
   secret_iam_bindings = {
     "database-password-access" = {
       secret_key = "database-password"
       role       = "roles/secretmanager.secretAccessor"
-      members    = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
     }
     "api-key-access" = {
       secret_key = "api-key"
       role       = "roles/secretmanager.secretAccessor"
-      members    = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
     }
   }
-  
+
   depends_on = [module.iam]
 }
 
 # Compute Module
 module "compute" {
   source = "../../modules/compute/instances"
-  
-  project_id    = local.project_id
-  network_name  = module.vpc.network_name
-  region        = local.region
-  
+
+  project_id   = local.project_id
+  network_name = module.vpc.network_name
+  region       = local.region
+
   instance_templates = {
     "web-template" = {
-      name_prefix              = "web-instance"
-      description              = "Web server instance template"
-      machine_type             = "e2-micro"
-      source_image             = "debian-cloud/debian-11"
-      disk_size_gb             = 20
-      disk_type                = "pd-standard"
-      subnetwork               = module.subnets.subnets["${local.project_id}-${local.environment}-${local.region}-public"].name
-      enable_external_ip       = true
-      service_account_email    = module.iam.service_account_emails["app-sa"]
-      service_account_scopes   = ["cloud-platform"]
+      name_prefix            = "web-instance"
+      description            = "Web server instance template"
+      machine_type           = "e2-micro"
+      source_image           = "debian-cloud/debian-11"
+      disk_size_gb           = 20
+      disk_type              = "pd-standard"
+      subnetwork             = module.subnets.subnets["${local.project_id}-${local.environment}-${local.region}-public"].name
+      enable_external_ip     = true
+      service_account_email  = module.iam.service_account_emails["app-sa"]
+      service_account_scopes = ["cloud-platform"]
       metadata = {
         "startup-script" = <<-EOF
           #!/bin/bash
@@ -311,21 +311,21 @@ module "compute" {
         EOF
       }
       startup_script = ""
-      tags = ["web", "http"]
+      tags           = ["web", "http"]
     }
   }
-  
+
   instance_group_managers = {
     "web-igm" = {
-      name                    = "acme-ecommerce-web-servers"
-      description             = "ACME E-commerce Web Server Instance Group"
-      base_instance_name      = "acme-ecommerce-web-server"
-      zone                    = "${local.region}-a"
-      template_key            = "web-template"
-      target_size             = 2
-      enable_auto_healing     = true
-      health_check_key        = "web-health-check"
-      initial_delay_sec       = 300
+      name                = "acme-ecommerce-web-servers"
+      description         = "ACME E-commerce Web Server Instance Group"
+      base_instance_name  = "acme-ecommerce-web-server"
+      zone                = "${local.region}-a"
+      template_key        = "web-template"
+      target_size         = 2
+      enable_auto_healing = true
+      health_check_key    = "web-health-check"
+      initial_delay_sec   = 300
       update_policy = {
         type                         = "PROACTIVE"
         instance_redistribution_type = "PROACTIVE"
@@ -335,7 +335,7 @@ module "compute" {
       }
     }
   }
-  
+
   health_checks = {
     "web-health-check" = {
       name                = "acme-ecommerce-web-health-check"
@@ -348,36 +348,36 @@ module "compute" {
       request_path        = "/"
     }
   }
-  
+
   autoscalers = {
     "web-autoscaler" = {
-      name                        = "acme-ecommerce-web-autoscaler"
-      zone                        = "${local.region}-a"
-      instance_group_manager_key  = "web-igm"
-      max_replicas                = 5
-      min_replicas                = 2
-      cooldown_period             = 60
+      name                       = "acme-ecommerce-web-autoscaler"
+      zone                       = "${local.region}-a"
+      instance_group_manager_key = "web-igm"
+      max_replicas               = 5
+      min_replicas               = 2
+      cooldown_period            = 60
       cpu_utilization = {
         target = 0.7
       }
     }
   }
-  
+
   depends_on = [module.subnets, module.iam]
 }
 
 # Load Balancer Module
 module "load_balancer" {
   source = "../../modules/compute/load-balancer"
-  
+
   project_id = local.project_id
-  
-  global_ip_name = "acme-ecommerce-platform-lb-ip-${local.environment}"
-  health_check_name = "acme-ecommerce-platform-lb-health-check-${local.environment}"
+
+  global_ip_name       = "acme-ecommerce-platform-lb-ip-${local.environment}"
+  health_check_name    = "acme-ecommerce-platform-lb-health-check-${local.environment}"
   backend_service_name = "acme-ecommerce-platform-lb-backend-${local.environment}"
-  url_map_name = "acme-ecommerce-platform-lb-url-map-${local.environment}"
+  url_map_name         = "acme-ecommerce-platform-lb-url-map-${local.environment}"
   forwarding_rule_name = "acme-ecommerce-platform-lb-forwarding-rule-${local.environment}"
-  
+
   backend_groups = [
     {
       group           = module.compute.instance_group_managers["web-igm"].instance_group
@@ -386,16 +386,16 @@ module "load_balancer" {
       max_utilization = 0.8
     }
   ]
-  
+
   depends_on = [module.compute]
 }
 
 # Storage Module
 module "storage" {
   source = "../../modules/storage/buckets"
-  
+
   project_id = local.project_id
-  
+
   buckets = {
     "app-data" = {
       name                        = "acme-ecommerce-customer-data-${local.environment}"
@@ -439,24 +439,24 @@ module "storage" {
       ]
     }
   }
-  
+
   bucket_iam_bindings = {
     "app-data-access" = {
       bucket_key = "app-data"
       role       = "roles/storage.objectViewer"
-      members    = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
     }
     "logs-access" = {
       bucket_key = "logs"
       role       = "roles/storage.objectCreator"
-      members    = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
     }
   }
-  
+
   bucket_objects = {
     "welcome-file" = {
       name         = "welcome.txt"
@@ -465,34 +465,34 @@ module "storage" {
       content_type = "text/plain"
     }
   }
-  
+
   depends_on = [module.kms, module.iam]
 }
 
 # Database Module
 module "database" {
   source = "../../modules/database/cloud-sql"
-  
-  project_id                = local.project_id
-  private_vpc_connection    = module.vpc.private_vpc_connection
-  
+
+  project_id             = local.project_id
+  private_vpc_connection = module.vpc.private_vpc_connection
+
   instances = {
     "postgres-primary" = {
-      name                              = "acme-orders-database-${local.environment}"
-      database_version                  = "POSTGRES_15"
-      region                           = local.region
-      tier                             = "db-f1-micro"
-      availability_type                = "ZONAL"
-      disk_type                        = "PD_SSD"
-      disk_size                        = 20
-      disk_autoresize                  = true
-      disk_autoresize_limit            = 100
-      deletion_protection              = false
-      backup_enabled                   = true
-      backup_start_time                = "03:00"
-      backup_location                  = local.region
-      point_in_time_recovery_enabled   = true
-      transaction_log_retention_days   = 7
+      name                           = "acme-orders-database-${local.environment}"
+      database_version               = "POSTGRES_15"
+      region                         = local.region
+      tier                           = "db-f1-micro"
+      availability_type              = "ZONAL"
+      disk_type                      = "PD_SSD"
+      disk_size                      = 20
+      disk_autoresize                = true
+      disk_autoresize_limit          = 100
+      deletion_protection            = false
+      backup_enabled                 = true
+      backup_start_time              = "03:00"
+      backup_location                = local.region
+      point_in_time_recovery_enabled = true
+      transaction_log_retention_days = 7
       backup_retention_settings = {
         retained_backups = 7
         retention_unit   = "COUNT"
@@ -501,7 +501,7 @@ module "database" {
       private_network                               = module.vpc.network_self_link
       enable_private_path_for_google_cloud_services = true
       require_ssl                                   = true
-      authorized_networks = []
+      authorized_networks                           = []
       database_flags = [
         {
           name  = "log_statement"
@@ -525,7 +525,7 @@ module "database" {
       }
     }
   }
-  
+
   databases = {
     "app-db" = {
       name         = "acme_customer_portal_db"
@@ -536,7 +536,7 @@ module "database" {
       instance_key = "postgres-primary"
     }
   }
-  
+
   users = {
     "app-user" = {
       name         = "acme_ecommerce_app_user"
@@ -549,24 +549,24 @@ module "database" {
       password     = "readonly-password-change-me"
     }
   }
-  
+
   ssl_certs = {
     "app-ssl-cert" = {
       common_name  = "app-ssl-cert"
       instance_key = "postgres-primary"
     }
   }
-  
+
   depends_on = [module.vpc, module.iam]
 }
 
 # Redis Module
 module "redis" {
   source = "../../modules/database/redis"
-  
-  project_id                = local.project_id
-  private_vpc_connection    = module.vpc.private_vpc_connection
-  
+
+  project_id             = local.project_id
+  private_vpc_connection = module.vpc.private_vpc_connection
+
   instances = {
     "cache-primary" = {
       name                    = "acme-ecommerce-cache-${local.environment}"
@@ -596,49 +596,49 @@ module "redis" {
       }
     }
   }
-  
+
   depends_on = [module.vpc, module.iam]
 }
 
 # Cloud Run Module
 module "cloud_run" {
   source = "../../modules/compute/cloud-run"
-  
-  project_id                = local.project_id
-  service_account_email     = module.iam.service_account_emails["app-sa"]
-  private_vpc_connection    = module.vpc.private_vpc_connection
-  vpc_connector             = null # We'll use direct VPC access
-  
+
+  project_id             = local.project_id
+  service_account_email  = module.iam.service_account_emails["app-sa"]
+  private_vpc_connection = module.vpc.private_vpc_connection
+  vpc_connector          = null # We'll use direct VPC access
+
   services = {
     "web-service" = {
-             name                = "acme-customer-portal-web-${local.environment}"
-      location            = local.region
-      image               = "gcr.io/cloudrun/hello"
-      container_port      = 8080
-      environment         = local.environment
-      cpu_limit           = "1"
-      memory_limit        = "512Mi"
-      cpu_idle            = true
-      min_instances       = 0
-      max_instances       = 10
-      timeout             = "300s"
-      health_check_path   = "/"
-      env_vars = []
+      name              = "acme-customer-portal-web-${local.environment}"
+      location          = local.region
+      image             = "gcr.io/cloudrun/hello"
+      container_port    = 8080
+      environment       = local.environment
+      cpu_limit         = "1"
+      memory_limit      = "512Mi"
+      cpu_idle          = true
+      min_instances     = 0
+      max_instances     = 10
+      timeout           = "300s"
+      health_check_path = "/"
+      env_vars          = []
     }
-    
+
     "api-service" = {
-             name                = "acme-orders-api-${local.environment}"
-      location            = local.region
-      image               = "gcr.io/cloudrun/hello"
-      container_port      = 8080
-      environment         = local.environment
-      cpu_limit           = "2"
-      memory_limit        = "1Gi"
-      cpu_idle            = true
-      min_instances       = 0
-      max_instances       = 5
-      timeout             = "300s"
-      health_check_path   = "/health"
+      name              = "acme-orders-api-${local.environment}"
+      location          = local.region
+      image             = "gcr.io/cloudrun/hello"
+      container_port    = 8080
+      environment       = local.environment
+      cpu_limit         = "2"
+      memory_limit      = "1Gi"
+      cpu_idle          = true
+      min_instances     = 0
+      max_instances     = 5
+      timeout           = "300s"
+      health_check_path = "/health"
       env_vars = [
         {
           name  = "API_VERSION"
@@ -647,48 +647,48 @@ module "cloud_run" {
       ]
     }
   }
-  
+
   depends_on = [module.vpc, module.iam]
 }
 
 # Container Registry Module
 module "container_registry" {
   source = "../../modules/storage/container-registry"
-  
+
   project_id = local.project_id
-  
+
   repositories = {
     "app-images" = {
-      location        = local.region
-      repository_id   = "acme-ecommerce-application-images-${local.environment}"
-      description     = "Application container images"
-      format          = "DOCKER"
-      keep_count      = 10
-      retention_days  = "2592000s" # 30 days
+      location       = local.region
+      repository_id  = "acme-ecommerce-application-images-${local.environment}"
+      description    = "Application container images"
+      format         = "DOCKER"
+      keep_count     = 10
+      retention_days = "2592000s" # 30 days
       labels = {
         environment = local.environment
         purpose     = "application-images"
       }
     }
     "base-images" = {
-      location        = local.region
-      repository_id   = "acme-ecommerce-base-images-${local.environment}"
-      description     = "Base container images"
-      format          = "DOCKER"
-      keep_count      = 5
-      retention_days  = "5184000s" # 60 days
+      location       = local.region
+      repository_id  = "acme-ecommerce-base-images-${local.environment}"
+      description    = "Base container images"
+      format         = "DOCKER"
+      keep_count     = 5
+      retention_days = "5184000s" # 60 days
       labels = {
         environment = local.environment
         purpose     = "base-images"
       }
     }
   }
-  
+
   repository_iam_bindings = {
     "app-images-access" = {
       repository_key = "app-images"
       role           = "roles/artifactregistry.reader"
-      members        = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
@@ -696,44 +696,44 @@ module "container_registry" {
     "base-images-access" = {
       repository_key = "base-images"
       role           = "roles/artifactregistry.reader"
-      members        = [
+      members = [
         "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
         "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
       ]
     }
   }
-  
+
   enable_legacy_registry = false
-  
+
   depends_on = [module.iam]
 }
 
 # Cloud Monitoring Module
 module "monitoring" {
   source = "../../modules/monitoring/cloud-monitoring"
-  
+
   project_id = local.project_id
-  
+
   # Uptime Checks - Simplified for now
   uptime_checks = {}
-  
+
   # Alert Policies
   alert_policies = {
     "high-cpu-usage" = {
       display_name = "ACME E-commerce Platform High CPU Usage Alert"
       combiner     = "OR"
       enabled      = true
-             condition = {
-               display_name = "CPU usage is high"
-               filter       = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/cpu/utilization\""
-               duration     = "300s"
-               comparison   = "COMPARISON_GT"
-               threshold_value = 80
+      condition = {
+        display_name    = "CPU usage is high"
+        filter          = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/cpu/utilization\""
+        duration        = "300s"
+        comparison      = "COMPARISON_GT"
+        threshold_value = 80
         aggregation = {
-          alignment_period    = "60s"
-          per_series_aligner  = "ALIGN_MEAN"
+          alignment_period     = "60s"
+          per_series_aligner   = "ALIGN_MEAN"
           cross_series_reducer = "REDUCE_MEAN"
-          group_by_fields     = ["resource.label.instance_id"]
+          group_by_fields      = ["resource.label.instance_id"]
         }
       }
       notification_channels = []
@@ -742,22 +742,22 @@ module "monitoring" {
         mime_type = "text/markdown"
       }
     }
-    
+
     "high-memory-usage" = {
       display_name = "ACME E-commerce Platform High Memory Usage Alert"
       combiner     = "OR"
       enabled      = true
-             condition = {
-               display_name = "Memory usage is high"
-               filter       = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/memory/balloon/ram_size\""
-               duration     = "300s"
-               comparison   = "COMPARISON_GT"
-               threshold_value = 85
+      condition = {
+        display_name    = "Memory usage is high"
+        filter          = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/memory/balloon/ram_size\""
+        duration        = "300s"
+        comparison      = "COMPARISON_GT"
+        threshold_value = 85
         aggregation = {
-          alignment_period    = "60s"
-          per_series_aligner  = "ALIGN_MEAN"
+          alignment_period     = "60s"
+          per_series_aligner   = "ALIGN_MEAN"
           cross_series_reducer = "REDUCE_MEAN"
-          group_by_fields     = ["resource.label.instance_id"]
+          group_by_fields      = ["resource.label.instance_id"]
         }
       }
       notification_channels = []
@@ -766,22 +766,22 @@ module "monitoring" {
         mime_type = "text/markdown"
       }
     }
-    
+
     "disk-space-low" = {
       display_name = "ACME E-commerce Platform Low Disk Space Alert"
       combiner     = "OR"
       enabled      = true
-             condition = {
-               display_name = "Disk space is low"
-               filter       = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/disk/read_bytes_count\""
-               duration     = "300s"
-               comparison   = "COMPARISON_LT"
-               threshold_value = 10
+      condition = {
+        display_name    = "Disk space is low"
+        filter          = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/disk/read_bytes_count\""
+        duration        = "300s"
+        comparison      = "COMPARISON_LT"
+        threshold_value = 10
         aggregation = {
-          alignment_period    = "60s"
-          per_series_aligner  = "ALIGN_MEAN"
+          alignment_period     = "60s"
+          per_series_aligner   = "ALIGN_MEAN"
           cross_series_reducer = "REDUCE_MEAN"
-          group_by_fields     = ["resource.label.instance_id"]
+          group_by_fields      = ["resource.label.instance_id"]
         }
       }
       notification_channels = []
@@ -791,35 +791,35 @@ module "monitoring" {
       }
     }
   }
-  
+
   # Services to Monitor
   services = {
     "cloud-run-web" = {
       service_id   = "terragrunt-471602-dev-web"
       display_name = "ACME Customer Portal Web Service"
       user_labels = {
-        environment = local.environment
+        environment  = local.environment
         service_type = "web"
       }
     }
-    
+
     "cloud-run-api" = {
       service_id   = "terragrunt-471602-dev-api"
       display_name = "ACME Orders API Service"
       user_labels = {
-        environment = local.environment
+        environment  = local.environment
         service_type = "api"
       }
     }
   }
-  
+
   # SLOs
   slos = {
     "web-service-availability" = {
-      service_key = "cloud-run-web"
-      slo_id      = "web-availability-slo"
-      display_name = "ACME Customer Portal Web Service Availability SLO"
-      goal        = 0.99
+      service_key         = "cloud-run-web"
+      slo_id              = "web-availability-slo"
+      display_name        = "ACME Customer Portal Web Service Availability SLO"
+      goal                = 0.99
       rolling_period_days = 30
       basic_sli = {
         availability = {
@@ -827,12 +827,12 @@ module "monitoring" {
         }
       }
     }
-    
+
     "api-service-availability" = {
-      service_key = "cloud-run-api"
-      slo_id      = "api-availability-slo"
-      display_name = "ACME Orders API Service Availability SLO"
-      goal        = 0.99
+      service_key         = "cloud-run-api"
+      slo_id              = "api-availability-slo"
+      display_name        = "ACME Orders API Service Availability SLO"
+      goal                = 0.99
       rolling_period_days = 30
       basic_sli = {
         availability = {
@@ -841,46 +841,46 @@ module "monitoring" {
       }
     }
   }
-  
+
   depends_on = [module.cloud_run, module.compute]
 }
 
 # Cloud Logging Module
 module "logging" {
   source = "../../modules/monitoring/cloud-logging"
-  
+
   project_id = local.project_id
-  
+
   # Log Sinks
   log_sinks = {
     "security-logs" = {
-      name        = "security-logs-sink"
-      destination = "bigquery.googleapis.com/projects/${local.project_id}/datasets/security_logs"
-      filter      = "severity>=ERROR AND resource.type=\"gce_instance\""
+      name                   = "security-logs-sink"
+      destination            = "bigquery.googleapis.com/projects/${local.project_id}/datasets/security_logs"
+      filter                 = "severity>=ERROR AND resource.type=\"gce_instance\""
       unique_writer_identity = true
-      exclusions = []
+      exclusions             = []
     }
-    
+
     "application-logs" = {
-      name        = "acme-ecommerce-application-logs-sink"
-      destination = "bigquery.googleapis.com/projects/${local.project_id}/datasets/application_logs"
-      filter      = "resource.type=\"cloud_run_revision\""
+      name                   = "acme-ecommerce-application-logs-sink"
+      destination            = "bigquery.googleapis.com/projects/${local.project_id}/datasets/application_logs"
+      filter                 = "resource.type=\"cloud_run_revision\""
       unique_writer_identity = true
-      exclusions = []
+      exclusions             = []
     }
-    
+
     "audit-logs" = {
-      name        = "acme-ecommerce-audit-logs-sink"
-      destination = "storage.googleapis.com/terragrunt-471602-dev-logs"
-      filter      = "protoPayload.serviceName=\"cloudsql.googleapis.com\" OR protoPayload.serviceName=\"redis.googleapis.com\""
+      name                   = "acme-ecommerce-audit-logs-sink"
+      destination            = "storage.googleapis.com/terragrunt-471602-dev-logs"
+      filter                 = "protoPayload.serviceName=\"cloudsql.googleapis.com\" OR protoPayload.serviceName=\"redis.googleapis.com\""
       unique_writer_identity = true
-      exclusions = []
+      exclusions             = []
     }
   }
-  
+
   # Log Metrics - Simplified for now
   log_metrics = {}
-  
+
   # Log Exclusions
   log_exclusions = {
     "health-check-logs" = {
@@ -889,7 +889,7 @@ module "logging" {
       filter      = "resource.type=\"cloud_run_revision\" AND httpRequest.requestUrl=\"/health\""
       disabled    = false
     }
-    
+
     "debug-logs" = {
       name        = "acme-ecommerce-debug-logs-exclusion"
       description = "Exclude debug level logs"
@@ -897,7 +897,7 @@ module "logging" {
       disabled    = false
     }
   }
-  
+
   depends_on = [module.storage]
 }
 
