@@ -38,6 +38,11 @@ jobs:
         gcloud storage ls gs://acme-ecommerce-platform-dev-terraform-state/terraform/state/global/
         echo "GCS access test completed successfully!"
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.9.0
+
     - name: Test Terraform Backend
       run: |
         echo "Testing Terraform backend configuration..."
