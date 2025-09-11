@@ -18,7 +18,7 @@ resource "google_monitoring_alert_policy" "security_incidents" {
       filter          = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/security_events\""
       comparison      = "COMPARISON_GT"
       threshold_value = 5
-      duration        = "300s"
+      duration        = "60s"
 
       aggregations {
         alignment_period   = "300s"
@@ -84,7 +84,7 @@ resource "google_monitoring_alert_policy" "suspicious_network_activity" {
       filter          = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/network/received_bytes_count\""
       comparison      = "COMPARISON_GT"
       threshold_value = 1000000000 # 1GB
-      duration        = "300s"
+      duration        = "60s"
 
       aggregations {
         alignment_period   = "300s"
@@ -150,7 +150,7 @@ resource "google_monitoring_alert_policy" "storage_security" {
       filter          = "resource.type=\"gcs_bucket\" AND metric.type=\"storage.googleapis.com/api/request_count\""
       comparison      = "COMPARISON_GT"
       threshold_value = 1000
-      duration        = "300s"
+      duration        = "60s"
 
       aggregations {
         alignment_period   = "300s"
