@@ -32,7 +32,7 @@ resource "google_compute_backend_service" "backend_service" {
   
   protocol    = "HTTP"
   port_name   = "http"
-  timeout_sec = 30
+  timeout_sec = var.backend_service_timeout_sec
   
   health_checks = [google_compute_health_check.health_check.id]
   

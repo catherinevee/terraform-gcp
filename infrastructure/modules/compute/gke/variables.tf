@@ -57,3 +57,33 @@ variable "node_pools" {
   }))
   default = {}
 }
+
+variable "initial_node_count" {
+  description = "Initial node count for the default node pool (will be removed)"
+  type        = number
+  default     = 1
+  validation {
+    condition     = var.initial_node_count >= 0 && var.initial_node_count <= 10
+    error_message = "Initial node count must be between 0 and 10."
+  }
+}
+
+variable "upgrade_max_surge" {
+  description = "Maximum number of nodes that can be created during an upgrade"
+  type        = number
+  default     = 1
+  validation {
+    condition     = var.upgrade_max_surge >= 0 && var.upgrade_max_surge <= 10
+    error_message = "Upgrade max surge must be between 0 and 10."
+  }
+}
+
+variable "upgrade_max_unavailable" {
+  description = "Maximum number of nodes that can be unavailable during an upgrade"
+  type        = number
+  default     = 0
+  validation {
+    condition     = var.upgrade_max_unavailable >= 0 && var.upgrade_max_unavailable <= 10
+    error_message = "Upgrade max unavailable must be between 0 and 10."
+  }
+}

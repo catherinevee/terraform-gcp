@@ -10,7 +10,7 @@ resource "google_container_cluster" "cluster" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 1
+  initial_node_count       = var.initial_node_count
   
   # Disable deletion protection for development
   deletion_protection = false
@@ -173,7 +173,7 @@ resource "google_container_node_pool" "node_pool" {
   
   # Upgrade settings
   upgrade_settings {
-    max_surge       = 1
-    max_unavailable = 0
+    max_surge       = var.upgrade_max_surge
+    max_unavailable = var.upgrade_max_unavailable
   }
 }

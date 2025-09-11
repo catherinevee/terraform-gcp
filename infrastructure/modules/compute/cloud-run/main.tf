@@ -46,10 +46,10 @@ resource "google_cloud_run_v2_service" "service" {
           path = each.value.health_check_path
           port = each.value.container_port
         }
-        initial_delay_seconds = 30
-        timeout_seconds      = 1
-        period_seconds       = 3
-        failure_threshold    = 1
+        initial_delay_seconds = var.health_check_initial_delay_seconds
+        timeout_seconds      = var.health_check_timeout_seconds
+        period_seconds       = var.health_check_period_seconds
+        failure_threshold    = var.health_check_failure_threshold
       }
       
       liveness_probe {
@@ -57,10 +57,10 @@ resource "google_cloud_run_v2_service" "service" {
           path = each.value.health_check_path
           port = each.value.container_port
         }
-        initial_delay_seconds = 30
-        timeout_seconds      = 1
-        period_seconds       = 3
-        failure_threshold    = 1
+        initial_delay_seconds = var.health_check_initial_delay_seconds
+        timeout_seconds      = var.health_check_timeout_seconds
+        period_seconds       = var.health_check_period_seconds
+        failure_threshold    = var.health_check_failure_threshold
       }
     }
     
@@ -86,7 +86,7 @@ resource "google_cloud_run_v2_service" "service" {
   }
   
   traffic {
-    percent = 100
+    percent = var.traffic_percent
     type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
   }
   

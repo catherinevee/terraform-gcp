@@ -130,6 +130,11 @@ data "terraform_remote_state" "us_east1" {
   }
 }
 
+# Data source to access VPN shared secret from Secret Manager
+data "google_secret_manager_secret_version" "vpn_shared_secret" {
+  secret = "acme-vpn-shared-secret"
+}
+
 # Cross-region networking module
 module "cross_region_networking" {
   source = "../../../modules/networking/cross-region"
@@ -139,7 +144,7 @@ module "cross_region_networking" {
   secondary_region = "us-east1"
   primary_network_self_link = data.terraform_remote_state.us_central1.outputs.vpc_network_self_link
   secondary_network_self_link = data.terraform_remote_state.us_east1.outputs.vpc_network_self_link
-  vpn_shared_secret = var.vpn_shared_secret
+  vpn_shared_secret = data.google_secret_manager_secret_version.vpn_shared_secret.secret_data
 }
 "@ | Out-File -FilePath "$CrossRegionPath/main.tf" -Encoding UTF8
         
@@ -154,7 +159,6 @@ variable "vpn_shared_secret" {
   description = "VPN shared secret"
   type        = string
   sensitive   = true
-  default     = "your-vpn-shared-secret-here"
 }
 "@ | Out-File -FilePath "$CrossRegionPath/variables.tf" -Encoding UTF8
         

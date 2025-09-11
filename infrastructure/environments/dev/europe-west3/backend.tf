@@ -1,8 +1,8 @@
-# Backend configuration for global resources
+# Backend configuration for regional resources
 terraform {
   backend "gcs" {
     bucket = "cataziza-ecommerce-platform-dev-terraform-state"
-    prefix = "terraform/state/global"
+    prefix = "terraform/state/europe-west3"
   }
 }
 

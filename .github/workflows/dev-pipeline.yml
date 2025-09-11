@@ -30,12 +30,12 @@ on:
         options:
           - all
           - global
-          - us-central1
-          - us-east1
+          - europe-west1
+          - europe-west3
 
 env:
-  TF_VERSION: '1.5.0'
-  PROJECT_ID: 'acme-ecommerce-platform-dev'
+  TF_VERSION: '1.9.0'
+  PROJECT_ID: 'cataziza-ecommerce-platform-dev'
 
 jobs:
   # Stage 1: Validation
@@ -57,14 +57,14 @@ jobs:
         cd infrastructure/environments/dev/global
         terraform fmt -check -recursive
     
-    - name: Terraform Format Check - US Central1
+    - name: Terraform Format Check - Europe West1
       run: |
-        cd infrastructure/environments/dev/us-central1
+        cd infrastructure/environments/dev/europe-west1
         terraform fmt -check -recursive
     
-    - name: Terraform Format Check - US East1
+    - name: Terraform Format Check - Europe West3
       run: |
-        cd infrastructure/environments/dev/us-east1
+        cd infrastructure/environments/dev/europe-west3
         terraform fmt -check -recursive
     
     - name: Terraform Validate - Global
@@ -73,15 +73,15 @@ jobs:
         terraform init -backend=false
         terraform validate
     
-    - name: Terraform Validate - US Central1
+    - name: Terraform Validate - Europe West1
       run: |
-        cd infrastructure/environments/dev/us-central1
+        cd infrastructure/environments/dev/europe-west1
         terraform init -backend=false
         terraform validate
     
-    - name: Terraform Validate - US East1
+    - name: Terraform Validate - Europe West3
       run: |
-        cd infrastructure/environments/dev/us-east1
+        cd infrastructure/environments/dev/europe-west3
         terraform init -backend=false
         terraform validate
 
@@ -155,12 +155,12 @@ jobs:
       env:
         TF_VAR_environment: dev
 
-  # Stage 3: Regional Resources Deployment - US Central1
-  deploy-us-central1:
-    name: Deploy US Central1 Resources
+  # Stage 3: Regional Resources Deployment - Europe West1
+  deploy-europe-west1:
+    name: Deploy Europe West1 Resources
     runs-on: ubuntu-latest
     needs: [validate, deploy-global]
-    if: github.event.inputs.region == 'all' || github.event.inputs.region == 'us-central1' || github.event_name != 'workflow_dispatch'
+    if: github.event.inputs.region == 'all' || github.event.inputs.region == 'europe-west1' || github.event_name != 'workflow_dispatch'
     environment: development
 
     steps:
@@ -185,48 +185,48 @@ jobs:
     - name: Configure gcloud
       run: |
         gcloud config set project ${{ env.PROJECT_ID }}
-        gcloud config set compute/region us-central1
+        gcloud config set compute/region europe-west1
 
-    - name: Terraform Init - US Central1
+    - name: Terraform Init - Europe West1
       run: |
-        cd infrastructure/environments/dev/us-central1
+        cd infrastructure/environments/dev/europe-west1
         terraform init -reconfigure
 
-    - name: Terraform Plan - US Central1
+    - name: Terraform Plan - Europe West1
       if: github.event.inputs.operation == 'plan' || github.event_name == 'pull_request'
       run: |
-        cd infrastructure/environments/dev/us-central1
-        terraform plan -var-file=terraform.tfvars -out=tfplan-us-central1
+        cd infrastructure/environments/dev/europe-west1
+        terraform plan -var-file=terraform.tfvars -out=tfplan-europe-west1
       env:
         TF_VAR_environment: dev
 
-    - name: Terraform Apply - US Central1
+    - name: Terraform Apply - Europe West1
       if: github.event.inputs.operation == 'apply'
       run: |
-        cd infrastructure/environments/dev/us-central1
+        cd infrastructure/environments/dev/europe-west1
         terraform apply -var-file=terraform.tfvars -auto-approve
       env:
         TF_VAR_environment: dev
 
-    - name: Terraform Destroy - US Central1
+    - name: Terraform Destroy - Europe West1
       if: github.event.inputs.operation == 'destroy'
       run: |
-        cd infrastructure/environments/dev/us-central1
-        echo "⚠️  WARNING: This will destroy ALL US Central1 infrastructure resources!"
+        cd infrastructure/environments/dev/europe-west1
+        echo "⚠️  WARNING: This will destroy ALL Europe West1 infrastructure resources!"
         echo "🔍 Running terraform plan to show what will be destroyed..."
         terraform plan -destroy -var-file=terraform.tfvars
         echo "🗑️  Proceeding with destruction..."
         terraform destroy -var-file=terraform.tfvars -auto-approve
-        echo "✅ US Central1 infrastructure destruction completed"
+        echo "✅ Europe West1 infrastructure destruction completed"
       env:
         TF_VAR_environment: dev
 
-  # Stage 4: Regional Resources Deployment - US East1
-  deploy-us-east1:
-    name: Deploy US East1 Resources
+  # Stage 4: Regional Resources Deployment - Europe West3
+  deploy-europe-west3:
+    name: Deploy Europe West3 Resources
     runs-on: ubuntu-latest
     needs: [validate, deploy-global]
-    if: github.event.inputs.region == 'all' || github.event.inputs.region == 'us-east1' || github.event_name != 'workflow_dispatch'
+    if: github.event.inputs.region == 'all' || github.event.inputs.region == 'europe-west3' || github.event_name != 'workflow_dispatch'
     environment: development
 
     steps:
@@ -251,39 +251,39 @@ jobs:
     - name: Configure gcloud
       run: |
         gcloud config set project ${{ env.PROJECT_ID }}
-        gcloud config set compute/region us-east1
+        gcloud config set compute/region europe-west3
 
-    - name: Terraform Init - US East1
+    - name: Terraform Init - Europe West3
       run: |
-        cd infrastructure/environments/dev/us-east1
+        cd infrastructure/environments/dev/europe-west3
         terraform init -reconfigure
 
-    - name: Terraform Plan - US East1
+    - name: Terraform Plan - Europe West3
       if: github.event.inputs.operation == 'plan' || github.event_name == 'pull_request'
       run: |
-        cd infrastructure/environments/dev/us-east1
-        terraform plan -var-file=terraform.tfvars -out=tfplan-us-east1
+        cd infrastructure/environments/dev/europe-west3
+        terraform plan -var-file=terraform.tfvars -out=tfplan-europe-west3
       env:
         TF_VAR_environment: dev
 
-    - name: Terraform Apply - US East1
+    - name: Terraform Apply - Europe West3
       if: github.event.inputs.operation == 'apply'
       run: |
-        cd infrastructure/environments/dev/us-east1
+        cd infrastructure/environments/dev/europe-west3
         terraform apply -var-file=terraform.tfvars -auto-approve
       env:
         TF_VAR_environment: dev
 
-    - name: Terraform Destroy - US East1
+    - name: Terraform Destroy - Europe West3
       if: github.event.inputs.operation == 'destroy'
       run: |
-        cd infrastructure/environments/dev/us-east1
-        echo "⚠️  WARNING: This will destroy ALL US East1 infrastructure resources!"
+        cd infrastructure/environments/dev/europe-west3
+        echo "⚠️  WARNING: This will destroy ALL Europe West3 infrastructure resources!"
         echo "🔍 Running terraform plan to show what will be destroyed..."
         terraform plan -destroy -var-file=terraform.tfvars
         echo "🗑️  Proceeding with destruction..."
         terraform destroy -var-file=terraform.tfvars -auto-approve
-        echo "✅ US East1 infrastructure destruction completed"
+        echo "✅ Europe West3 infrastructure destruction completed"
       env:
         TF_VAR_environment: dev
 
@@ -291,7 +291,7 @@ jobs:
   deploy-cross-region:
     name: Deploy Cross-Region Networking
     runs-on: ubuntu-latest
-    needs: [deploy-us-central1, deploy-us-east1]
+    needs: [deploy-europe-west1, deploy-europe-west3]
     if: github.event.inputs.region == 'all' || github.event_name != 'workflow_dispatch'
     environment: development
 
@@ -338,19 +338,19 @@ jobs:
         }
 
         # Data sources to reference regional resources
-        data "terraform_remote_state" "us_central1" {
+        data "terraform_remote_state" "europe_west1" {
           backend = "gcs"
           config = {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
-            prefix = "terraform/state/us-central1"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+            prefix = "terraform/state/europe-west1"
           }
         }
 
-        data "terraform_remote_state" "us_east1" {
+        data "terraform_remote_state" "europe_west3" {
           backend = "gcs"
           config = {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
-            prefix = "terraform/state/us-east1"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+            prefix = "terraform/state/europe-west3"
           }
         }
 
@@ -359,10 +359,10 @@ jobs:
           source = "../../../modules/networking/cross-region"
 
           project_id = var.project_id
-          primary_region = "us-central1"
-          secondary_region = "us-east1"
-          primary_network_self_link = data.terraform_remote_state.us_central1.outputs.vpc_network_self_link
-          secondary_network_self_link = data.terraform_remote_state.us_east1.outputs.vpc_network_self_link
+          primary_region = "europe-west1"
+          secondary_region = "europe-west3"
+          primary_network_self_link = data.terraform_remote_state.europe_west1.outputs.vpc_network_self_link
+          secondary_network_self_link = data.terraform_remote_state.europe_west3.outputs.vpc_network_self_link
           vpn_shared_secret = var.vpn_shared_secret
         }
         EOF
@@ -382,14 +382,14 @@ jobs:
         EOF
 
         cat > infrastructure/environments/dev/cross-region/terraform.tfvars << 'EOF'
-        project_id = "acme-ecommerce-platform-dev"
-        vpn_shared_secret = "acme-ecommerce-vpn-secret-2024"
+        project_id = "cataziza-ecommerce-platform-dev"
+        vpn_shared_secret = "cataziza-ecommerce-vpn-secret-2024"
         EOF
 
         cat > infrastructure/environments/dev/cross-region/backend.tf << 'EOF'
         terraform {
           backend "gcs" {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/cross-region"
           }
         }
@@ -423,7 +423,7 @@ jobs:
   verify-deployment:
     name: Verify Multi-Region Deployment
     runs-on: ubuntu-latest
-    needs: [deploy-global, deploy-us-central1, deploy-us-east1, deploy-cross-region]
+    needs: [deploy-global, deploy-europe-west1, deploy-europe-west3, deploy-cross-region]
     if: github.event.inputs.operation != 'destroy' && (github.event.inputs.region == 'all' || github.event_name != 'workflow_dispatch')
     environment: development
 
@@ -449,71 +449,71 @@ jobs:
       run: |
         echo "🔍 Verifying global resources..."
         echo "VPC Networks:"
-        gcloud compute networks list --filter="name:acme-ecommerce-platform-vpc-dev" || echo "No VPC networks found"
+        gcloud compute networks list --filter="name:cataziza-ecommerce-platform-vpc-dev" || echo "No VPC networks found"
         echo "Load Balancers:"
-        gcloud compute forwarding-rules list --global --filter="name:acme-ecommerce-platform-lb" || echo "No global load balancers found"
+        gcloud compute forwarding-rules list --global --filter="name:cataziza-ecommerce-platform-lb" || echo "No global load balancers found"
         echo "Service Accounts:"
-        gcloud iam service-accounts list --filter="email:acme-ecommerce" || echo "No service accounts found"
+        gcloud iam service-accounts list --filter="email:cataziza-ecommerce" || echo "No service accounts found"
 
-    - name: Verify US Central1 Resources
+    - name: Verify Europe West1 Resources
       run: |
-        echo "🔍 Verifying US Central1 resources..."
+        echo "🔍 Verifying Europe West1 resources..."
         echo "Compute Instances:"
-        gcloud compute instances list --filter="zone:us-central1" || echo "No instances found in us-central1"
+        gcloud compute instances list --filter="zone:europe-west1" || echo "No instances found in europe-west1"
         echo "Cloud Run Services:"
-        gcloud run services list --region=us-central1 --filter="metadata.name:acme" || echo "No Cloud Run services found in us-central1"
+        gcloud run services list --region=europe-west1 --filter="metadata.name:cataziza" || echo "No Cloud Run services found in europe-west1"
         echo "Cloud SQL Instances:"
-        gcloud sql instances list --filter="region:us-central1" || echo "No Cloud SQL instances found in us-central1"
+        gcloud sql instances list --filter="region:europe-west1" || echo "No Cloud SQL instances found in europe-west1"
 
-    - name: Verify US East1 Resources
+    - name: Verify Europe West3 Resources
       run: |
-        echo "🔍 Verifying US East1 resources..."
+        echo "🔍 Verifying Europe West3 resources..."
         echo "Compute Instances:"
-        gcloud compute instances list --filter="zone:us-east1" || echo "No instances found in us-east1"
+        gcloud compute instances list --filter="zone:europe-west3" || echo "No instances found in europe-west3"
         echo "Cloud Run Services:"
-        gcloud run services list --region=us-east1 --filter="metadata.name:acme" || echo "No Cloud Run services found in us-east1"
+        gcloud run services list --region=europe-west3 --filter="metadata.name:cataziza" || echo "No Cloud Run services found in europe-west3"
         echo "Cloud SQL Instances:"
-        gcloud sql instances list --filter="region:us-east1" || echo "No Cloud SQL instances found in us-east1"
+        gcloud sql instances list --filter="region:europe-west3" || echo "No Cloud SQL instances found in europe-west3"
 
     - name: Verify Cross-Region Connectivity
       run: |
         echo "🔍 Verifying cross-region connectivity..."
         echo "VPC Peerings:"
-        gcloud compute networks peerings list --filter="name:acme-ecommerce-platform-dev" || echo "No VPC peerings found"
+        gcloud compute networks peerings list --filter="name:cataziza-ecommerce-platform-dev" || echo "No VPC peerings found"
         echo "VPN Tunnels:"
-        gcloud compute vpn-tunnels list --filter="name:acme-ecommerce-platform-dev" || echo "No VPN tunnels found"
+        gcloud compute vpn-tunnels list --filter="name:cataziza-ecommerce-platform-dev" || echo "No VPN tunnels found"
 
   # Stage 7: Notifications
   notify:
     name: Send Notifications
     runs-on: ubuntu-latest
-    needs: [deploy-global, deploy-us-central1, deploy-us-east1, deploy-cross-region, verify-deployment]
+    needs: [deploy-global, deploy-europe-west1, deploy-europe-west3, deploy-cross-region, verify-deployment]
     if: always()
 
     steps:
     - name: Notify Multi-Region Deployment Success
-      if: needs.deploy-global.result == 'success' && needs.deploy-us-central1.result == 'success' && needs.deploy-us-east1.result == 'success' && github.event.inputs.operation != 'destroy'
+      if: needs.deploy-global.result == 'success' && needs.deploy-europe-west1.result == 'success' && needs.deploy-europe-west3.result == 'success' && github.event.inputs.operation != 'destroy'
       run: |
         echo "✅ Multi-region development deployment successful!"
         echo "🌍 Global resources deployed"
-        echo "🇺🇸 US Central1 resources deployed"
-        echo "🇺🇸 US East1 resources deployed"
+        echo "🇪🇺 Europe West1 resources deployed"
+        echo "🇪🇺 Europe West3 resources deployed"
         echo "🔗 Cross-region networking configured"
 
     - name: Notify Regional Deployment Success
-      if: (needs.deploy-us-central1.result == 'success' || needs.deploy-us-east1.result == 'success') && github.event.inputs.region != 'all' && github.event.inputs.operation != 'destroy'
+      if: (needs.deploy-europe-west1.result == 'success' || needs.deploy-europe-west3.result == 'success') && github.event.inputs.region != 'all' && github.event.inputs.operation != 'destroy'
       run: |
         echo "✅ Regional development deployment successful!"
         echo "Target region: ${{ github.event.inputs.region }}"
 
     - name: Notify Destruction Success
-      if: github.event.inputs.operation == 'destroy' && (needs.deploy-global.result == 'success' || needs.deploy-us-central1.result == 'success' || needs.deploy-us-east1.result == 'success')
+      if: github.event.inputs.operation == 'destroy' && (needs.deploy-global.result == 'success' || needs.deploy-europe-west1.result == 'success' || needs.deploy-europe-west3.result == 'success')
       run: |
         echo "✅ Multi-region infrastructure destruction successful!"
         echo "All specified resources have been removed"
 
     - name: Notify Failure
-      if: needs.deploy-global.result == 'failure' || needs.deploy-us-central1.result == 'failure' || needs.deploy-us-east1.result == 'failure'
+      if: needs.deploy-global.result == 'failure' || needs.deploy-europe-west1.result == 'failure' || needs.deploy-europe-west3.result == 'failure'
       run: |
         if [ "${{ github.event.inputs.operation }}" == "destroy" ]; then
           echo "❌ Multi-region infrastructure destruction failed!"

@@ -56,11 +56,11 @@ module "load_balancer" {
 
   # Health check configuration
   health_check_config = {
-    check_interval_sec  = 10
-    timeout_sec         = 5
+    check_interval_sec  = var.load_balancer_health_check_interval
+    timeout_sec         = var.load_balancer_health_check_timeout
     healthy_threshold   = 2
     unhealthy_threshold = 3
-    port                = 80
+    port                = var.load_balancer_health_check_port
     request_path        = "/health"
   }
 }
@@ -169,7 +169,7 @@ module "kms" {
     "acme-ecommerce-data-encryption-key" = {
       name            = "acme-ecommerce-data-encryption-key"
       purpose         = "ENCRYPT_DECRYPT"
-      rotation_period = "7776000s" # 90 days
+      rotation_period = "${var.kms_rotation_period_days * 24 * 60 * 60}s"
       algorithm       = "GOOGLE_SYMMETRIC_ENCRYPTION"
     }
     "acme-ecommerce-signing-key" = {
@@ -217,7 +217,7 @@ module "secret_manager" {
       replication_type = "AUTOMATIC"
     }
     "database-password" = {
-      secret_id = "database-password"
+      secret_id = "cataziza-orders-database-password"
       labels = {
         environment = local.environment
         purpose     = "database-password"
@@ -226,18 +226,23 @@ module "secret_manager" {
       replicas         = []
       replication_type = "AUTOMATIC"
     }
+    "vpn-shared-secret" = {
+      secret_id = "cataziza-vpn-shared-secret"
+      labels = {
+        environment = local.environment
+        purpose     = "vpn-shared-secret"
+        managed_by  = "terraform"
+      }
+      replicas         = []
+      replication_type = "AUTOMATIC"
+    }
   }
 
-  secret_versions = {
-    "api-key-version" = {
-      secret_key  = "api-key"
-      secret_data = "your-api-key-here"
-    }
-    "database-password-version" = {
-      secret_key  = "database-password"
-      secret_data = "your-database-password-here"
-    }
-  }
+  # Secret versions are created manually via gcloud CLI or console
+  # Example commands:
+  # gcloud secrets versions add api-key --data-file=api-key.txt
+  # gcloud secrets versions add cataziza-orders-database-password --data-file=db-password.txt
+  # gcloud secrets versions add cataziza-vpn-shared-secret --data-file=vpn-secret.txt
 
   secret_iam_bindings = {
     "api-key-access" = {
@@ -252,6 +257,13 @@ module "secret_manager" {
       role       = "roles/secretmanager.secretAccessor"
       members = [
         "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+      ]
+    }
+    "vpn-shared-secret-access" = {
+      secret_key = "vpn-shared-secret"
+      role       = "roles/secretmanager.secretAccessor"
+      members = [
+        "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
   }
@@ -269,8 +281,8 @@ module "container_registry" {
       repository_id  = "${local.global_prefix}-application-images"
       description    = "Application container images"
       format         = "DOCKER"
-      keep_count     = 10
-      retention_days = "30"
+      keep_count     = var.container_registry_retention_count
+      retention_days = var.container_registry_retention_days
       labels = {
         environment = local.environment
         purpose     = "application-images"
@@ -282,8 +294,8 @@ module "container_registry" {
       repository_id  = "${local.global_prefix}-base-images"
       description    = "Base container images"
       format         = "DOCKER"
-      keep_count     = 10
-      retention_days = "30"
+      keep_count     = var.container_registry_retention_count
+      retention_days = var.container_registry_retention_days
       labels = {
         environment = local.environment
         purpose     = "base-images"

@@ -2,20 +2,22 @@
 
 ![Development Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/dev-pipeline.yml/badge.svg)
 ![Trivy Security Scan](https://github.com/catherinevee/terraform-gcp/actions/workflows/trivy-scan.yml/badge.svg)
+![Security Status](https://img.shields.io/badge/Security%20Excellent-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
-A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for ACME Corporation's e-commerce platform.
+A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for Cataziza Corporation's e-commerce platform.
 
 ## Architecture Overview
 
-### Comprehensive Architecture
-![GCP Architecture](gcp_architecture_diagram.png)
+The infrastructure follows a multi-region, multi-tier architecture designed for high availability and scalability:
 
-### Simplified Overview
-![GCP Simplified](gcp_simplified_diagram.png)
+- **Global Tier**: VPC, Load Balancer, DNS, IAM, KMS, Secret Manager
+- **Regional Tier**: Compute instances, databases, storage, monitoring
+- **Cross-Region**: VPN tunnels and VPC peering for connectivity
+- **Security Tier**: IAM policies, KMS encryption, Secret Manager integration
 
-*These diagrams are automatically generated from the Terraform infrastructure code. See [docs/architecture-diagrams.md](docs/architecture-diagrams.md) for more details.*
+*Architecture diagrams can be generated using the Terraform infrastructure code.*
 
 ## Overview
 
@@ -23,7 +25,7 @@ This repository provides a complete infrastructure foundation for deploying and 
 
 ### Key Features
 
-- **Multi-Region Support**: Deploy across multiple GCP regions (us-central1, us-east1)
+- **Multi-Region Support**: Deploy across multiple GCP regions (europe-west1, europe-west3)
 - **Multi-Environment Support**: Development, staging, and production environments
 - **Modular Architecture**: Reusable Terraform modules for common GCP services
 - **Security First**: IAM, KMS, Secret Manager, and VPC Service Controls
@@ -46,8 +48,8 @@ This infrastructure supports deployment across multiple GCP regions for high ava
 - **Data Replication**: Automatic cross-region data replication for critical services
 
 #### Region Distribution
-- **Primary Region**: us-central1 (Iowa)
-- **Secondary Region**: us-east1 (South Carolina)
+- **Primary Region**: europe-west1 (Belgium)
+- **Secondary Region**: europe-west3 (Frankfurt)
 - **Global Resources**: Deployed once, accessible from all regions
 
 ### Infrastructure Components
@@ -89,8 +91,8 @@ terraform-gcp/
 │   └── environments/
 │       ├── dev/                    # Development environment
 │       │   ├── global/            # Global resources (VPC, IAM, etc.)
-│       │   ├── us-central1/       # Primary region resources
-│       │   └── us-east1/          # Secondary region resources
+│       │   ├── europe-west1/      # Primary region resources
+│       │   └── europe-west3/      # Secondary region resources
 │       ├── staging/               # Staging environment (future)
 │       └── prod/                  # Production environment (future)
 ├── infrastructure/modules/         # Reusable Terraform modules
@@ -189,7 +191,7 @@ gcloud config set project $PROJECT_ID
 ```bash
 # Set environment variables
 export TF_VAR_project_id="your-project-id"
-export TF_VAR_region="us-central1"
+export TF_VAR_region="europe-west1"
 export TF_VAR_environment="dev"
 ```
 
@@ -225,7 +227,7 @@ gcloud sql instances list --project=$PROJECT_ID
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
 | `project_id` | GCP Project ID | - | Yes |
-| `region` | GCP Region | `us-central1` | No |
+| `region` | GCP Region | `europe-west1` | No |
 | `environment` | Environment name | `dev` | No |
 
 ### Customizing Resources
@@ -234,7 +236,7 @@ Edit the `terraform.tfvars` file to customize your deployment:
 
 ```hcl
 project_id  = "your-project-id"
-region      = "us-central1"
+region      = "europe-west1"
 environment = "dev"
 ```
 
@@ -282,7 +284,7 @@ The project includes two active CI/CD workflows:
 gh workflow run dev-pipeline.yml -f operation=apply -f region=all
 
 # Deploy specific region
-gh workflow run dev-pipeline.yml -f operation=apply -f region=us-central1
+gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
 
 # Plan all regions
 gh workflow run dev-pipeline.yml -f operation=plan -f region=all
@@ -302,7 +304,7 @@ gh workflow run trivy-scan.yml
 .\scripts\deploy-multi-region.ps1 -Operation apply -Region all
 
 # Deploy specific region
-.\scripts\deploy-multi-region.ps1 -Operation apply -Region us-central1
+.\scripts\deploy-multi-region.ps1 -Operation apply -Region europe-west1
 
 # Plan deployment
 .\scripts\deploy-multi-region.ps1 -Operation plan -Region all
@@ -314,7 +316,7 @@ gh workflow run trivy-scan.yml
 ./scripts/deploy-multi-region.sh -o apply -r all
 
 # Deploy specific region
-./scripts/deploy-multi-region.sh -o apply -r us-central1
+./scripts/deploy-multi-region.sh -o apply -r europe-west1
 
 # Plan deployment
 ./scripts/deploy-multi-region.sh -o plan -r all
@@ -326,13 +328,13 @@ For backward compatibility, you can still deploy to a single region:
 
 ```bash
 # Plan infrastructure changes (safe, no changes made)
-gh workflow run dev-pipeline.yml -f operation=plan -f region=us-central1
+gh workflow run dev-pipeline.yml -f operation=plan -f region=europe-west1
 
 # Deploy infrastructure (creates/updates resources)
-gh workflow run dev-pipeline.yml -f operation=apply -f region=us-central1
+gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
 
 # Destroy infrastructure (⚠️ REMOVES ALL RESOURCES)
-gh workflow run dev-pipeline.yml -f operation=destroy -f region=us-central1
+gh workflow run dev-pipeline.yml -f operation=destroy -f region=europe-west1
 
 # Run security scan
 gh workflow run trivy-scan.yml
@@ -415,6 +417,66 @@ This repository includes comprehensive security scanning with **Trivy**:
 - **IaC Misconfigurations**: 7 minor warnings (non-critical)
 
 The security scanning runs automatically on every push and pull request, ensuring continuous security monitoring of your infrastructure code.
+
+### Security Improvements (v1.1.0)
+
+This version includes significant security enhancements:
+
+#### 🔐 **Secret Management**
+- **No Hardcoded Secrets**: All passwords, API keys, and sensitive data moved to Secret Manager
+- **Secure References**: All secrets accessed via `data.google_secret_manager_secret_version`
+- **Automatic Rotation**: Secrets can be rotated without code changes
+- **Access Control**: Fine-grained IAM permissions for secret access
+
+#### 🛡️ **Input Validation**
+- **Comprehensive Validation**: All variables include validation rules with meaningful error messages
+- **Type Safety**: Strict type checking for all configuration values
+- **Range Validation**: Numeric values validated against appropriate ranges
+- **Format Validation**: String values validated against expected patterns
+
+#### 🔧 **Configuration Management**
+- **No Magic Numbers**: All hardcoded values replaced with configurable variables
+- **Environment-Specific**: Different configurations for dev, staging, and production
+- **Documentation**: All variables documented with descriptions and examples
+- **Defaults**: Sensible defaults with validation rules
+
+#### 🔍 **Security Validation**
+- **Automated Scanning**: Pre-commit hooks and CI/CD integration
+- **Multi-Platform**: Validation scripts for both Bash and PowerShell
+- **Comprehensive Checks**: Scans for hardcoded secrets, placeholders, and security issues
+- **False Positive Reduction**: Intelligent filtering to reduce noise
+
+#### 📚 **Documentation**
+- **Security Guide**: Comprehensive `SECURITY.md` with best practices
+- **Deployment Checklist**: Step-by-step `DEPLOYMENT-CHECKLIST.md`
+- **Secret Management**: Clear instructions for secret creation and rotation
+- **Incident Response**: Documented procedures for security incidents
+
+### Pre-Deployment Security Requirements
+
+Before deploying, you must create the following secrets in Secret Manager:
+
+```bash
+# Database password
+echo "your-secure-database-password" | gcloud secrets create cataziza-orders-database-password --data-file=-
+
+# API key
+echo "your-api-key" | gcloud secrets create api-key --data-file=-
+
+# VPN shared secret
+echo "your-vpn-shared-secret" | gcloud secrets create cataziza-vpn-shared-secret --data-file=-
+```
+
+Run security validation before deployment:
+```bash
+# Linux/Mac
+./scripts/security/validate-secrets.sh
+
+# Windows
+.\scripts\security\validate-secrets.ps1
+```
+
+See [SECURITY.md](SECURITY.md) for detailed security guidance and [DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md) for deployment procedures.
 
 ## Monitoring & Observability
 

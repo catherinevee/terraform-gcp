@@ -100,7 +100,7 @@ resource "google_compute_route" "primary_to_secondary_route" {
   dest_range = "10.1.0.0/8"
   network    = var.primary_network_self_link
   next_hop_vpn_tunnel = google_compute_vpn_tunnel.primary_to_secondary_tunnel.id
-  priority   = 1000
+  priority   = var.vpn_route_priority
 }
 
 resource "google_compute_route" "secondary_to_primary_route" {
@@ -108,7 +108,7 @@ resource "google_compute_route" "secondary_to_primary_route" {
   dest_range = "10.0.0.0/8"
   network    = var.secondary_network_self_link
   next_hop_vpn_tunnel = google_compute_vpn_tunnel.secondary_to_primary_tunnel.id
-  priority   = 1000
+  priority   = var.vpn_route_priority
 }
 
 # Cloud NAT for primary region

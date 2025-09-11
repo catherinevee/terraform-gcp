@@ -29,6 +29,15 @@ variable "vpn_shared_secret" {
   description = "Shared secret for VPN tunnels"
   type        = string
   sensitive   = true
-  default     = "your-vpn-shared-secret-here"
+}
+
+variable "vpn_route_priority" {
+  description = "Priority for VPN routes"
+  type        = number
+  default     = 1000
+  validation {
+    condition     = var.vpn_route_priority >= 0 && var.vpn_route_priority <= 65535
+    error_message = "VPN route priority must be between 0 and 65535."
+  }
 }
 

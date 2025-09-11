@@ -1,0 +1,129 @@
+name: Security Status Badge
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'infrastructure/**'
+      - 'scripts/security/**'
+      - 'SECURITY.md'
+      - 'DEPLOYMENT-CHECKLIST.md'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - 'scripts/security/**'
+      - 'SECURITY.md'
+      - 'DEPLOYMENT-CHECKLIST.md'
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  security-badge:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.9.0
+    
+    - name: Generate Security Badge
+      run: |
+        chmod +x scripts/security/generate-status-badge.sh
+        ./scripts/security/generate-status-badge.sh
+    
+    - name: Check if badge needs updating
+      id: badge-check
+      run: |
+        if [ -f ".security-badge-url" ]; then
+          CURRENT_BADGE=$(cat .security-badge-url)
+          echo "current_badge=$CURRENT_BADGE" >> $GITHUB_OUTPUT
+          
+          # Check if README needs updating
+          if grep -q "Security Status" README.md; then
+            README_BADGE=$(grep "Security Status" README.md | sed 's/.*(\([^)]*\)).*/\1/')
+            if [ "$CURRENT_BADGE" != "$README_BADGE" ]; then
+              echo "update_needed=true" >> $GITHUB_OUTPUT
+            else
+              echo "update_needed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "update_needed=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Update README with new badge
+      if: steps.badge-check.outputs.update_needed == 'true'
+      run: |
+        if [ -f ".security-badge-url" ]; then
+          NEW_BADGE=$(cat .security-badge-url)
+          sed -i "s|https://img.shields.io/badge/Security%20[^)]*|$NEW_BADGE|g" README.md
+          
+          # Commit the changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update security status badge" || exit 0
+          git push
+        fi
+    
+    - name: Create Security Status Comment (PR)
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          if (fs.existsSync('.security-status.json')) {
+            const statusData = JSON.parse(fs.readFileSync('.security-status.json', 'utf8'));
+            const badgeUrl = fs.readFileSync('.security-badge-url', 'utf8').trim();
+            
+            const comment = `## 🔒 Security Status Check
+            
+            **Status**: ${statusData.status}
+            **Last Updated**: ${statusData.last_updated}
+            
+            ![Security Status](${badgeUrl})
+            
+            ### Security Checks:
+            - **Hardcoded Passwords**: ${statusData.checks.hardcoded_passwords ? '✅ Pass' : '❌ Fail'}
+            - **Placeholder Values**: ${statusData.checks.placeholder_values ? '✅ Pass' : '❌ Fail'}
+            - **Hardcoded API Keys**: ${statusData.checks.hardcoded_api_keys ? '✅ Pass' : '❌ Fail'}
+            - **Hardcoded Secrets**: ${statusData.checks.hardcoded_secrets ? '✅ Pass' : '❌ Fail'}
+            - **Magic Numbers**: ${statusData.checks.magic_numbers} found
+            - **Validation Rules**: ${statusData.checks.validation_rules} configured
+            - **Documentation**: ${statusData.checks.documentation ? '✅ Complete' : '❌ Missing'}
+            - **Security Scripts**: ${statusData.checks.security_scripts ? '✅ Available' : '❌ Missing'}
+            
+            ${statusData.status === 'EXCELLENT' ? '🎉 Excellent security posture!' : 
+              statusData.status === 'GOOD' ? '✅ Good security posture with minor improvements possible.' :
+              statusData.status === 'FAIR' ? '⚠️ Fair security posture - some improvements needed.' :
+              '❌ Poor security posture - critical issues found.'}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+    
+    - name: Upload Security Status Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-status
+        path: |
+          .security-badge-url
+          .security-status.json
+        retention-days: 30

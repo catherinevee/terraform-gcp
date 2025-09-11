@@ -12,7 +12,7 @@ resource "google_compute_global_address" "private_ip_address" {
   name          = "${var.network_name}-private-ip"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
-  prefix_length = 16
+  prefix_length = var.private_ip_google_access_prefix_length
   network       = google_compute_network.vpc.self_link
   project       = var.project_id
 }

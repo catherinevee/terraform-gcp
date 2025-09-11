@@ -19,3 +19,13 @@ variable "delete_default_routes_on_create" {
   type        = bool
   default     = false
 }
+
+variable "private_ip_google_access_prefix_length" {
+  description = "Prefix length for private IP Google access"
+  type        = number
+  default     = 16
+  validation {
+    condition     = var.private_ip_google_access_prefix_length >= 8 && var.private_ip_google_access_prefix_length <= 30
+    error_message = "Private IP Google access prefix length must be between 8 and 30."
+  }
+}

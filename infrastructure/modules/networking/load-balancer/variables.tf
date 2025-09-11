@@ -61,3 +61,13 @@ variable "health_check_config" {
   }
 }
 
+variable "backend_service_timeout_sec" {
+  description = "Backend service timeout in seconds"
+  type        = number
+  default     = 30
+  validation {
+    condition     = var.backend_service_timeout_sec >= 1 && var.backend_service_timeout_sec <= 86400
+    error_message = "Backend service timeout must be between 1 and 86400 seconds (24 hours)."
+  }
+}
+
