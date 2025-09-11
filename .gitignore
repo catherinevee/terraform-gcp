@@ -9,6 +9,7 @@ terraform.tfstate.backup
 # Service account keys
 *-key.json
 *.json
+!scripts/security/package.json
 
 # Environment files
 .env
