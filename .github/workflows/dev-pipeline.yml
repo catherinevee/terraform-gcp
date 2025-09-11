@@ -160,7 +160,12 @@ jobs:
       if: github.event.inputs.operation == 'destroy'
       run: |
         cd infrastructure/environments/dev
+        echo "⚠️  WARNING: This will destroy ALL infrastructure resources in the dev environment!"
+        echo "🔍 Running terraform plan to show what will be destroyed..."
+        terraform plan -destroy -var-file=terraform.tfvars
+        echo "🗑️  Proceeding with destruction..."
         terraform destroy -var-file=terraform.tfvars -auto-approve
+        echo "✅ Infrastructure destruction completed"
       env:
         TF_VAR_environment: dev
     
@@ -174,6 +179,21 @@ jobs:
         gcloud sql instances list --project=${{ secrets.GCP_PROJECT_ID }} || echo "No Cloud SQL instances found"
         gcloud storage buckets list --project=${{ secrets.GCP_PROJECT_ID }} || echo "No storage buckets found"
 
+    - name: Verify Destruction
+      if: github.event.inputs.operation == 'destroy'
+      run: |
+        echo "🔍 Verifying infrastructure destruction..."
+        echo "📊 Checking remaining resources:"
+        echo "Compute Instances:"
+        gcloud compute instances list --project=${{ secrets.GCP_PROJECT_ID }} || echo "No instances found (expected)"
+        echo "Cloud Run Services:"
+        gcloud run services list --project=${{ secrets.GCP_PROJECT_ID }} || echo "No services found (expected)"
+        echo "Cloud SQL Instances:"
+        gcloud sql instances list --project=${{ secrets.GCP_PROJECT_ID }} || echo "No databases found (expected)"
+        echo "Storage Buckets (excluding terraform state):"
+        gcloud storage buckets list --project=${{ secrets.GCP_PROJECT_ID }} --filter="name:acme-ecommerce" || echo "No application buckets found (expected)"
+        echo "✅ Infrastructure destruction verification completed"
+
   # Stage 4: Notifications
   notify:
     name: Send Notifications
@@ -182,14 +202,24 @@ jobs:
     if: always()
     
     steps:
-    - name: Notify Success
-      if: needs.deploy.result == 'success'
+    - name: Notify Deployment Success
+      if: needs.deploy.result == 'success' && github.event.inputs.operation != 'destroy'
       run: |
         echo "✅ Development deployment successful!"
         echo "Pipeline completed successfully for development environment"
     
+    - name: Notify Destruction Success
+      if: needs.deploy.result == 'success' && github.event.inputs.operation == 'destroy'
+      run: |
+        echo "✅ Development environment destruction successful!"
+        echo "All infrastructure resources have been removed"
+    
     - name: Notify Failure
       if: needs.deploy.result == 'failure'
       run: |
-        echo "❌ Development deployment failed!"
+        if [ "${{ github.event.inputs.operation }}" == "destroy" ]; then
+          echo "❌ Development environment destruction failed!"
+        else
+          echo "❌ Development deployment failed!"
+        fi
         echo "Check logs for details"

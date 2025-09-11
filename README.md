@@ -251,15 +251,28 @@ The project includes multiple CI/CD workflows with different levels of functiona
 ### Manual Deployment
 
 ```bash
-# Run simple validation (always works)
-gh workflow run simple-test.yml
-
-# Deploy to development (requires GCP setup)
+# Plan infrastructure changes (safe, no changes made)
 gh workflow run dev-pipeline.yml -f operation=plan
 
-# Deploy to specific environment (requires GCP setup)
-gh workflow run robust-ci-cd.yml -f environment=dev -f operation=plan
+# Deploy infrastructure (creates/updates resources)
+gh workflow run dev-pipeline.yml -f operation=apply
+
+# Destroy infrastructure (⚠️ REMOVES ALL RESOURCES)
+gh workflow run dev-pipeline.yml -f operation=destroy
 ```
+
+### ⚠️ Destroy Operation Warning
+
+The `destroy` operation will **permanently delete ALL infrastructure resources** in the development environment, including:
+
+- **Compute Resources**: VM instances, instance groups, load balancers
+- **Storage**: Application data buckets, logs buckets (terraform state bucket preserved)
+- **Databases**: Cloud SQL instances, Redis cache
+- **Networking**: VPC, subnets, firewall rules
+- **Security**: Service accounts, IAM bindings, KMS keys
+- **Monitoring**: Alert policies, SLOs, logging configurations
+
+**This action cannot be undone!** Only use destroy when you need to completely tear down the environment.
 
 ### GCP Setup Requirements
 
