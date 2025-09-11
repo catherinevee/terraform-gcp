@@ -171,7 +171,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
   dashboard_json = jsonencode({
     displayName = "Cataziza E-commerce Platform Security Dashboard"
     mosaicLayout = {
-      columns = 12
+      columns = var.monitoring_dashboard_columns
       tiles = [
         {
           width  = 6

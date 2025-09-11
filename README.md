@@ -2,7 +2,7 @@
 
 ![Development Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/dev-pipeline.yml/badge.svg)
 ![Trivy Security Scan](https://github.com/catherinevee/terraform-gcp/actions/workflows/trivy-scan.yml/badge.svg)
-![Security Status](https://img.shields.io/badge/Security%20Excellent-brightgreen)
+![Security Status](https://img.shields.io/badge/Security%20Good-green)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 

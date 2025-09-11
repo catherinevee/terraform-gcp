@@ -255,7 +255,7 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
   dashboard_json = jsonencode({
     displayName = "Cataziza E-commerce Platform Compliance Dashboard"
     mosaicLayout = {
-      columns = 12
+      columns = var.monitoring_dashboard_columns
       tiles = [
         {
           width  = 12
@@ -275,4 +275,6 @@ resource "google_monitoring_dashboard" "compliance_dashboard" {
     }
   })
 }
+
+
 
