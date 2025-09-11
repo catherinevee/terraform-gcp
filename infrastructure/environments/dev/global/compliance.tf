@@ -232,7 +232,7 @@ resource "google_monitoring_alert_policy" "compliance_violations" {
 
     condition_threshold {
       filter          = "metric.type=\"logging.googleapis.com/user/compliance_violations\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "60s"
 

@@ -16,7 +16,7 @@ resource "google_monitoring_alert_policy" "security_incidents" {
 
     condition_threshold {
       filter          = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/security_events\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 5
       duration        = "300s"
 
@@ -49,7 +49,7 @@ resource "google_monitoring_alert_policy" "failed_authentication" {
 
     condition_threshold {
       filter          = "resource.type=\"gce_instance\" AND metric.type=\"logging.googleapis.com/user/auth_failures\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 10
       duration        = "600s"
 
@@ -82,7 +82,7 @@ resource "google_monitoring_alert_policy" "suspicious_network_activity" {
 
     condition_threshold {
       filter          = "resource.type=\"gce_instance\" AND metric.type=\"compute.googleapis.com/instance/network/received_bytes_count\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 1000000000 # 1GB
       duration        = "300s"
 
@@ -115,7 +115,7 @@ resource "google_monitoring_alert_policy" "database_security" {
 
     condition_threshold {
       filter          = "resource.type=\"cloudsql_database\" AND metric.type=\"cloudsql.googleapis.com/database/up\""
-      comparison      = "COMPARISON_LESS_THAN"
+      comparison      = "COMPARISON_LT"
       threshold_value = 1
       duration        = "60s"
 
@@ -148,7 +148,7 @@ resource "google_monitoring_alert_policy" "storage_security" {
 
     condition_threshold {
       filter          = "resource.type=\"gcs_bucket\" AND metric.type=\"storage.googleapis.com/api/request_count\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 1000
       duration        = "300s"
 
@@ -319,7 +319,7 @@ resource "google_monitoring_alert_policy" "security_policy_violations" {
 
     condition_threshold {
       filter          = "metric.type=\"logging.googleapis.com/user/security_policy_violations\""
-      comparison      = "COMPARISON_GREATER_THAN"
+      comparison      = "COMPARISON_GT"
       threshold_value = 1
       duration        = "60s"
 
