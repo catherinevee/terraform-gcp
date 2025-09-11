@@ -19,11 +19,11 @@ provider "google" {
 
 # Local values for consistent naming
 locals {
-  project_id     = var.project_id
-  environment    = var.environment
-  primary_region = var.primary_region
+  project_id       = var.project_id
+  environment      = var.environment
+  primary_region   = var.primary_region
   secondary_region = var.secondary_region
-  
+
   # Global resource naming
   global_prefix = "acme-ecommerce-platform-${local.environment}"
 }
@@ -32,28 +32,28 @@ locals {
 module "vpc" {
   source = "../../../modules/networking/vpc"
 
-  project_id    = local.project_id
-  network_name  = "${local.global_prefix}-vpc"
-  routing_mode  = "GLOBAL"
+  project_id   = local.project_id
+  network_name = "${local.global_prefix}-vpc"
+  routing_mode = "GLOBAL"
 }
 
 # Global Load Balancer
 module "load_balancer" {
   source = "../../../modules/networking/load-balancer"
 
-  project_id = local.project_id
+  project_id  = local.project_id
   environment = local.environment
-  
+
   # Global load balancer configuration
-  global_ip_name = "${local.global_prefix}-lb-ip"
-  health_check_name = "${local.global_prefix}-lb-health-check"
+  global_ip_name       = "${local.global_prefix}-lb-ip"
+  health_check_name    = "${local.global_prefix}-lb-health-check"
   backend_service_name = "${local.global_prefix}-lb-backend"
-  url_map_name = "${local.global_prefix}-lb-url-map"
+  url_map_name         = "${local.global_prefix}-lb-url-map"
   forwarding_rule_name = "${local.global_prefix}-lb-forwarding-rule"
-  
+
   # Backend regions
   backend_regions = [local.primary_region, local.secondary_region]
-  
+
   # Health check configuration
   health_check_config = {
     check_interval_sec  = 10
@@ -70,7 +70,7 @@ module "iam" {
   source = "../../../modules/security/iam"
 
   project_id = local.project_id
-  
+
   # Service accounts for global resources
   service_accounts = {
     "acme-ecommerce-terraform-sa" = {
@@ -89,7 +89,7 @@ module "iam" {
       description  = "Service account for customer API in GKE"
     }
   }
-  
+
   # Custom roles
   custom_roles = {
     "terraform-custom-role" = {
@@ -118,23 +118,23 @@ module "iam" {
       ]
     }
   }
-  
+
   # Service account roles
   service_account_roles = {
     "terraform-editor" = {
-      role = "roles/editor"
+      role                = "roles/editor"
       service_account_key = "acme-ecommerce-terraform-sa"
     }
     "app-storage-admin" = {
-      role = "roles/storage.admin"
+      role                = "roles/storage.admin"
       service_account_key = "acme-orders-service-sa"
     }
     "gke-cluster-admin" = {
-      role = "roles/container.clusterAdmin"
+      role                = "roles/container.clusterAdmin"
       service_account_key = "acme-customer-api-gke-sa"
     }
   }
-  
+
   # Project IAM bindings
   project_iam_bindings = {
     "terraform-sa-editor" = {
@@ -142,17 +142,17 @@ module "iam" {
       member = "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
     }
   }
-  
+
   # Workload Identity Pool for GitHub Actions
-  enable_workload_identity = true
-  workload_identity_pool_id = "github-actions"
+  enable_workload_identity       = true
+  workload_identity_pool_id      = "github-actions"
   workload_identity_display_name = "GitHub Actions Workload Identity Pool"
-  workload_identity_description = "Workload Identity Pool for GitHub Actions CI/CD"
-  
-  workload_identity_provider_id = "github-actions-provider"
+  workload_identity_description  = "Workload Identity Pool for GitHub Actions CI/CD"
+
+  workload_identity_provider_id           = "github-actions-provider"
   workload_identity_provider_display_name = "GitHub Actions Provider"
-  workload_identity_provider_description = "Workload Identity Provider for GitHub Actions"
-  
+  workload_identity_provider_description  = "Workload Identity Provider for GitHub Actions"
+
   workload_identity_issuer_uri = "https://token.actions.githubusercontent.com"
 }
 
@@ -161,10 +161,10 @@ module "kms" {
   source = "../../../modules/security/kms"
 
   project_id = local.project_id
-  location  = local.primary_region
-  
+  location   = local.primary_region
+
   key_ring_name = "${local.global_prefix}-keyring"
-  
+
   crypto_keys = {
     "acme-ecommerce-data-encryption-key" = {
       name            = "acme-ecommerce-data-encryption-key"
@@ -173,12 +173,12 @@ module "kms" {
       algorithm       = "GOOGLE_SYMMETRIC_ENCRYPTION"
     }
     "acme-ecommerce-signing-key" = {
-      name            = "acme-ecommerce-signing-key"
-      purpose         = "ASYMMETRIC_SIGN"
-      algorithm       = "EC_SIGN_P256_SHA256"
+      name      = "acme-ecommerce-signing-key"
+      purpose   = "ASYMMETRIC_SIGN"
+      algorithm = "EC_SIGN_P256_SHA256"
     }
   }
-  
+
   # IAM bindings for crypto keys
   crypto_key_iam_bindings = {
     "encryption-key-encrypt-decrypt" = {
@@ -204,7 +204,7 @@ module "secret_manager" {
   source = "../../../modules/security/secret-manager"
 
   project_id = local.project_id
-  
+
   secrets = {
     "api-key" = {
       secret_id = "api-key"
@@ -213,7 +213,7 @@ module "secret_manager" {
         purpose     = "api-key"
         managed_by  = "terraform"
       }
-      replicas = []
+      replicas         = []
       replication_type = "AUTOMATIC"
     }
     "database-password" = {
@@ -223,33 +223,33 @@ module "secret_manager" {
         purpose     = "database-password"
         managed_by  = "terraform"
       }
-      replicas = []
+      replicas         = []
       replication_type = "AUTOMATIC"
     }
   }
-  
+
   secret_versions = {
     "api-key-version" = {
-      secret_key = "api-key"
+      secret_key  = "api-key"
       secret_data = "your-api-key-here"
     }
     "database-password-version" = {
-      secret_key = "database-password"
+      secret_key  = "database-password"
       secret_data = "your-database-password-here"
     }
   }
-  
+
   secret_iam_bindings = {
     "api-key-access" = {
       secret_key = "api-key"
-      role = "roles/secretmanager.secretAccessor"
+      role       = "roles/secretmanager.secretAccessor"
       members = [
         "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
     "database-password-access" = {
       secret_key = "database-password"
-      role = "roles/secretmanager.secretAccessor"
+      role       = "roles/secretmanager.secretAccessor"
       members = [
         "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
@@ -262,14 +262,14 @@ module "container_registry" {
   source = "../../../modules/storage/container-registry"
 
   project_id = local.project_id
-  
+
   repositories = {
     "app-images" = {
-      location      = local.primary_region
-      repository_id = "${local.global_prefix}-application-images"
-      description   = "Application container images"
-      format        = "DOCKER"
-      keep_count    = 10
+      location       = local.primary_region
+      repository_id  = "${local.global_prefix}-application-images"
+      description    = "Application container images"
+      format         = "DOCKER"
+      keep_count     = 10
       retention_days = "30"
       labels = {
         environment = local.environment
@@ -278,11 +278,11 @@ module "container_registry" {
       }
     }
     "base-images" = {
-      location      = local.primary_region
-      repository_id = "${local.global_prefix}-base-images"
-      description   = "Base container images"
-      format        = "DOCKER"
-      keep_count    = 10
+      location       = local.primary_region
+      repository_id  = "${local.global_prefix}-base-images"
+      description    = "Base container images"
+      format         = "DOCKER"
+      keep_count     = 10
       retention_days = "30"
       labels = {
         environment = local.environment
@@ -291,12 +291,12 @@ module "container_registry" {
       }
     }
   }
-  
+
   # IAM bindings for repositories
   repository_iam_bindings = {
     "app-images-access" = {
       repository_key = "app-images"
-      role = "roles/artifactregistry.reader"
+      role           = "roles/artifactregistry.reader"
       members = [
         "serviceAccount:acme-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
         "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
@@ -304,7 +304,7 @@ module "container_registry" {
     }
     "base-images-access" = {
       repository_key = "base-images"
-      role = "roles/artifactregistry.reader"
+      role           = "roles/artifactregistry.reader"
       members = [
         "serviceAccount:acme-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
         "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
