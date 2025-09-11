@@ -1,6 +1,7 @@
 # Terraform GCP Infrastructure
 
 ![Development Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/dev-pipeline.yml/badge.svg)
+![Trivy Security Scan](https://github.com/catherinevee/terraform-gcp/actions/workflows/trivy-scan.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
@@ -12,15 +13,31 @@ This repository provides a complete infrastructure foundation for deploying and 
 
 ### Key Features
 
+- **Multi-Region Support**: Deploy across multiple GCP regions (us-central1, us-east1)
 - **Multi-Environment Support**: Development, staging, and production environments
 - **Modular Architecture**: Reusable Terraform modules for common GCP services
 - **Security First**: IAM, KMS, Secret Manager, and VPC Service Controls
-- **CI/CD Integration**: GitHub Actions workflows for automated deployment
+- **CI/CD Integration**: GitHub Actions workflows for automated multi-region deployment
+- **Cross-Region Networking**: VPC peering and VPN tunnels for region connectivity
 - **Monitoring & Logging**: Comprehensive observability with Cloud Monitoring and Logging
 - **Cost Optimization**: Resource sizing and scheduling for different environments
 - **Disaster Recovery**: Backup strategies and cross-region replication
 
 ## Architecture
+
+### Multi-Region Design
+
+This infrastructure supports deployment across multiple GCP regions for high availability and disaster recovery:
+
+- **Global Resources**: Shared across all regions (VPC, Load Balancer, DNS, IAM, KMS, Secret Manager)
+- **Regional Resources**: Deployed per region (Compute, Storage, Databases, Monitoring)
+- **Cross-Region Networking**: VPC peering and VPN tunnels for secure inter-region communication
+- **Data Replication**: Automatic cross-region data replication for critical services
+
+#### Region Distribution
+- **Primary Region**: us-central1 (Iowa)
+- **Secondary Region**: us-east1 (South Carolina)
+- **Global Resources**: Deployed once, accessible from all regions
 
 ### Infrastructure Components
 
@@ -250,15 +267,62 @@ The project includes multiple CI/CD workflows with different levels of functiona
 
 ### Manual Deployment
 
+#### Multi-Region Deployment
+
+**Using GitHub CLI (Recommended)**:
+```bash
+# Deploy all regions
+gh workflow run dev-pipeline.yml -f operation=apply -f region=all
+
+# Deploy specific region
+gh workflow run dev-pipeline.yml -f operation=apply -f region=us-central1
+
+# Plan all regions
+gh workflow run dev-pipeline.yml -f operation=plan -f region=all
+
+# Destroy all regions (⚠️ REMOVES ALL RESOURCES)
+gh workflow run dev-pipeline.yml -f operation=destroy -f region=all
+```
+
+**Using Deployment Scripts**:
+
+**PowerShell (Windows)**:
+```powershell
+# Deploy all regions
+.\scripts\deploy-multi-region.ps1 -Operation apply -Region all
+
+# Deploy specific region
+.\scripts\deploy-multi-region.ps1 -Operation apply -Region us-central1
+
+# Plan deployment
+.\scripts\deploy-multi-region.ps1 -Operation plan -Region all
+```
+
+**Bash (Linux/Mac)**:
+```bash
+# Deploy all regions
+./scripts/deploy-multi-region.sh -o apply -r all
+
+# Deploy specific region
+./scripts/deploy-multi-region.sh -o apply -r us-central1
+
+# Plan deployment
+./scripts/deploy-multi-region.sh -o plan -r all
+```
+
+#### Single Region Deployment (Legacy)
+
+For backward compatibility, you can still deploy to a single region:
+
 ```bash
 # Plan infrastructure changes (safe, no changes made)
-gh workflow run dev-pipeline.yml -f operation=plan
+gh workflow run dev-pipeline.yml -f operation=plan -f region=us-central1
 
 # Deploy infrastructure (creates/updates resources)
-gh workflow run dev-pipeline.yml -f operation=apply
+gh workflow run dev-pipeline.yml -f operation=apply -f region=us-central1
 
 # Destroy infrastructure (⚠️ REMOVES ALL RESOURCES)
-gh workflow run dev-pipeline.yml -f operation=destroy
+gh workflow run dev-pipeline.yml -f operation=destroy -f region=us-central1
 ```
 
 ### ⚠️ Destroy Operation Warning
