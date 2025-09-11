@@ -6,9 +6,9 @@ variable "project_id" {
 variable "log_sinks" {
   description = "Map of log sinks to create"
   type = map(object({
-    name        = string
-    destination = string
-    filter      = string
+    name                   = string
+    destination            = string
+    filter                 = string
     unique_writer_identity = bool
     bigquery_options = optional(object({
       use_partitioned_tables = bool
@@ -26,9 +26,9 @@ variable "log_sinks" {
 variable "log_metrics" {
   description = "Map of log metrics to create"
   type = map(object({
-    name   = string
-    filter = string
-    description = string
+    name             = string
+    filter           = string
+    description      = string
     label_extractors = map(string)
     bucket_options = optional(object({
       linear_buckets = optional(object({
@@ -73,9 +73,9 @@ variable "log_exclusions" {
 variable "log_buckets" {
   description = "Map of log buckets to create"
   type = map(object({
-    location      = string
-    bucket_id     = string
-    description   = string
+    location       = string
+    bucket_id      = string
+    description    = string
     retention_days = number
     cmek_settings = optional(object({
       kms_key_name = string
@@ -91,10 +91,10 @@ variable "log_buckets" {
 variable "folder_sinks" {
   description = "Map of folder sinks to create"
   type = map(object({
-    folder     = string
-    name       = string
-    destination = string
-    filter     = string
+    folder                 = string
+    name                   = string
+    destination            = string
+    filter                 = string
     unique_writer_identity = bool
     bigquery_options = optional(object({
       use_partitioned_tables = bool

@@ -41,7 +41,7 @@ output "routes" {
 output "nat_gateways" {
   description = "Cloud NAT gateways"
   value = {
-    primary = google_compute_router_nat.primary_nat.name
+    primary   = google_compute_router_nat.primary_nat.name
     secondary = google_compute_router_nat.secondary_nat.name
   }
 }

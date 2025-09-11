@@ -21,15 +21,15 @@ variable "private_vpc_connection" {
 variable "clusters" {
   description = "Map of GKE clusters to create"
   type = map(object({
-    name                     = string
-    location                 = string
-    subnetwork              = string
-    pods_range_name         = string
-    services_range_name     = string
-    master_ipv4_cidr_block  = string
-    authorized_cidr_block   = string
-    release_channel         = string
-    maintenance_start_time  = string
+    name                   = string
+    location               = string
+    subnetwork             = string
+    pods_range_name        = string
+    services_range_name    = string
+    master_ipv4_cidr_block = string
+    authorized_cidr_block  = string
+    release_channel        = string
+    maintenance_start_time = string
   }))
   default = {}
 }
@@ -47,7 +47,7 @@ variable "node_pools" {
     machine_type   = string
     disk_size_gb   = number
     disk_type      = string
-    labels = map(string)
+    labels         = map(string)
     taints = list(object({
       key    = string
       value  = string

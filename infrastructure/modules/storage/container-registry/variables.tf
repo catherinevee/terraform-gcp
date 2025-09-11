@@ -6,13 +6,13 @@ variable "project_id" {
 variable "repositories" {
   description = "Map of Artifact Registry repositories to create"
   type = map(object({
-    location        = string
-    repository_id   = string
-    description     = string
-    format          = string
-    keep_count      = number
-    retention_days  = string
-    labels          = map(string)
+    location       = string
+    repository_id  = string
+    description    = string
+    format         = string
+    keep_count     = number
+    retention_days = string
+    labels         = map(string)
   }))
   default = {}
 }

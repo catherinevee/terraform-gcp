@@ -18,14 +18,14 @@ variable "dashboards" {
               time_series_filter = object({
                 filter = string
                 aggregation = object({
-                  alignment_period    = string
-                  per_series_aligner  = string
+                  alignment_period     = string
+                  per_series_aligner   = string
                   cross_series_reducer = string
-                  group_by_fields     = list(string)
+                  group_by_fields      = list(string)
                 })
               })
             })
-            plot_type = string
+            plot_type   = string
             target_axis = string
           }))
           timeshift_duration = string
@@ -43,15 +43,15 @@ variable "dashboards" {
 variable "uptime_checks" {
   description = "Map of uptime checks to create"
   type = map(object({
-    display_name = string
-    timeout      = string
-    period       = string
-    host         = string
-    path         = string
-    port         = number
+    display_name   = string
+    timeout        = string
+    period         = string
+    host           = string
+    path           = string
+    port           = number
     request_method = string
-    use_ssl      = bool
-    validate_ssl = bool
+    use_ssl        = bool
+    validate_ssl   = bool
     auth_info = optional(object({
       username = string
       password = string
@@ -73,16 +73,16 @@ variable "alert_policies" {
     combiner     = string
     enabled      = bool
     condition = object({
-      display_name = string
-      filter       = string
-      duration     = string
-      comparison   = string
+      display_name    = string
+      filter          = string
+      duration        = string
+      comparison      = string
       threshold_value = number
       aggregation = object({
-        alignment_period    = string
-        per_series_aligner  = string
+        alignment_period     = string
+        per_series_aligner   = string
         cross_series_reducer = string
-        group_by_fields     = list(string)
+        group_by_fields      = list(string)
       })
       trigger = optional(object({
         count = number
@@ -135,10 +135,10 @@ variable "services" {
 variable "slos" {
   description = "Map of Service Level Objectives to create"
   type = map(object({
-    service_key = string
-    slo_id      = string
-    display_name = string
-    goal        = number
+    service_key         = string
+    slo_id              = string
+    display_name        = string
+    goal                = number
     rolling_period_days = number
     basic_sli = optional(object({
       availability = optional(object({

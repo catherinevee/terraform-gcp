@@ -69,7 +69,7 @@ variable "ingress_policies" {
       access_level = string
     }))
     ingress_to = list(object({
-      resources   = list(string)
+      resources    = list(string)
       service_name = string
     }))
   }))
@@ -83,7 +83,7 @@ variable "egress_policies" {
       identities = list(string)
     }))
     egress_to = list(object({
-      resources   = list(string)
+      resources    = list(string)
       service_name = string
     }))
   }))

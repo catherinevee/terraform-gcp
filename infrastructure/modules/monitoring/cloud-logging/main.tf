@@ -1,21 +1,21 @@
 # Log Sinks
 resource "google_logging_project_sink" "log_sink" {
   for_each = var.log_sinks
-  
+
   name        = each.value.name
   destination = each.value.destination
   filter      = each.value.filter
   project     = var.project_id
-  
+
   unique_writer_identity = each.value.unique_writer_identity
-  
+
   dynamic "bigquery_options" {
     for_each = each.value.bigquery_options != null ? [each.value.bigquery_options] : []
     content {
       use_partitioned_tables = bigquery_options.value.use_partitioned_tables
     }
   }
-  
+
   dynamic "exclusions" {
     for_each = each.value.exclusions
     content {
@@ -30,14 +30,14 @@ resource "google_logging_project_sink" "log_sink" {
 # Log Metrics
 resource "google_logging_metric" "log_metric" {
   for_each = var.log_metrics
-  
-  name   = each.value.name
-  filter = each.value.filter
+
+  name    = each.value.name
+  filter  = each.value.filter
   project = var.project_id
-  
-  description = each.value.description
+
+  description      = each.value.description
   label_extractors = each.value.label_extractors
-  
+
   dynamic "bucket_options" {
     for_each = each.value.bucket_options != null ? [each.value.bucket_options] : []
     content {
@@ -49,7 +49,7 @@ resource "google_logging_metric" "log_metric" {
           offset             = linear_buckets.value.offset
         }
       }
-      
+
       dynamic "exponential_buckets" {
         for_each = bucket_options.value.exponential_buckets != null ? [bucket_options.value.exponential_buckets] : []
         content {
@@ -58,7 +58,7 @@ resource "google_logging_metric" "log_metric" {
           scale              = exponential_buckets.value.scale
         }
       }
-      
+
       dynamic "explicit_buckets" {
         for_each = bucket_options.value.explicit_buckets != null ? [bucket_options.value.explicit_buckets] : []
         content {
@@ -67,13 +67,13 @@ resource "google_logging_metric" "log_metric" {
       }
     }
   }
-  
+
   dynamic "metric_descriptor" {
     for_each = each.value.metric_descriptor != null ? [each.value.metric_descriptor] : []
     content {
       metric_kind = metric_descriptor.value.metric_kind
       value_type  = metric_descriptor.value.value_type
-      
+
       dynamic "labels" {
         for_each = metric_descriptor.value.labels
         content {
@@ -84,14 +84,14 @@ resource "google_logging_metric" "log_metric" {
       }
     }
   }
-  
+
   value_extractor = each.value.value_extractor
 }
 
 # Log Views
 resource "google_logging_project_exclusion" "log_exclusion" {
   for_each = var.log_exclusions
-  
+
   name        = each.value.name
   description = each.value.description
   filter      = each.value.filter
@@ -102,21 +102,21 @@ resource "google_logging_project_exclusion" "log_exclusion" {
 # Log Router
 resource "google_logging_project_bucket_config" "log_bucket" {
   for_each = var.log_buckets
-  
+
   location  = each.value.location
   bucket_id = each.value.bucket_id
   project   = var.project_id
-  
-  description = each.value.description
+
+  description    = each.value.description
   retention_days = each.value.retention_days
-  
+
   dynamic "cmek_settings" {
     for_each = each.value.cmek_settings != null ? [each.value.cmek_settings] : []
     content {
       kms_key_name = cmek_settings.value.kms_key_name
     }
   }
-  
+
   dynamic "index_configs" {
     for_each = each.value.index_configs
     content {
@@ -129,21 +129,21 @@ resource "google_logging_project_bucket_config" "log_bucket" {
 # Log Analytics
 resource "google_logging_folder_sink" "folder_sink" {
   for_each = var.folder_sinks
-  
-  folder     = each.value.folder
-  name       = each.value.name
+
+  folder      = each.value.folder
+  name        = each.value.name
   destination = each.value.destination
-  filter     = each.value.filter
-  
+  filter      = each.value.filter
+
   # unique_writer_identity = each.value.unique_writer_identity
-  
+
   dynamic "bigquery_options" {
     for_each = each.value.bigquery_options != null ? [each.value.bigquery_options] : []
     content {
       use_partitioned_tables = bigquery_options.value.use_partitioned_tables
     }
   }
-  
+
   dynamic "exclusions" {
     for_each = each.value.exclusions
     content {

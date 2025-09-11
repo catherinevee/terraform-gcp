@@ -12,8 +12,8 @@ variable "subnets" {
   description = "The list of subnets being created"
   type = list(object({
     subnet_name           = string
-    subnet_ip            = string
-    subnet_region        = string
+    subnet_ip             = string
+    subnet_region         = string
     subnet_private_access = bool
   }))
 }

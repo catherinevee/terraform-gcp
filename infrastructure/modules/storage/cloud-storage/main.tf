@@ -3,14 +3,14 @@
 # Storage Buckets
 resource "google_storage_bucket" "buckets" {
   for_each = var.buckets
-  
+
   name          = each.value.name
   location      = each.value.location
   storage_class = each.value.storage_class
   force_destroy = each.value.force_destroy
-  
+
   labels = each.value.labels
-  
+
   # Versioning
   dynamic "versioning" {
     for_each = each.value.versioning != null ? [each.value.versioning] : []
@@ -18,7 +18,7 @@ resource "google_storage_bucket" "buckets" {
       enabled = versioning.value.enabled
     }
   }
-  
+
   # Lifecycle rules
   dynamic "lifecycle_rule" {
     for_each = each.value.lifecycle_rule != null ? each.value.lifecycle_rule : []
@@ -31,7 +31,7 @@ resource "google_storage_bucket" "buckets" {
       }
     }
   }
-  
+
   # CORS configuration
   dynamic "cors" {
     for_each = each.value.cors != null ? each.value.cors : []
@@ -47,16 +47,16 @@ resource "google_storage_bucket" "buckets" {
 # Bucket IAM bindings
 resource "google_storage_bucket_iam_binding" "bucket_iam_bindings" {
   for_each = var.bucket_iam_bindings
-  
-  bucket = google_storage_bucket.buckets[each.value.bucket_key].name
-  role   = each.value.role
+
+  bucket  = google_storage_bucket.buckets[each.value.bucket_key].name
+  role    = each.value.role
   members = each.value.members
 }
 
 # Bucket objects
 resource "google_storage_bucket_object" "bucket_objects" {
   for_each = var.bucket_objects
-  
+
   name         = each.value.name
   bucket       = google_storage_bucket.buckets[each.value.bucket_key].name
   content      = each.value.content

@@ -16,19 +16,19 @@ variable "region" {
 variable "instance_templates" {
   description = "Map of instance templates to create"
   type = map(object({
-    name_prefix              = string
-    description              = string
-    machine_type             = string
-    source_image             = string
-    disk_size_gb             = number
-    disk_type                = string
-    subnetwork               = string
-    enable_external_ip       = bool
-    service_account_email    = string
-    service_account_scopes   = list(string)
-    metadata                 = map(string)
-    startup_script           = string
-    tags                     = list(string)
+    name_prefix            = string
+    description            = string
+    machine_type           = string
+    source_image           = string
+    disk_size_gb           = number
+    disk_type              = string
+    subnetwork             = string
+    enable_external_ip     = bool
+    service_account_email  = string
+    service_account_scopes = list(string)
+    metadata               = map(string)
+    startup_script         = string
+    tags                   = list(string)
   }))
   default = {}
 }
@@ -36,15 +36,15 @@ variable "instance_templates" {
 variable "instance_group_managers" {
   description = "Map of instance group managers to create"
   type = map(object({
-    name                    = string
-    description             = string
-    base_instance_name      = string
-    zone                    = string
-    template_key            = string
-    target_size             = number
-    enable_auto_healing     = bool
-    health_check_key        = string
-    initial_delay_sec       = number
+    name                = string
+    description         = string
+    base_instance_name  = string
+    zone                = string
+    template_key        = string
+    target_size         = number
+    enable_auto_healing = bool
+    health_check_key    = string
+    initial_delay_sec   = number
     update_policy = optional(object({
       type                         = string
       instance_redistribution_type = string
@@ -74,12 +74,12 @@ variable "health_checks" {
 variable "autoscalers" {
   description = "Map of autoscalers to create"
   type = map(object({
-    name                        = string
-    zone                        = string
-    instance_group_manager_key  = string
-    max_replicas                = number
-    min_replicas                = number
-    cooldown_period             = number
+    name                       = string
+    zone                       = string
+    instance_group_manager_key = string
+    max_replicas               = number
+    min_replicas               = number
+    cooldown_period            = number
     cpu_utilization = optional(object({
       target = number
     }))

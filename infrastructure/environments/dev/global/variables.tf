@@ -240,22 +240,17 @@ variable "network_cidr_blocks" {
 variable "backup_retention_policy" {
   description = "Backup retention policy configuration"
   type = object({
-    daily_retention_days   = number
-    weekly_retention_weeks = number
+    daily_retention_days     = number
+    weekly_retention_weeks   = number
     monthly_retention_months = number
   })
   default = {
-    daily_retention_days   = 7
-    weekly_retention_weeks = 4
+    daily_retention_days     = 7
+    weekly_retention_weeks   = 4
     monthly_retention_months = 12
   }
   validation {
-    condition = var.backup_retention_policy.daily_retention_days >= 1 && 
-                var.backup_retention_policy.daily_retention_days <= 30 &&
-                var.backup_retention_policy.weekly_retention_weeks >= 1 && 
-                var.backup_retention_policy.weekly_retention_weeks <= 12 &&
-                var.backup_retention_policy.monthly_retention_months >= 1 && 
-                var.backup_retention_policy.monthly_retention_months <= 60
+    condition     = var.backup_retention_policy.daily_retention_days >= 1 && var.backup_retention_policy.daily_retention_days <= 30 && var.backup_retention_policy.weekly_retention_weeks >= 1 && var.backup_retention_policy.weekly_retention_weeks <= 12 && var.backup_retention_policy.monthly_retention_months >= 1 && var.backup_retention_policy.monthly_retention_months <= 60
     error_message = "Backup retention policy values must be within reasonable ranges."
   }
 }
@@ -275,7 +270,7 @@ variable "security_policy_config" {
     enable_hsts         = true
   }
   validation {
-    condition = contains(["TLS_1_0", "TLS_1_1", "TLS_1_2", "TLS_1_3"], var.security_policy_config.min_tls_version)
+    condition     = contains(["TLS_1_0", "TLS_1_1", "TLS_1_2", "TLS_1_3"], var.security_policy_config.min_tls_version)
     error_message = "Minimum TLS version must be one of: TLS_1_0, TLS_1_1, TLS_1_2, TLS_1_3."
   }
 }

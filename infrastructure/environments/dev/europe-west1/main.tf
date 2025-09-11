@@ -275,43 +275,43 @@ module "database" {
 
   instances = {
     "orders-database" = {
-      name             = "acme-orders-database-${local.environment}"
-      database_version = "POSTGRES_15"
-      region           = local.region
-      tier             = "db-f1-micro"
-      availability_type = "ZONAL"
-      disk_type        = "PD_SSD"
-      disk_size        = var.database_default_disk_size_gb
-      disk_autoresize  = true
+      name                  = "acme-orders-database-${local.environment}"
+      database_version      = "POSTGRES_15"
+      region                = local.region
+      tier                  = "db-f1-micro"
+      availability_type     = "ZONAL"
+      disk_type             = "PD_SSD"
+      disk_size             = var.database_default_disk_size_gb
+      disk_autoresize       = true
       disk_autoresize_limit = var.database_autoresize_limit_gb
-      deletion_protection = false
-      
-      backup_enabled                = true
-      backup_start_time             = "03:00"
-      backup_location               = local.region
+      deletion_protection   = false
+
+      backup_enabled                 = true
+      backup_start_time              = "03:00"
+      backup_location                = local.region
       point_in_time_recovery_enabled = true
       transaction_log_retention_days = var.database_transaction_log_retention_days
-      
+
       ipv4_enabled                                  = false
       private_network                               = local.vpc_network_self_link
       enable_private_path_for_google_cloud_services = true
       require_ssl                                   = true
       authorized_networks                           = []
-      
+
       database_flags = [
         {
           name  = "log_statement"
           value = "all"
         }
       ]
-      
+
       insights_config = {
         query_insights_enabled  = true
         query_string_length     = var.database_query_string_length
         record_application_tags = true
         record_client_address   = true
       }
-      
+
       maintenance_window = {
         day          = 7
         hour         = 3
