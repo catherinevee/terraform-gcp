@@ -1,0 +1,46 @@
+name: Test GCS Access
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: 'acme-ecommerce-platform-dev'
+
+jobs:
+  test-gcs:
+    name: Test GCS Bucket Access
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        create_credentials_file: true
+        export_environment_variables: true
+
+    - name: Setup Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+        version: latest
+
+    - name: Test GCS Bucket Access
+      run: |
+        echo "Testing GCS bucket access..."
+        gcloud storage ls gs://acme-ecommerce-platform-dev-terraform-state/
+        echo "Testing specific state directory..."
+        gcloud storage ls gs://acme-ecommerce-platform-dev-terraform-state/terraform/state/
+        echo "Testing global state directory..."
+        gcloud storage ls gs://acme-ecommerce-platform-dev-terraform-state/terraform/state/global/
+        echo "GCS access test completed successfully!"
+
+    - name: Test Terraform Backend
+      run: |
+        echo "Testing Terraform backend configuration..."
+        cd infrastructure/environments/dev/global
+        terraform init -reconfigure
+        echo "Terraform backend test completed successfully!"
