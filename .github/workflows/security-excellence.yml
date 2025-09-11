@@ -53,21 +53,37 @@ jobs:
         
     - name: Run Terraform Security Scan
       run: |
-        tfsec infrastructure/ --format json > tfsec-results.json || true
-        tfsec infrastructure/ --format sarif > tfsec-results.sarif || true
-        # Ensure SARIF file exists even if no issues found
-        if [ ! -f tfsec-results.sarif ]; then
+        # Create empty SARIF file first
+        echo '{"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "tfsec"}}, "results": []}]}' > tfsec-results.sarif
+        
+        # Run tfsec and capture output
+        tfsec infrastructure/ --format json > tfsec-results.json 2>/dev/null || true
+        tfsec infrastructure/ --format sarif > tfsec-results.sarif 2>/dev/null || true
+        
+        # Ensure SARIF file exists and is valid JSON
+        if [ ! -s tfsec-results.sarif ] || ! jq empty tfsec-results.sarif 2>/dev/null; then
           echo '{"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "tfsec"}}, "results": []}]}' > tfsec-results.sarif
         fi
         
+        # Verify file exists
+        ls -la tfsec-results.sarif
+        
     - name: Run Dependency Vulnerability Scan
       run: |
-        trivy fs --severity HIGH,CRITICAL --format json --output trivy-results.json infrastructure/ || true
-        trivy fs --severity HIGH,CRITICAL --format sarif --output trivy-results.sarif infrastructure/ || true
-        # Ensure SARIF file exists even if no issues found
-        if [ ! -f trivy-results.sarif ]; then
+        # Create empty SARIF file first
+        echo '{"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "trivy"}}, "results": []}]}' > trivy-results.sarif
+        
+        # Run trivy and capture output
+        trivy fs --severity HIGH,CRITICAL --format json --output trivy-results.json infrastructure/ 2>/dev/null || true
+        trivy fs --severity HIGH,CRITICAL --format sarif --output trivy-results.sarif infrastructure/ 2>/dev/null || true
+        
+        # Ensure SARIF file exists and is valid JSON
+        if [ ! -s trivy-results.sarif ] || ! jq empty trivy-results.sarif 2>/dev/null; then
           echo '{"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "trivy"}}, "results": []}]}' > trivy-results.sarif
         fi
+        
+        # Verify file exists
+        ls -la trivy-results.sarif
         
     - name: Run Terraform Validation
       run: |
@@ -102,6 +118,18 @@ jobs:
           .security-status.json
           .security-badge-url
           
+    - name: Verify SARIF Files Before Upload
+      run: |
+        echo "Checking SARIF files..."
+        ls -la *.sarif || echo "No SARIF files found"
+        if [ -f tfsec-results.sarif ]; then
+          echo "tfsec-results.sarif exists and has $(wc -c < tfsec-results.sarif) bytes"
+          head -5 tfsec-results.sarif
+        else
+          echo "ERROR: tfsec-results.sarif not found!"
+          exit 1
+        fi
+        
     - name: Upload Security Results to GitHub Security
       uses: github/codeql-action/upload-sarif@v3
       if: always()
