@@ -220,6 +220,7 @@ resource "null_resource" "overall_compliance_validation" {
 # Compliance Reporting
 resource "google_monitoring_alert_policy" "compliance_violations" {
   display_name = "ACME E-commerce Platform Compliance Violations"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when compliance violations are detected"

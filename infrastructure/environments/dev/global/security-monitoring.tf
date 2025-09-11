@@ -4,6 +4,7 @@
 # Security Incident Detection Alert Policy
 resource "google_monitoring_alert_policy" "security_incidents" {
   display_name = "ACME E-commerce Platform Security Incident Detection"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when security incidents are detected across all regions"
@@ -36,6 +37,7 @@ resource "google_monitoring_alert_policy" "security_incidents" {
 # Failed Authentication Attempts Alert Policy
 resource "google_monitoring_alert_policy" "failed_authentication" {
   display_name = "ACME E-commerce Platform Failed Authentication Attempts"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when multiple failed authentication attempts are detected"
@@ -68,6 +70,7 @@ resource "google_monitoring_alert_policy" "failed_authentication" {
 # Suspicious Network Activity Alert Policy
 resource "google_monitoring_alert_policy" "suspicious_network_activity" {
   display_name = "ACME E-commerce Platform Suspicious Network Activity"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when suspicious network activity is detected"
@@ -100,6 +103,7 @@ resource "google_monitoring_alert_policy" "suspicious_network_activity" {
 # Database Security Alert Policy
 resource "google_monitoring_alert_policy" "database_security" {
   display_name = "ACME E-commerce Platform Database Security"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when database security issues are detected"
@@ -132,6 +136,7 @@ resource "google_monitoring_alert_policy" "database_security" {
 # Storage Security Alert Policy
 resource "google_monitoring_alert_policy" "storage_security" {
   display_name = "ACME E-commerce Platform Storage Security"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when storage security issues are detected"
@@ -280,6 +285,7 @@ resource "random_id" "bucket_suffix" {
 
 # Security Metrics Export
 resource "google_monitoring_metric_descriptor" "security_events" {
+  type         = "custom.googleapis.com/security/events"
   metric_kind  = "GAUGE"
   value_type   = "INT64"
   display_name = "Security Events Count"
@@ -301,6 +307,7 @@ resource "google_monitoring_metric_descriptor" "security_events" {
 # Security Policy Violations Alert
 resource "google_monitoring_alert_policy" "security_policy_violations" {
   display_name = "ACME E-commerce Platform Security Policy Violations"
+  combiner     = "OR"
 
   documentation {
     content   = "This alert fires when security policy violations are detected"
