@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "terragrunt-471602-terraform-state-dev"
+    bucket = "acme-ecommerce-platform-dev-terraform-state"
     prefix = "terraform/state"
   }
 }
