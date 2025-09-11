@@ -18,9 +18,6 @@ resource "google_kms_crypto_key" "crypto_keys" {
     algorithm = each.value.algorithm
   }
   
-  lifecycle {
-    prevent_destroy = true
-  }
   
   rotation_period = each.value.rotation_period != null ? each.value.rotation_period : null
 }

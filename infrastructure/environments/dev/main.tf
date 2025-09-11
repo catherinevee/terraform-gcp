@@ -209,18 +209,18 @@ module "kms" {
 
   crypto_key_iam_bindings = {
     "encryption-key-encrypt-decrypt" = {
-      crypto_key_key = "encryption-key"
+      crypto_key_key = "acme-ecommerce-data-encryption-key"
       role           = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}",
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-ecommerce-terraform-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
     "signing-key-signer" = {
-      crypto_key_key = "signing-key"
+      crypto_key_key = "acme-ecommerce-signing-key"
       role           = "roles/cloudkms.signer"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["terraform-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-ecommerce-terraform-sa"]}"
       ]
     }
   }
@@ -265,14 +265,14 @@ module "secret_manager" {
       secret_key = "database-password"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
     "api-key-access" = {
       secret_key = "api-key"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
   }
@@ -296,9 +296,9 @@ module "compute" {
       source_image           = "debian-cloud/debian-11"
       disk_size_gb           = 20
       disk_type              = "pd-standard"
-      subnetwork             = module.subnets.subnets["${local.project_id}-${local.environment}-${local.region}-public"].name
+      subnetwork             = module.subnets.subnets["acme-ecommerce-web-tier-${local.environment}"].name
       enable_external_ip     = true
-      service_account_email  = module.iam.service_account_emails["app-sa"]
+      service_account_email  = module.iam.service_account_emails["acme-orders-service-sa"]
       service_account_scopes = ["cloud-platform"]
       metadata = {
         "startup-script" = <<-EOF
@@ -445,14 +445,14 @@ module "storage" {
       bucket_key = "app-data"
       role       = "roles/storage.objectViewer"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
     "logs-access" = {
       bucket_key = "logs"
       role       = "roles/storage.objectCreator"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
   }
@@ -605,7 +605,7 @@ module "cloud_run" {
   source = "../../modules/compute/cloud-run"
 
   project_id             = local.project_id
-  service_account_email  = module.iam.service_account_emails["app-sa"]
+  service_account_email  = module.iam.service_account_emails["acme-orders-service-sa"]
   private_vpc_connection = module.vpc.private_vpc_connection
   vpc_connector          = null # We'll use direct VPC access
 
@@ -689,16 +689,16 @@ module "container_registry" {
       repository_key = "app-images"
       role           = "roles/artifactregistry.reader"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-customer-api-gke-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
     "base-images-access" = {
       repository_key = "base-images"
       role           = "roles/artifactregistry.reader"
       members = [
-        "serviceAccount:${module.iam.service_account_emails["gke-sa"]}",
-        "serviceAccount:${module.iam.service_account_emails["app-sa"]}"
+        "serviceAccount:${module.iam.service_account_emails["acme-customer-api-gke-sa"]}",
+        "serviceAccount:${module.iam.service_account_emails["acme-orders-service-sa"]}"
       ]
     }
   }
