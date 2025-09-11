@@ -21,7 +21,7 @@ provider "google" {
 data "terraform_remote_state" "global" {
   backend = "gcs"
   config = {
-    bucket = "acme-ecommerce-platform-dev-terraform-state"
+    bucket = "cataziza-ecommerce-platform-dev-terraform-state"
     prefix = "terraform/state/global"
   }
 }
@@ -33,7 +33,7 @@ locals {
   region      = var.region
 
   # Regional resource naming
-  regional_prefix = "acme-ecommerce-platform-${local.environment}-${local.region}"
+  regional_prefix = "cataziza-ecommerce-platform-${local.environment}-${local.region}"
 
   # Get global resource references
   vpc_network_name       = data.terraform_remote_state.global.outputs.vpc_network_name
@@ -54,25 +54,25 @@ module "subnets" {
 
   subnets = [
     {
-      subnet_name           = "acme-ecommerce-web-tier-${local.environment}"
+      subnet_name           = "cataziza-ecommerce-web-tier-${local.environment}"
       subnet_ip             = "10.1.1.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "acme-ecommerce-app-tier-${local.environment}"
+      subnet_name           = "cataziza-ecommerce-app-tier-${local.environment}"
       subnet_ip             = "10.1.10.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "acme-ecommerce-database-tier-${local.environment}"
+      subnet_name           = "cataziza-ecommerce-database-tier-${local.environment}"
       subnet_ip             = "10.1.20.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "acme-ecommerce-kubernetes-tier-${local.environment}"
+      subnet_name           = "cataziza-ecommerce-kubernetes-tier-${local.environment}"
       subnet_ip             = "10.1.30.0/24"
       subnet_region         = local.region
       subnet_private_access = true
@@ -106,7 +106,7 @@ module "compute" {
       disk_type              = "pd-standard"
       subnetwork             = module.subnets.subnets[0].subnet_name
       enable_external_ip     = true
-      service_account_email  = local.service_accounts["acme-orders-service-sa"]
+      service_account_email  = local.service_accounts["cataziza-orders-service-sa"]
       service_account_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
       metadata = {
         "startup-script" = <<-EOT
@@ -125,9 +125,9 @@ module "compute" {
 
   instance_group_managers = {
     "web-igm" = {
-      name                = "acme-ecommerce-web-servers"
-      description         = "ACME E-commerce Web Server Instance Group"
-      base_instance_name  = "acme-ecommerce-web-server"
+      name                = "cataziza-ecommerce-web-servers"
+      description         = "Cataziza E-commerce Web Server Instance Group"
+      base_instance_name  = "cataziza-ecommerce-web-server"
       zone                = "${local.region}-a"
       template_key        = "web-template"
       target_size         = var.instance_group_target_size
@@ -146,7 +146,7 @@ module "compute" {
 
   health_checks = {
     "web-health-check" = {
-      name                = "acme-ecommerce-web-health-check"
+      name                = "cataziza-ecommerce-web-health-check"
       description         = "Health check for web servers"
       check_interval_sec  = var.health_check_interval_sec
       timeout_sec         = var.health_check_timeout_sec
@@ -159,7 +159,7 @@ module "compute" {
 
   autoscalers = {
     "web-autoscaler" = {
-      name                       = "acme-ecommerce-web-autoscaler"
+      name                       = "cataziza-ecommerce-web-autoscaler"
       zone                       = "${local.region}-a"
       instance_group_manager_key = "web-igm"
       max_replicas               = 5
@@ -180,7 +180,7 @@ module "storage" {
 
   buckets = {
     "app-data" = {
-      name          = "acme-ecommerce-customer-data-${local.environment}-${local.region}"
+      name          = "cataziza-ecommerce-customer-data-${local.environment}-${local.region}"
       location      = "US-EAST1"
       storage_class = "STANDARD"
       force_destroy = false
@@ -213,7 +213,7 @@ module "storage" {
     }
 
     "logs" = {
-      name          = "acme-ecommerce-application-logs-${local.environment}-${local.region}"
+      name          = "cataziza-ecommerce-application-logs-${local.environment}-${local.region}"
       location      = "US-EAST1"
       storage_class = "NEARLINE"
       force_destroy = false
@@ -240,14 +240,14 @@ module "storage" {
       bucket_key = "app-data"
       role       = "roles/storage.objectViewer"
       members = [
-        "serviceAccount:${local.service_accounts["acme-orders-service-sa"]}"
+        "serviceAccount:${local.service_accounts["cataziza-orders-service-sa"]}"
       ]
     }
     "logs-access" = {
       bucket_key = "logs"
       role       = "roles/storage.objectCreator"
       members = [
-        "serviceAccount:${local.service_accounts["acme-orders-service-sa"]}"
+        "serviceAccount:${local.service_accounts["cataziza-orders-service-sa"]}"
       ]
     }
   }
@@ -256,7 +256,7 @@ module "storage" {
     "welcome-file" = {
       bucket_key   = "app-data"
       name         = "welcome.txt"
-      content      = "Welcome to ACME E-commerce Platform - Multi-Region Deployment - US East!"
+      content      = "Welcome to Cataziza E-commerce Platform - Multi-Region Deployment - US East!"
       content_type = "text/plain"
     }
   }

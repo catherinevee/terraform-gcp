@@ -57,7 +57,7 @@ if [[ ! "$REGION" =~ ^(all|global|us-central1|us-east1)$ ]]; then
 fi
 
 # Set project ID
-PROJECT_ID="acme-ecommerce-platform-$ENVIRONMENT"
+PROJECT_ID="cataziza-ecommerce-platform-$ENVIRONMENT"
 
 echo "🚀 Starting Multi-Region Deployment"
 echo "Operation: $OPERATION"
@@ -177,7 +177,7 @@ data "terraform_remote_state" "us_east1" {
 
 # Data source to access VPN shared secret from Secret Manager
 data "google_secret_manager_secret_version" "vpn_shared_secret" {
-  secret = "acme-vpn-shared-secret"
+  secret = "cataziza-vpn-shared-secret"
 }
 
 # Cross-region networking module
@@ -210,7 +210,7 @@ EOF
         # Create terraform.tfvars
         cat > "$CROSS_REGION_PATH/terraform.tfvars" << EOF
 project_id = "$PROJECT_ID"
-vpn_shared_secret = "acme-ecommerce-vpn-secret-2024"
+vpn_shared_secret = "cataziza-ecommerce-vpn-secret-2024"
 EOF
         
         # Create backend.tf
@@ -246,8 +246,8 @@ if [[ "$OPERATION" == "apply" ]]; then
     
     echo ""
     echo "🔍 Verification Commands:"
-    echo "gcloud compute networks list --filter='name:acme-ecommerce-platform-vpc-$ENVIRONMENT'"
-    echo "gcloud compute instances list --filter='name:acme-ecommerce'"
-    echo "gcloud run services list --filter='metadata.name:acme'"
+    echo "gcloud compute networks list --filter='name:cataziza-ecommerce-platform-vpc-$ENVIRONMENT'"
+    echo "gcloud compute instances list --filter='name:cataziza-ecommerce'"
+    echo "gcloud run services list --filter='metadata.name:cataziza'"
 fi
 

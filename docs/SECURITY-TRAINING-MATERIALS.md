@@ -137,7 +137,7 @@ echo "my-secret-value" | gcloud secrets versions add my-secret --data-file=-
 ```hcl
 # ✅ CORRECT: Using Secret Manager
 data "google_secret_manager_secret_version" "db_password" {
-  secret = "acme-orders-database-password"
+  secret = "cataziza-orders-database-password"
 }
 
 resource "google_sql_database_instance" "main" {

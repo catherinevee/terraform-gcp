@@ -242,7 +242,7 @@ This project is licensed under the MIT License - see the [LICENSE](../../LICENSE
 For issues and questions:
 - **Documentation**: [SECURITY.md](../../SECURITY.md)
 - **Issues**: [GitHub Issues](https://github.com/catherinevee/terraform-gcp/issues)
-- **Email**: platform-engineering@acme-corp.com
+- **Email**: platform-engineering@cataziza-corp.com
 
 ---
 

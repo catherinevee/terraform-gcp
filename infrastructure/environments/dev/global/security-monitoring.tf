@@ -3,7 +3,7 @@
 
 # Security Incident Detection Alert Policy
 resource "google_monitoring_alert_policy" "security_incidents" {
-  display_name = "ACME E-commerce Platform Security Incident Detection"
+  display_name = "Cataziza E-commerce Platform Security Incident Detection"
   combiner     = "OR"
 
   documentation {
@@ -36,7 +36,7 @@ resource "google_monitoring_alert_policy" "security_incidents" {
 
 # Failed Authentication Attempts Alert Policy
 resource "google_monitoring_alert_policy" "failed_authentication" {
-  display_name = "ACME E-commerce Platform Failed Authentication Attempts"
+  display_name = "Cataziza E-commerce Platform Failed Authentication Attempts"
   combiner     = "OR"
 
   documentation {
@@ -69,7 +69,7 @@ resource "google_monitoring_alert_policy" "failed_authentication" {
 
 # Suspicious Network Activity Alert Policy
 resource "google_monitoring_alert_policy" "suspicious_network_activity" {
-  display_name = "ACME E-commerce Platform Suspicious Network Activity"
+  display_name = "Cataziza E-commerce Platform Suspicious Network Activity"
   combiner     = "OR"
 
   documentation {
@@ -102,7 +102,7 @@ resource "google_monitoring_alert_policy" "suspicious_network_activity" {
 
 # Database Security Alert Policy
 resource "google_monitoring_alert_policy" "database_security" {
-  display_name = "ACME E-commerce Platform Database Security"
+  display_name = "Cataziza E-commerce Platform Database Security"
   combiner     = "OR"
 
   documentation {
@@ -135,7 +135,7 @@ resource "google_monitoring_alert_policy" "database_security" {
 
 # Storage Security Alert Policy
 resource "google_monitoring_alert_policy" "storage_security" {
-  display_name = "ACME E-commerce Platform Storage Security"
+  display_name = "Cataziza E-commerce Platform Storage Security"
   combiner     = "OR"
 
   documentation {
@@ -169,7 +169,7 @@ resource "google_monitoring_alert_policy" "storage_security" {
 # Compliance Monitoring Dashboard
 resource "google_monitoring_dashboard" "security_dashboard" {
   dashboard_json = jsonencode({
-    displayName = "ACME E-commerce Platform Security Dashboard"
+    displayName = "Cataziza E-commerce Platform Security Dashboard"
     mosaicLayout = {
       tiles = [
         {
@@ -238,7 +238,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
 
 # Security Log Sink for centralized logging
 resource "google_logging_project_sink" "security_logs" {
-  name = "acme-ecommerce-security-logs"
+  name = "cataziza-ecommerce-security-logs"
 
   destination = "storage.googleapis.com/${google_storage_bucket.security_logs.name}"
 
@@ -256,7 +256,7 @@ resource "google_logging_project_sink" "security_logs" {
 
 # Storage bucket for security logs
 resource "google_storage_bucket" "security_logs" {
-  name          = "acme-ecommerce-security-logs-${var.environment}-${random_id.bucket_suffix.hex}"
+  name          = "cataziza-ecommerce-security-logs-${var.environment}-${random_id.bucket_suffix.hex}"
   location      = "US"
   force_destroy = false
 
@@ -306,7 +306,7 @@ resource "google_monitoring_metric_descriptor" "security_events" {
 
 # Security Policy Violations Alert
 resource "google_monitoring_alert_policy" "security_policy_violations" {
-  display_name = "ACME E-commerce Platform Security Policy Violations"
+  display_name = "Cataziza E-commerce Platform Security Policy Violations"
   combiner     = "OR"
 
   documentation {

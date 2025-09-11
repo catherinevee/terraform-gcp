@@ -35,7 +35,7 @@ on:
 
 env:
   TF_VERSION: '1.9.0'
-  PROJECT_ID: 'acme-ecommerce-platform-dev'
+  PROJECT_ID: 'cataziza-ecommerce-platform-dev'
 
 jobs:
   # Stage 1: Validation
@@ -341,7 +341,7 @@ jobs:
         data "terraform_remote_state" "europe_west1" {
           backend = "gcs"
           config = {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west1"
           }
         }
@@ -349,7 +349,7 @@ jobs:
         data "terraform_remote_state" "europe_west3" {
           backend = "gcs"
           config = {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west3"
           }
         }
@@ -382,14 +382,14 @@ jobs:
         EOF
 
         cat > infrastructure/environments/dev/cross-region/terraform.tfvars << 'EOF'
-        project_id = "acme-ecommerce-platform-dev"
+        project_id = "cataziza-ecommerce-platform-dev"
         vpn_shared_secret = "cataziza-ecommerce-vpn-secret-2024"
         EOF
 
         cat > infrastructure/environments/dev/cross-region/backend.tf << 'EOF'
         terraform {
           backend "gcs" {
-            bucket = "acme-ecommerce-platform-dev-terraform-state"
+            bucket = "cataziza-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/cross-region"
           }
         }
@@ -449,11 +449,11 @@ jobs:
       run: |
         echo "🔍 Verifying global resources..."
         echo "VPC Networks:"
-        gcloud compute networks list --filter="name:acme-ecommerce-platform-vpc-dev" || echo "No VPC networks found"
+        gcloud compute networks list --filter="name:cataziza-ecommerce-platform-vpc-dev" || echo "No VPC networks found"
         echo "Load Balancers:"
-        gcloud compute forwarding-rules list --global --filter="name:acme-ecommerce-platform-lb" || echo "No global load balancers found"
+        gcloud compute forwarding-rules list --global --filter="name:cataziza-ecommerce-platform-lb" || echo "No global load balancers found"
         echo "Service Accounts:"
-        gcloud iam service-accounts list --filter="email:acme-ecommerce" || echo "No service accounts found"
+        gcloud iam service-accounts list --filter="email:cataziza-ecommerce" || echo "No service accounts found"
 
     - name: Verify Europe West1 Resources
       run: |
@@ -461,7 +461,7 @@ jobs:
         echo "Compute Instances:"
         gcloud compute instances list --filter="zone:europe-west1" || echo "No instances found in europe-west1"
         echo "Cloud Run Services:"
-        gcloud run services list --region=europe-west1 --filter="metadata.name:acme" || echo "No Cloud Run services found in europe-west1"
+        gcloud run services list --region=europe-west1 --filter="metadata.name:cataziza" || echo "No Cloud Run services found in europe-west1"
         echo "Cloud SQL Instances:"
         gcloud sql instances list --filter="region:europe-west1" || echo "No Cloud SQL instances found in europe-west1"
 
@@ -471,7 +471,7 @@ jobs:
         echo "Compute Instances:"
         gcloud compute instances list --filter="zone:europe-west3" || echo "No instances found in europe-west3"
         echo "Cloud Run Services:"
-        gcloud run services list --region=europe-west3 --filter="metadata.name:acme" || echo "No Cloud Run services found in europe-west3"
+        gcloud run services list --region=europe-west3 --filter="metadata.name:cataziza" || echo "No Cloud Run services found in europe-west3"
         echo "Cloud SQL Instances:"
         gcloud sql instances list --filter="region:europe-west3" || echo "No Cloud SQL instances found in europe-west3"
 
@@ -479,9 +479,9 @@ jobs:
       run: |
         echo "🔍 Verifying cross-region connectivity..."
         echo "VPC Peerings:"
-        gcloud compute networks peerings list --filter="name:acme-ecommerce-platform-dev" || echo "No VPC peerings found"
+        gcloud compute networks peerings list --filter="name:cataziza-ecommerce-platform-dev" || echo "No VPC peerings found"
         echo "VPN Tunnels:"
-        gcloud compute vpn-tunnels list --filter="name:acme-ecommerce-platform-dev" || echo "No VPN tunnels found"
+        gcloud compute vpn-tunnels list --filter="name:cataziza-ecommerce-platform-dev" || echo "No VPN tunnels found"
 
   # Stage 7: Notifications
   notify:

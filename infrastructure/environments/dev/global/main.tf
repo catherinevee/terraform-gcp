@@ -25,7 +25,7 @@ locals {
   secondary_region = var.secondary_region
 
   # Global resource naming
-  global_prefix = "acme-ecommerce-platform-${local.environment}"
+  global_prefix = "cataziza-ecommerce-platform-${local.environment}"
 }
 
 # Global VPC Network (shared across regions)
@@ -73,19 +73,19 @@ module "iam" {
 
   # Service accounts for global resources
   service_accounts = {
-    "acme-ecommerce-terraform-sa" = {
-      account_id   = "acme-ecommerce-terraform-sa"
-      display_name = "ACME E-commerce Terraform Service Account"
+    "cataziza-ecommerce-terraform-sa" = {
+      account_id   = "cataziza-ecommerce-terraform-sa"
+      display_name = "Cataziza E-commerce Terraform Service Account"
       description  = "Service account for Terraform operations"
     }
-    "acme-orders-service-sa" = {
-      account_id   = "acme-orders-service-sa"
-      display_name = "ACME Orders Service Account"
+    "cataziza-orders-service-sa" = {
+      account_id   = "cataziza-orders-service-sa"
+      display_name = "Cataziza Orders Service Account"
       description  = "Service account for orders service"
     }
-    "acme-customer-api-gke-sa" = {
-      account_id   = "acme-customer-api-gke-sa"
-      display_name = "ACME Customer API GKE Service Account"
+    "cataziza-customer-api-gke-sa" = {
+      account_id   = "cataziza-customer-api-gke-sa"
+      display_name = "Cataziza Customer API GKE Service Account"
       description  = "Service account for customer API in GKE"
     }
   }
@@ -123,15 +123,15 @@ module "iam" {
   service_account_roles = {
     "terraform-editor" = {
       role                = "roles/editor"
-      service_account_key = "acme-ecommerce-terraform-sa"
+      service_account_key = "cataziza-ecommerce-terraform-sa"
     }
     "app-storage-admin" = {
       role                = "roles/storage.admin"
-      service_account_key = "acme-orders-service-sa"
+      service_account_key = "cataziza-orders-service-sa"
     }
     "gke-cluster-admin" = {
       role                = "roles/container.clusterAdmin"
-      service_account_key = "acme-customer-api-gke-sa"
+      service_account_key = "cataziza-customer-api-gke-sa"
     }
   }
 
@@ -139,7 +139,7 @@ module "iam" {
   project_iam_bindings = {
     "terraform-sa-editor" = {
       role   = "roles/editor"
-      member = "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+      member = "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
     }
   }
 
@@ -166,14 +166,14 @@ module "kms" {
   key_ring_name = "${local.global_prefix}-keyring"
 
   crypto_keys = {
-    "acme-ecommerce-data-encryption-key" = {
-      name            = "acme-ecommerce-data-encryption-key"
+    "cataziza-ecommerce-data-encryption-key" = {
+      name            = "cataziza-ecommerce-data-encryption-key"
       purpose         = "ENCRYPT_DECRYPT"
       rotation_period = "${var.kms_rotation_period_days * 24 * 60 * 60}s"
       algorithm       = "GOOGLE_SYMMETRIC_ENCRYPTION"
     }
-    "acme-ecommerce-signing-key" = {
-      name      = "acme-ecommerce-signing-key"
+    "cataziza-ecommerce-signing-key" = {
+      name      = "cataziza-ecommerce-signing-key"
       purpose   = "ASYMMETRIC_SIGN"
       algorithm = "EC_SIGN_P256_SHA256"
     }
@@ -184,17 +184,17 @@ module "kms" {
     "encryption-key-encrypt-decrypt" = {
       role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
       members = [
-        "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com",
-        "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com",
+        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
-      crypto_key_key = "acme-ecommerce-data-encryption-key"
+      crypto_key_key = "cataziza-ecommerce-data-encryption-key"
     }
     "signing-key-signer" = {
       role = "roles/cloudkms.signer"
       members = [
-        "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
-      crypto_key_key = "acme-ecommerce-signing-key"
+      crypto_key_key = "cataziza-ecommerce-signing-key"
     }
   }
 }
@@ -249,21 +249,21 @@ module "secret_manager" {
       secret_key = "api-key"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
     "database-password-access" = {
       secret_key = "database-password"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
     "vpn-shared-secret-access" = {
       secret_key = "vpn-shared-secret"
       role       = "roles/secretmanager.secretAccessor"
       members = [
-        "serviceAccount:acme-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-ecommerce-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
   }
@@ -310,16 +310,16 @@ module "container_registry" {
       repository_key = "app-images"
       role           = "roles/artifactregistry.reader"
       members = [
-        "serviceAccount:acme-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
-        "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
+        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
     "base-images-access" = {
       repository_key = "base-images"
       role           = "roles/artifactregistry.reader"
       members = [
-        "serviceAccount:acme-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
-        "serviceAccount:acme-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+        "serviceAccount:cataziza-customer-api-gke-sa@${local.project_id}.iam.gserviceaccount.com",
+        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
     }
   }

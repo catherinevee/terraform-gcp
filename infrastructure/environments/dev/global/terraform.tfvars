@@ -1,6 +1,6 @@
 # Global Configuration for Multi-Region Deployment
 
-project_id       = "acme-ecommerce-platform-dev"
+project_id       = "cataziza-ecommerce-platform-dev"
 environment      = "dev"
 primary_region   = "europe-west1"
 secondary_region = "europe-west3"

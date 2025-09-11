@@ -70,7 +70,7 @@ This guide provides comprehensive documentation for achieving and maintaining se
    ```hcl
    # ✅ CORRECT: Using Secret Manager
    data "google_secret_manager_secret_version" "db_password" {
-     secret = "acme-orders-database-password"
+     secret = "cataziza-orders-database-password"
    }
    
    # ❌ WRONG: Hardcoded secrets

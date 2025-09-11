@@ -219,7 +219,7 @@ resource "null_resource" "overall_compliance_validation" {
 
 # Compliance Reporting
 resource "google_monitoring_alert_policy" "compliance_violations" {
-  display_name = "ACME E-commerce Platform Compliance Violations"
+  display_name = "Cataziza E-commerce Platform Compliance Violations"
   combiner     = "OR"
 
   documentation {
@@ -253,7 +253,7 @@ resource "google_monitoring_alert_policy" "compliance_violations" {
 # Compliance Dashboard
 resource "google_monitoring_dashboard" "compliance_dashboard" {
   dashboard_json = jsonencode({
-    displayName = "ACME E-commerce Platform Compliance Dashboard"
+    displayName = "Cataziza E-commerce Platform Compliance Dashboard"
     mosaicLayout = {
       tiles = [
         {

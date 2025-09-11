@@ -352,7 +352,7 @@ variable "bigquery_config" {
 ```hcl
 # infrastructure/environments/dev/terraform.tfvars
 
-project_id  = "acme-dev-project"
+project_id  = "cataziza-dev-project"
 region      = "us-central1"
 cost_center = "engineering"
 team        = "platform"
@@ -406,7 +406,7 @@ bigquery_config = {
 
 terraform {
   backend "gcs" {
-    bucket = "acme-terraform-state-dev"
+    bucket = "cataziza-terraform-state-dev"
     prefix = "terraform/state"
   }
 }
