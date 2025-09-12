@@ -166,7 +166,7 @@ module "compute" {
       min_replicas               = 2
       cooldown_period            = var.autoscaler_cooldown_period
       cpu_utilization = {
-        target = var.autoscaler_cpu_target
+        target = var.autoscaler_cpu_target / 100
       }
     }
   }
