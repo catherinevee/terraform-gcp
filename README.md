@@ -2,7 +2,7 @@
 
 ![Development Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/dev-pipeline.yml/badge.svg)
 ![Trivy Security Scan](https://github.com/catherinevee/terraform-gcp/actions/workflows/trivy-scan.yml/badge.svg)
-![Security Status](https://img.shields.io/badge/Security%20Unknown-lightgrey)
+![Security Status](https://img.shields.io/badge/Security%20Good-green)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
@@ -17,7 +17,21 @@ The infrastructure follows a multi-region, multi-tier architecture designed for 
 - **Cross-Region**: VPN tunnels and VPC peering for connectivity
 - **Security Tier**: IAM policies, KMS encryption, Secret Manager integration
 
-*Architecture diagrams can be generated using the Terraform infrastructure code.*
+## Architecture Diagrams
+
+This project includes comprehensive architecture diagrams that visualize the complete infrastructure:
+
+### **Complete Architecture Overview**
+- **[GCP Architecture Diagram](gcp-architecture-diagram.md)**: High-level multi-region architecture with all GCP services
+- **[Technical Architecture](gcp-technical-architecture.md)**: Detailed Terraform resource mapping and service relationships
+- **[CI/CD Pipeline](gcp-cicd-pipeline.md)**: Complete deployment pipeline and security validation flow
+
+These diagrams show:
+- **Multi-region deployment** across Europe West 1 and Europe West 3
+- **Complete GCP service ecosystem** including VPC, Compute, Storage, Database, KMS, Secret Manager
+- **Security architecture** with IAM, encryption, and compliance validation
+- **CI/CD pipeline flow** with GitHub Actions workflows and security scanning
+- **Monitoring and alerting** infrastructure for observability
 
 ## Overview
 
@@ -87,51 +101,51 @@ This infrastructure supports deployment across multiple GCP regions for high ava
 
 ```
 terraform-gcp/
-├── infrastructure/
-│   └── environments/
-│       ├── dev/                    # Development environment
-│       │   ├── global/            # Global resources (VPC, IAM, etc.)
-│       │   ├── europe-west1/      # Primary region resources
-│       │   └── europe-west3/      # Secondary region resources
-│       ├── staging/               # Staging environment (future)
-│       └── prod/                  # Production environment (future)
-├── infrastructure/modules/         # Reusable Terraform modules
-│   ├── compute/                   # Compute resources
-│   │   ├── cloud-run/            # Cloud Run services
-│   │   ├── gke/                  # Google Kubernetes Engine
-│   │   ├── instances/            # Compute Engine instances
-│   │   └── load-balancer/        # Load balancer configuration
-│   ├── database/                 # Database services
-│   │   ├── cloud-sql/           # Cloud SQL instances
-│   │   └── redis/               # Memorystore Redis
-│   ├── monitoring/              # Observability
-│   │   ├── cloud-monitoring/    # Monitoring dashboards
-│   │   └── cloud-logging/       # Log management
-│   ├── networking/              # Network infrastructure
-│   │   ├── vpc/                # Virtual Private Cloud
-│   │   ├── subnets/            # Subnet configuration
-│   │   ├── firewall/           # Firewall rules
-│   │   ├── cross-region/       # Cross-region networking
-│   │   ├── dns/                # DNS configuration
-│   │   └── load-balancer/      # Load balancer networking
-│   ├── security/               # Security services
-│   │   ├── iam/               # Identity and Access Management
-│   │   ├── kms/               # Key Management Service
-│   │   ├── secret-manager/    # Secret storage
-│   │   └── vpc-service-controls/ # VPC Service Controls
-│   └── storage/               # Storage services
-│       ├── buckets/          # Cloud Storage buckets
-│       ├── cloud-storage/    # Cloud Storage configuration
-│       └── container-registry/ # Artifact Registry
-├── .github/workflows/         # CI/CD pipelines
-│   ├── dev-pipeline.yml      # Development deployment pipeline
-│   └── trivy-scan.yml        # Security scanning pipeline
-├── scripts/                  # Automation scripts
-│   ├── automation/          # Deployment automation
-│   ├── integration/         # Integration testing
-│   ├── phase-testing/       # Phased deployment testing
-│   └── utilities/           # Utility scripts
-└── docs/                    # Documentation
+ infrastructure/
+    environments/
+        dev/                    # Development environment
+           global/            # Global resources (VPC, IAM, etc.)
+           europe-west1/      # Primary region resources
+           europe-west3/      # Secondary region resources
+        staging/               # Staging environment (future)
+        prod/                  # Production environment (future)
+ infrastructure/modules/         # Reusable Terraform modules
+    compute/                   # Compute resources
+       cloud-run/            # Cloud Run services
+       gke/                  # Google Kubernetes Engine
+       instances/            # Compute Engine instances
+       load-balancer/        # Load balancer configuration
+    database/                 # Database services
+       cloud-sql/           # Cloud SQL instances
+       redis/               # Memorystore Redis
+    monitoring/              # Observability
+       cloud-monitoring/    # Monitoring dashboards
+       cloud-logging/       # Log management
+    networking/              # Network infrastructure
+       vpc/                # Virtual Private Cloud
+       subnets/            # Subnet configuration
+       firewall/           # Firewall rules
+       cross-region/       # Cross-region networking
+       dns/                # DNS configuration
+       load-balancer/      # Load balancer networking
+    security/               # Security services
+       iam/               # Identity and Access Management
+       kms/               # Key Management Service
+       secret-manager/    # Secret storage
+       vpc-service-controls/ # VPC Service Controls
+    storage/               # Storage services
+        buckets/          # Cloud Storage buckets
+        cloud-storage/    # Cloud Storage configuration
+        container-registry/ # Artifact Registry
+ .github/workflows/         # CI/CD pipelines
+    dev-pipeline.yml      # Development deployment pipeline
+    trivy-scan.yml        # Security scanning pipeline
+ scripts/                  # Automation scripts
+    automation/          # Deployment automation
+    integration/         # Integration testing
+    phase-testing/       # Phased deployment testing
+    utilities/           # Utility scripts
+ docs/                    # Documentation
 ```
 
 ## Prerequisites
@@ -246,7 +260,7 @@ environment = "dev"
 
 The project includes two active CI/CD workflows:
 
-#### **1. Development Pipeline** ✅ **Active & Working**
+#### **1. Development Pipeline**  **Active & Working**
 - **File**: `dev-pipeline.yml`
 - **Status**: Fully functional and actively running
 - **Features**:
@@ -256,7 +270,7 @@ The project includes two active CI/CD workflows:
   - Resource verification
   - Automated workflow dispatch
 
-#### **2. Trivy Security Scan** ✅ **Active & Working**
+#### **2. Trivy Security Scan**  **Active & Working**
 - **File**: `trivy-scan.yml`
 - **Status**: Fully functional with passing security scans
 - **Features**:
@@ -271,8 +285,8 @@ The project includes two active CI/CD workflows:
 
 | Pipeline | Status | Description |
 |----------|--------|-------------|
-| Development Pipeline | ✅ Working | Terraform validation and deployment |
-| Trivy Security Scan | ✅ Working | Comprehensive security scanning |
+| Development Pipeline |  Working | Terraform validation and deployment |
+| Trivy Security Scan |  Working | Comprehensive security scanning |
 
 ### Manual Deployment
 
@@ -289,7 +303,7 @@ gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
 # Plan all regions
 gh workflow run dev-pipeline.yml -f operation=plan -f region=all
 
-# Destroy all regions (⚠️ REMOVES ALL RESOURCES)
+# Destroy all regions ( REMOVES ALL RESOURCES)
 gh workflow run dev-pipeline.yml -f operation=destroy -f region=all
 
 # Run security scan manually
@@ -333,14 +347,14 @@ gh workflow run dev-pipeline.yml -f operation=plan -f region=europe-west1
 # Deploy infrastructure (creates/updates resources)
 gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
 
-# Destroy infrastructure (⚠️ REMOVES ALL RESOURCES)
+# Destroy infrastructure ( REMOVES ALL RESOURCES)
 gh workflow run dev-pipeline.yml -f operation=destroy -f region=europe-west1
 
 # Run security scan
 gh workflow run trivy-scan.yml
 ```
 
-### ⚠️ Destroy Operation Warning
+###  Destroy Operation Warning
 
 The `destroy` operation will **permanently delete ALL infrastructure resources** in the development environment, including:
 
@@ -402,18 +416,18 @@ To use the deployment pipelines, you need:
 
 This repository includes comprehensive security scanning with **Trivy**:
 
-- **✅ Vulnerability Scanning**: Scans for CRITICAL and HIGH severity vulnerabilities
-- **✅ Secret Detection**: Identifies exposed API keys, passwords, and credentials
-- **✅ Infrastructure as Code Scanning**: Validates Terraform configurations for security best practices
-- **✅ GitHub Security Integration**: Results automatically uploaded to GitHub Security tab
-- **✅ Daily Automated Scans**: Continuous security monitoring
-- **✅ PR Security Reviews**: Automatic security comments on pull requests
+- ** Vulnerability Scanning**: Scans for CRITICAL and HIGH severity vulnerabilities
+- ** Secret Detection**: Identifies exposed API keys, passwords, and credentials
+- ** Infrastructure as Code Scanning**: Validates Terraform configurations for security best practices
+- ** GitHub Security Integration**: Results automatically uploaded to GitHub Security tab
+- ** Daily Automated Scans**: Continuous security monitoring
+- ** PR Security Reviews**: Automatic security comments on pull requests
 
 ### Current Security Status
 
-- **Critical Vulnerabilities**: 0 found ✅
-- **Exposed Secrets**: 0 found ✅
-- **Security Badge**: Passing ✅
+- **Critical Vulnerabilities**: 0 found 
+- **Exposed Secrets**: 0 found 
+- **Security Badge**: Passing 
 - **IaC Misconfigurations**: 7 minor warnings (non-critical)
 
 The security scanning runs automatically on every push and pull request, ensuring continuous security monitoring of your infrastructure code.
@@ -422,31 +436,31 @@ The security scanning runs automatically on every push and pull request, ensurin
 
 This version includes significant security enhancements:
 
-#### 🔐 **Secret Management**
+#### **Secret Management**
 - **No Hardcoded Secrets**: All passwords, API keys, and sensitive data moved to Secret Manager
 - **Secure References**: All secrets accessed via `data.google_secret_manager_secret_version`
 - **Automatic Rotation**: Secrets can be rotated without code changes
 - **Access Control**: Fine-grained IAM permissions for secret access
 
-#### 🛡️ **Input Validation**
+#### **Input Validation**
 - **Comprehensive Validation**: All variables include validation rules with meaningful error messages
 - **Type Safety**: Strict type checking for all configuration values
 - **Range Validation**: Numeric values validated against appropriate ranges
 - **Format Validation**: String values validated against expected patterns
 
-#### 🔧 **Configuration Management**
+#### **Configuration Management**
 - **No Magic Numbers**: All hardcoded values replaced with configurable variables
 - **Environment-Specific**: Different configurations for dev, staging, and production
 - **Documentation**: All variables documented with descriptions and examples
 - **Defaults**: Sensible defaults with validation rules
 
-#### 🔍 **Security Validation**
+#### **Security Validation**
 - **Automated Scanning**: Pre-commit hooks and CI/CD integration
 - **Multi-Platform**: Validation scripts for both Bash and PowerShell
 - **Comprehensive Checks**: Scans for hardcoded secrets, placeholders, and security issues
 - **False Positive Reduction**: Intelligent filtering to reduce noise
 
-#### 📚 **Documentation**
+#### **Documentation**
 - **Security Guide**: Comprehensive `SECURITY.md` with best practices
 - **Deployment Checklist**: Step-by-step `DEPLOYMENT-CHECKLIST.md`
 - **Secret Management**: Clear instructions for secret creation and rotation
@@ -551,4 +565,4 @@ For issues and questions:
 **Last Updated**: September 2025  
 **Version**: 1.1.0  
 **Maintainer**: Platform Engineering Team  
-**Security Status**: ✅ Passing (0 critical vulnerabilities, 0 exposed secrets)
+**Security Status**:  Passing (0 critical vulnerabilities, 0 exposed secrets)
