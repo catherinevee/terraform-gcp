@@ -133,7 +133,7 @@ module "compute" {
       name                = "cataziza-ecommerce-web-servers"
       description         = "Cataziza E-commerce Web Server Instance Group"
       base_instance_name  = "cataziza-ecommerce-web-server"
-      zone                = "${local.region}-a"
+      zone                = "${local.region}-b"
       template_key        = "web-template"
       target_size         = var.instance_group_target_size
       enable_auto_healing = true
@@ -165,7 +165,7 @@ module "compute" {
   autoscalers = {
     "web-autoscaler" = {
       name                       = "cataziza-ecommerce-web-autoscaler"
-      zone                       = "${local.region}-a"
+      zone                       = "${local.region}-b"
       instance_group_manager_key = "web-igm"
       max_replicas               = 5
       min_replicas               = 2
