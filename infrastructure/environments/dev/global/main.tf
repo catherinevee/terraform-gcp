@@ -90,50 +90,50 @@ module "iam" {
     }
   }
 
-  # Custom roles
-  custom_roles = {
-    "terraform-custom-role-v2" = {
-      role_id     = "terraform_custom_role_v2"
-      title       = "Terraform Custom Role V2"
-      description = "Custom role for Terraform operations V2"
-      permissions = [
-        "compute.instances.create",
-        "compute.instances.delete",
-        "compute.instances.get",
-        "compute.instances.list",
-        "compute.instances.setMetadata",
-        "compute.instances.setTags",
-        "compute.instances.start",
-        "compute.instances.stop",
-        "compute.instances.update",
-        "compute.instances.use",
-        "compute.instances.attachDisk",
-        "compute.instances.detachDisk",
-        "compute.instances.reset",
-        "compute.instances.setServiceAccount",
-        "compute.instances.setShieldedInstanceIntegrityPolicy",
-        "compute.instances.setShieldedVmIntegrityPolicy",
-        "compute.instances.setShieldedInstanceIntegrityPolicy",
-        "compute.instances.setShieldedVmIntegrityPolicy",
-        "cloudkms.cryptoKeys.create",
-        "cloudkms.cryptoKeys.delete",
-        "cloudkms.cryptoKeys.get",
-        "cloudkms.cryptoKeys.list",
-        "cloudkms.cryptoKeys.update",
-        "cloudkms.cryptoKeyVersions.create",
-        "cloudkms.cryptoKeyVersions.destroy",
-        "cloudkms.cryptoKeyVersions.get",
-        "cloudkms.cryptoKeyVersions.list",
-        "cloudkms.cryptoKeyVersions.update",
-        "cloudkms.keyRings.create",
-        "cloudkms.keyRings.delete",
-        "cloudkms.keyRings.get",
-        "cloudkms.keyRings.list",
-        "cloudkms.locations.get",
-        "cloudkms.locations.list"
-      ]
-    }
-  }
+  # Custom roles - temporarily disabled due to existing resource conflicts
+  # custom_roles = {
+  #   "terraform-custom-role-v2" = {
+  #     role_id     = "terraform_custom_role_v2"
+  #     title       = "Terraform Custom Role V2"
+  #     description = "Custom role for Terraform operations V2"
+  #     permissions = [
+  #       "compute.instances.create",
+  #       "compute.instances.delete",
+  #       "compute.instances.get",
+  #       "compute.instances.list",
+  #       "compute.instances.setMetadata",
+  #       "compute.instances.setTags",
+  #       "compute.instances.start",
+  #       "compute.instances.stop",
+  #       "compute.instances.update",
+  #       "compute.instances.use",
+  #       "compute.instances.attachDisk",
+  #       "compute.instances.detachDisk",
+  #       "compute.instances.reset",
+  #       "compute.instances.setServiceAccount",
+  #       "compute.instances.setShieldedInstanceIntegrityPolicy",
+  #       "compute.instances.setShieldedVmIntegrityPolicy",
+  #       "compute.instances.setShieldedInstanceIntegrityPolicy",
+  #       "compute.instances.setShieldedVmIntegrityPolicy",
+  #       "cloudkms.cryptoKeys.create",
+  #       "cloudkms.cryptoKeys.delete",
+  #       "cloudkms.cryptoKeys.get",
+  #       "cloudkms.cryptoKeys.list",
+  #       "cloudkms.cryptoKeys.update",
+  #       "cloudkms.cryptoKeyVersions.create",
+  #       "cloudkms.cryptoKeyVersions.destroy",
+  #       "cloudkms.cryptoKeyVersions.get",
+  #       "cloudkms.cryptoKeyVersions.list",
+  #       "cloudkms.cryptoKeyVersions.update",
+  #       "cloudkms.keyRings.create",
+  #       "cloudkms.keyRings.delete",
+  #       "cloudkms.keyRings.get",
+  #       "cloudkms.keyRings.list",
+  #       "cloudkms.locations.get",
+  #       "cloudkms.locations.list"
+  #     ]
+  #   }
+  # }
 
   # Service account roles
   service_account_roles = {
@@ -159,17 +159,17 @@ module "iam" {
     }
   }
 
-  # Workload Identity Pool for GitHub Actions
-  enable_workload_identity       = true
-  workload_identity_pool_id      = "github-actions"
-  workload_identity_display_name = "GitHub Actions WIP"
-  workload_identity_description  = "Workload Identity Pool for GitHub Actions CI/CD"
+  # Workload Identity Pool for GitHub Actions - temporarily disabled due to existing resource conflicts
+  # enable_workload_identity       = true
+  # workload_identity_pool_id      = "github-actions"
+  # workload_identity_display_name = "GitHub Actions WIP"
+  # workload_identity_description  = "Workload Identity Pool for GitHub Actions CI/CD"
 
-  workload_identity_provider_id           = "github-actions-provider"
-  workload_identity_provider_display_name = "GitHub Actions Provider"
-  workload_identity_provider_description  = "Workload Identity Provider for GitHub Actions"
+  # workload_identity_provider_id           = "github-actions-provider"
+  # workload_identity_provider_display_name = "GitHub Actions Provider"
+  # workload_identity_provider_description  = "Workload Identity Provider for GitHub Actions"
 
-  workload_identity_issuer_uri = "https://token.actions.githubusercontent.com"
+  # workload_identity_issuer_uri = "https://token.actions.githubusercontent.com"
 }
 
 # Global KMS Configuration
@@ -222,16 +222,16 @@ module "secret_manager" {
   project_id = local.project_id
 
   secrets = {
-    "api-key" = {
-      secret_id = "api-key"
-      labels = {
-        environment = local.environment
-        purpose     = "api-key"
-        managed_by  = "terraform"
-      }
-      replicas         = []
-      replication_type = "AUTOMATIC"
-    }
+    # "api-key" = {
+    #   secret_id = "api-key"
+    #   labels = {
+    #     environment = local.environment
+    #     purpose     = "api-key"
+    #     managed_by  = "terraform"
+    #   }
+    #   replicas         = []
+    #   replication_type = "AUTOMATIC"
+    # }
     "database-password" = {
       secret_id = "cataziza-orders-database-password"
       labels = {
@@ -261,13 +261,13 @@ module "secret_manager" {
   # gcloud secrets versions add cataziza-vpn-shared-secret --data-file=vpn-secret.txt
 
   secret_iam_bindings = {
-    "api-key-access" = {
-      secret_key = "api-key"
-      role       = "roles/secretmanager.secretAccessor"
-      members = [
-        "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
-      ]
-    }
+    # "api-key-access" = {
+    #   secret_key = "api-key"
+    #   role       = "roles/secretmanager.secretAccessor"
+    #   members = [
+    #     "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
+    #   ]
+    # }
     "database-password-access" = {
       secret_key = "database-password"
       role       = "roles/secretmanager.secretAccessor"
