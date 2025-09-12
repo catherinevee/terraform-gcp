@@ -104,7 +104,7 @@ module "compute" {
       source_image           = "projects/debian-cloud/global/images/family/debian-11"
       disk_size_gb           = var.default_disk_size_gb
       disk_type              = "pd-standard"
-      subnetwork             = module.subnets.subnets[0].subnet_name
+      subnetwork             = module.subnets.subnets["cataziza-ecommerce-web-tier-${local.environment}"].name
       enable_external_ip     = true
       service_account_email  = local.service_accounts["cataziza-orders-service-sa"]
       service_account_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
