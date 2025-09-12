@@ -6,8 +6,6 @@ resource "google_compute_network_peering" "primary_to_secondary" {
   name         = "${var.project_id}-${var.primary_region}-to-${var.secondary_region}"
   network      = var.primary_network_self_link
   peer_network = var.secondary_network_self_link
-
-  depends_on = [google_compute_network_peering.secondary_to_primary]
 }
 
 resource "google_compute_network_peering" "secondary_to_primary" {
