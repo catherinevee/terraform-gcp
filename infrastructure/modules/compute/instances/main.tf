@@ -64,7 +64,7 @@ resource "google_compute_instance_group_manager" "instance_group_manager" {
   dynamic "auto_healing_policies" {
     for_each = each.value.enable_auto_healing ? [1] : []
     content {
-      health_check      = google_compute_health_check.health_check[each.value.health_check_key].id
+      health_check      = length(var.health_checks) == 0 ? data.google_compute_health_check.existing_health_check[0].id : google_compute_health_check.health_check[each.value.health_check_key].id
       initial_delay_sec = each.value.initial_delay_sec
     }
   }
@@ -80,7 +80,12 @@ resource "google_compute_instance_group_manager" "instance_group_manager" {
   }
 }
 
-# Health Check
+# Health Check - Use data source if health_checks is empty, otherwise create resource
+data "google_compute_health_check" "existing_health_check" {
+  count = length(var.health_checks) == 0 ? 1 : 0
+  name  = "cataziza-ecommerce-web-health-check"
+}
+
 resource "google_compute_health_check" "health_check" {
   for_each = var.health_checks
 
