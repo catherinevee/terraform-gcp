@@ -364,4 +364,5 @@ output "storage_buckets" {
 output "database_instances" {
   description = "Database instances"
   value       = module.database.instances
+  sensitive   = true
 }
