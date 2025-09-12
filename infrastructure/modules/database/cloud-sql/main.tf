@@ -37,7 +37,7 @@ resource "google_sql_database_instance" "instance" {
       ipv4_enabled                                  = each.value.ipv4_enabled
       private_network                               = each.value.private_network
       enable_private_path_for_google_cloud_services = each.value.enable_private_path_for_google_cloud_services
-      require_ssl                                   = each.value.require_ssl
+      ssl_mode                                      = each.value.require_ssl ? "REQUIRED" : "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
 
       dynamic "authorized_networks" {
         for_each = each.value.authorized_networks
