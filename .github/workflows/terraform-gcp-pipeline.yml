@@ -498,7 +498,15 @@ jobs:
           project = var.project_id
         }
 
-        # Data sources to reference regional resources
+        # Data sources to reference global and regional resources
+        data "terraform_remote_state" "global" {
+          backend = "gcs"
+          config = {
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
+            prefix = "terraform/state/global"
+          }
+        }
+
         data "terraform_remote_state" "europe_west1" {
           backend = "gcs"
           config = {
@@ -522,8 +530,8 @@ jobs:
           project_id = var.project_id
           primary_region = "europe-west1"
           secondary_region = "europe-west3"
-          primary_network_self_link = data.terraform_remote_state.europe_west1.outputs.vpc_network_self_link
-          secondary_network_self_link = data.terraform_remote_state.europe_west3.outputs.vpc_network_self_link
+          primary_network_self_link = data.terraform_remote_state.global.outputs.vpc_network_self_link
+          secondary_network_self_link = data.terraform_remote_state.global.outputs.vpc_network_self_link
           vpn_shared_secret = var.vpn_shared_secret
         }
         EOF
