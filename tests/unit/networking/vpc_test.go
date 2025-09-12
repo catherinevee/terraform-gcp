@@ -3,7 +3,7 @@ package networking
 import (
 	"testing"
 
-	"../../testhelpers"
+	"github.com/catherinevee/terraform-gcp/tests/testhelpers"
 	"github.com/gruntwork-io/terratest/modules/gcp"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"

@@ -70,7 +70,7 @@ func TestCrossRegionConnectivity(t *testing.T, config *IntegrationTestConfig) {
 	t.Log("Testing cross-region connectivity")
 	
 	// Test VPC peering
-	testVPC Peering(t, config)
+	testVPCPeering(t, config)
 	
 	// Test VPN tunnels
 	testVPNTunnels(t, config)
@@ -79,7 +79,7 @@ func TestCrossRegionConnectivity(t *testing.T, config *IntegrationTestConfig) {
 	testDataReplication(t, config)
 }
 
-func testVPC Peering(t *testing.T, config *IntegrationTestConfig) {
+func testVPCPeering(t *testing.T, config *IntegrationTestConfig) {
 	t.Log("Testing VPC peering between regions")
 	
 	// Get VPCs from both regions
