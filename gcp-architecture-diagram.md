@@ -7,8 +7,11 @@ graph TB
     %% External Internet
     Internet[("Internet")]
     
+    %% Status Monitoring
+    STATUS[("🚀 Dynamic Status Badge<br/>LIVE/UNALIVE")]
+    
     %% Global Load Balancer
-    LB[("Global Load Balancer<br/>cataziza-lb")]
+    LB[("Global Load Balancer<br/>cataziza-platform-lb")]
     
     %% Europe West 1 Region
     subgraph EU_WEST1["Europe West 1 (Primary)"]
@@ -16,14 +19,14 @@ graph TB
         subgraph VPC1["VPC: cataziza-platform-dev-vpc"]
             %% Web Tier
             subgraph WEB_TIER1["Web Tier"]
-                WEB1["Web Server 1<br/>cataziza-web-1"]
-                WEB2["Web Server 2<br/>cataziza-web-2"]
+                WEB1["Web Server 1<br/>cataziza-web-server-1"]
+                WEB2["Web Server 2<br/>cataziza-web-server-2"]
             end
             
             %% App Tier
             subgraph APP_TIER1["Application Tier"]
-                APP1["App Server 1<br/>cataziza-app-1"]
-                APP2["App Server 2<br/>cataziza-app-2"]
+                APP1["App Server 1<br/>cataziza-app-server-1"]
+                APP2["App Server 2<br/>cataziza-app-server-2"]
             end
             
             %% Database Tier
@@ -35,6 +38,7 @@ graph TB
             subgraph STORAGE1["Storage"]
                 BUCKET1["App Data Bucket<br/>cataziza-customer-data-dev"]
                 LOGS1["Logs Bucket<br/>cataziza-application-logs-dev"]
+                SECURITY_LOGS1["Security Logs<br/>cataziza-security-logs-dev"]
             end
         end
         
@@ -50,14 +54,14 @@ graph TB
         subgraph VPC3["VPC: cataziza-platform-dev-vpc"]
             %% Web Tier
             subgraph WEB_TIER3["Web Tier"]
-                WEB3["Web Server 3<br/>cataziza-web-3"]
-                WEB4["Web Server 4<br/>cataziza-web-4"]
+                WEB3["Web Server 3<br/>cataziza-web-server-3"]
+                WEB4["Web Server 4<br/>cataziza-web-server-4"]
             end
             
             %% App Tier
             subgraph APP_TIER3["Application Tier"]
-                APP3["App Server 3<br/>cataziza-app-3"]
-                APP4["App Server 4<br/>cataziza-app-4"]
+                APP3["App Server 3<br/>cataziza-app-server-3"]
+                APP4["App Server 4<br/>cataziza-app-server-4"]
             end
             
             %% Database Tier
@@ -69,6 +73,7 @@ graph TB
             subgraph STORAGE3["Storage"]
                 BUCKET3["App Data Bucket<br/>cataziza-customer-data-dev"]
                 LOGS3["Logs Bucket<br/>cataziza-application-logs-dev"]
+                SECURITY_LOGS3["Security Logs<br/>cataziza-security-logs-dev"]
             end
         end
         
@@ -102,6 +107,12 @@ graph TB
         WORKLOAD_IDENTITY["Workload Identity Pool<br/>GitHub Actions WIP"]
         CUSTOM_ROLE["Custom Role<br/>terraform-custom-role-v2"]
         SERVICE_ACCOUNTS["Service Accounts"]
+        
+        %% Status Monitoring
+        STATUS_MONITOR["Status Monitoring System"]
+        STATUS_CHECKER["Status Checker<br/>GitHub Actions"]
+        STATUS_BADGE["Dynamic Badge<br/>LIVE/UNALIVE"]
+        STATUS_DASHBOARD["Status Dashboard<br/>GitHub Pages"]
         
         %% Monitoring
         MONITORING["Cloud Monitoring"]

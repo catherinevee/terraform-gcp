@@ -1,4 +1,4 @@
-# Cataziza E-commerce Platform - Technical Architecture
+# Cataziza Platform - Technical Architecture
 
 ## GCP Services Architecture
 
@@ -150,6 +150,30 @@ graph TB
             WEB_HEALTH3["Web Health Check<br/>google_compute_health_check"]
             APP_HEALTH3["App Health Check<br/>google_compute_health_check"]
             DB_HEALTH3["DB Health Check<br/>google_compute_health_check"]
+        end
+    end
+    
+    %% Status Monitoring Layer
+    subgraph STATUS_MONITOR["Status Monitoring System"]
+        %% Status Checking
+        subgraph STATUS_CHECKING["Status Checking"]
+            STATUS_SCRIPT["Status Checker<br/>scripts/status/check-deployment-status.sh"]
+            STATUS_PS1["PowerShell Checker<br/>scripts/status/check-deployment-status.ps1"]
+            BADGE_GENERATOR["Badge Generator<br/>scripts/status/generate-badges.js"]
+        end
+        
+        %% Status Display
+        subgraph STATUS_DISPLAY["Status Display"]
+            DYNAMIC_BADGE["Dynamic Badge<br/>docs/status/badge.svg"]
+            STATUS_DASHBOARD["Status Dashboard<br/>docs/status/index.html"]
+            STATIC_BADGES["Static Badges<br/>live.svg, unalive.svg, partial.svg"]
+        end
+        
+        %% Status Automation
+        subgraph STATUS_AUTOMATION["Status Automation"]
+            STATUS_WORKFLOW["GitHub Actions Workflow<br/>update-deployment-status.yml"]
+            STATUS_SCHEDULE["Cron Schedule<br/>Every 15 minutes"]
+            STATUS_TRIGGER["Manual Trigger<br/>workflow_dispatch"]
         end
     end
     

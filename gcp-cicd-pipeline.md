@@ -1,4 +1,4 @@
-# Cataziza E-commerce Platform - CI/CD Pipeline Architecture
+# Cataziza Platform - CI/CD Pipeline Architecture
 
 ## Complete CI/CD Pipeline Flow
 
@@ -57,6 +57,16 @@ graph TB
             BADGE_SETUP["Setup Node.js"]
             BADGE_GENERATE["Generate Badge"]
             BADGE_COMMIT["Commit Badge"]
+        end
+        
+        %% Status Monitoring
+        subgraph STATUS_MONITORING["Status Monitoring Pipeline"]
+            STATUS_TRIGGER["Trigger: schedule (15min), manual"]
+            STATUS_SETUP["Setup GCP Authentication"]
+            STATUS_CHECK["Check Deployment Status"]
+            STATUS_BADGE_GEN["Generate Status Badges"]
+            STATUS_UPDATE["Update Status Dashboard"]
+            STATUS_COMMIT["Commit Status Changes"]
         end
     end
     

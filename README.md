@@ -30,9 +30,17 @@ This project includes comprehensive architecture diagrams that visualize the com
 These diagrams show:
 - **Multi-region deployment** across Europe West 1 and Europe West 3
 - **Complete GCP service ecosystem** including VPC, Compute, Storage, Database, KMS, Secret Manager
+- **Dynamic status monitoring system** with LIVE/UNALIVE badge tracking
 - **Security architecture** with IAM, encryption, and compliance validation
 - **CI/CD pipeline flow** with GitHub Actions workflows and security scanning
 - **Monitoring and alerting** infrastructure for observability
+- **Status monitoring pipeline** with automated badge updates every 15 minutes
+
+### **Recent Updates**
+- **Updated naming convention**: All resources now use "cataziza-platform" instead of "cataziza-ecommerce"
+- **Enhanced status monitoring**: Added comprehensive status monitoring system with dynamic badges
+- **Improved diagrams**: Updated all architecture diagrams to reflect current infrastructure state
+- **Status dashboard**: Added GitHub Pages-based status dashboard for real-time monitoring
 
 ## Overview
 
