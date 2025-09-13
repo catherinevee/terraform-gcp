@@ -4,11 +4,11 @@ const path = require('path');
 function generateBadge(status, percentage = null) {
     const configs = {
         live: { color: '#28a745', text: 'LIVE' },
-        unalive: { color: '#dc3545', text: 'UNALIVE' },
+        notdeployed: { color: '#dc3545', text: 'NOTDEPLOYED' },
         partial: { color: '#ffc107', text: 'PARTIAL' }
     };
     
-    const config = configs[status] || configs.unalive;
+    const config = configs[status] || configs.notdeployed;
     const textWidth = config.text.length * 6 + 10;
     const labelWidth = 9 * 6 + 10; // "Deployment"
     const totalWidth = labelWidth + textWidth;
@@ -42,14 +42,14 @@ if (!fs.existsSync(outputDir)) {
 }
 
 // Read current status from deployment-status.json if it exists
-let currentStatus = 'UNALIVE';
+let currentStatus = 'NOTDEPLOYED';
 let currentPercentage = 0;
 
 const statusFile = path.join(__dirname, 'deployment-status.json');
 if (fs.existsSync(statusFile)) {
     try {
         const statusData = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
-        currentStatus = statusData.status || 'UNALIVE';
+        currentStatus = statusData.status || 'NOTDEPLOYED';
         currentPercentage = statusData.percentage || 0;
         console.log(`📊 Current status: ${currentStatus} (${currentPercentage}%)`);
     } catch (error) {
@@ -58,7 +58,7 @@ if (fs.existsSync(statusFile)) {
 }
 
 // Generate static badges for all statuses
-['live', 'unalive', 'partial'].forEach(status => {
+['live', 'notdeployed', 'partial'].forEach(status => {
     const svg = generateBadge(status);
     const filePath = path.join(outputDir, status + '.svg');
     fs.writeFileSync(filePath, svg);

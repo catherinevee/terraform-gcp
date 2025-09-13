@@ -62,7 +62,7 @@ This repository provides a complete infrastructure foundation for deploying and 
 
 ## 🚀 Dynamic Deployment Status
 
-This repository includes a **comprehensive status monitoring system** that automatically tracks and displays the deployment status of your Terraform infrastructure. The system provides real-time visibility into whether your infrastructure is "LIVE", "PARTIAL", or "UNALIVE" (destroyed).
+This repository includes a **comprehensive status monitoring system** that automatically tracks and displays the deployment status of your Terraform infrastructure. The system provides real-time visibility into whether your infrastructure is "LIVE", "PARTIAL", or "NOTDEPLOYED" (not deployed).
 
 ### Status Badge
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
@@ -70,7 +70,7 @@ This repository includes a **comprehensive status monitoring system** that autom
 ### Status Meanings
 - **🟢 LIVE**: 80%+ of critical resources are deployed and accessible
 - **🟡 PARTIAL**: 50-79% of critical resources are deployed (degraded state)
-- **🔴 UNALIVE**: Less than 50% of critical resources are deployed (destroyed/error state)
+- **🔴 NOTDEPLOYED**: Less than 50% of critical resources are deployed (not deployed/error state)
 
 ### Status Monitoring Components
 
@@ -102,7 +102,7 @@ The status is determined by checking these critical infrastructure components:
 - **Static Badges**: 
   - Live: `https://catherinevee.github.io/terraform-gcp/status/live.svg`
   - Partial: `https://catherinevee.github.io/terraform-gcp/status/partial.svg`
-  - Unalive: `https://catherinevee.github.io/terraform-gcp/status/unalive.svg`
+  - Not Deployed: `https://catherinevee.github.io/terraform-gcp/status/notdeployed.svg`
 
 ### Status Monitoring Workflow
 

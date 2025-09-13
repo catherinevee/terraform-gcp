@@ -65,7 +65,7 @@ if [ $PERCENTAGE -ge 80 ]; then
 elif [ $PERCENTAGE -ge 50 ]; then
     STATUS="PARTIAL"
 else
-    STATUS="UNALIVE"
+    STATUS="NOTDEPLOYED"
 fi
 
 echo ""
