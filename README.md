@@ -61,7 +61,7 @@ This repository provides a complete infrastructure foundation for deploying and 
 
 ## 🚀 Dynamic Deployment Status
 
-This repository includes a **dynamic status badge** that automatically shows whether the Terraform deployment is currently "LIVE" or "UNALIVE" (destroyed). The badge is updated every 15 minutes via GitHub Actions.
+This repository includes a **comprehensive status monitoring system** that automatically tracks and displays the deployment status of your Terraform infrastructure. The system provides real-time visibility into whether your infrastructure is "LIVE", "PARTIAL", or "UNALIVE" (destroyed).
 
 ### Status Badge
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
@@ -71,19 +71,58 @@ This repository includes a **dynamic status badge** that automatically shows whe
 - **🟡 PARTIAL**: 50-79% of critical resources are deployed (degraded state)
 - **🔴 UNALIVE**: Less than 50% of critical resources are deployed (destroyed/error state)
 
-### Status Monitoring
-The status is determined by checking critical infrastructure components:
-- VPC and subnets
-- Terraform state bucket
-- KMS keyring
-- Compute instances
-- Storage buckets
-- Cloud SQL instances
+### Status Monitoring Components
+
+#### **Automated Status Checking**
+- **Frequency**: Every 15 minutes via GitHub Actions
+- **Manual Trigger**: Available through GitHub Actions workflow dispatch
+- **Multi-Platform**: Supports both Bash and PowerShell scripts
+- **Real-time Updates**: Status changes are reflected within 15 minutes
+
+#### **Critical Infrastructure Checks**
+The status is determined by checking these critical infrastructure components:
+- **Networking**: VPC, subnets, firewall rules, load balancers
+- **Storage**: Terraform state bucket, application data buckets, logs buckets
+- **Security**: KMS keyring, encryption keys, service accounts
+- **Compute**: VM instances, instance groups, health checks
+- **Database**: Cloud SQL instances, Redis cache
+- **Monitoring**: Alert policies, logging configurations
+
+#### **Status Dashboard**
+- **URL**: `https://catherinevee.github.io/terraform-gcp/status/`
+- **Features**: Interactive dashboard with detailed status information
+- **Real-time**: Updates automatically with latest status
+- **Mobile-friendly**: Responsive design for all devices
 
 ### Badge URLs
 - **Dynamic Badge**: `https://catherinevee.github.io/terraform-gcp/status/badge.svg`
 - **Status Dashboard**: `https://catherinevee.github.io/terraform-gcp/status/`
 - **Status API**: `https://catherinevee.github.io/terraform-gcp/status/deployment-status.json`
+- **Static Badges**: 
+  - Live: `https://catherinevee.github.io/terraform-gcp/status/live.svg`
+  - Partial: `https://catherinevee.github.io/terraform-gcp/status/partial.svg`
+  - Unalive: `https://catherinevee.github.io/terraform-gcp/status/unalive.svg`
+
+### Status Monitoring Workflow
+
+The status monitoring system includes:
+
+1. **Status Checker Scripts** (`scripts/status/`):
+   - `check-deployment-status.sh` - Bash script for Linux/Mac
+   - `check-deployment-status.ps1` - PowerShell script for Windows
+   - `generate-badges.js` - Node.js script for badge generation
+
+2. **GitHub Actions Workflow** (`.github/workflows/update-deployment-status.yml`):
+   - Automated status checking every 15 minutes
+   - Manual trigger capability
+   - Badge generation and deployment
+   - Status dashboard updates
+
+3. **Status Dashboard** (`docs/status/`):
+   - Interactive HTML dashboard
+   - Real-time status display
+   - Historical status tracking
+   - Mobile-responsive design
 
 ## Architecture
 
@@ -136,51 +175,56 @@ This infrastructure supports deployment across multiple GCP regions for high ava
 
 ```
 terraform-gcp/
- infrastructure/
-    environments/
-        dev/                    # Development environment
-           global/            # Global resources (VPC, IAM, etc.)
-           europe-west1/      # Primary region resources
-           europe-west3/      # Secondary region resources
-        staging/               # Staging environment (future)
-        prod/                  # Production environment (future)
- infrastructure/modules/         # Reusable Terraform modules
-    compute/                   # Compute resources
-       cloud-run/            # Cloud Run services
-       gke/                  # Google Kubernetes Engine
-       instances/            # Compute Engine instances
-       load-balancer/        # Load balancer configuration
-    database/                 # Database services
-       cloud-sql/           # Cloud SQL instances
-       redis/               # Memorystore Redis
-    monitoring/              # Observability
-       cloud-monitoring/    # Monitoring dashboards
-       cloud-logging/       # Log management
-    networking/              # Network infrastructure
-       vpc/                # Virtual Private Cloud
-       subnets/            # Subnet configuration
-       firewall/           # Firewall rules
-       cross-region/       # Cross-region networking
-       dns/                # DNS configuration
-       load-balancer/      # Load balancer networking
-    security/               # Security services
-       iam/               # Identity and Access Management
-       kms/               # Key Management Service
-       secret-manager/    # Secret storage
-       vpc-service-controls/ # VPC Service Controls
-    storage/               # Storage services
-        buckets/          # Cloud Storage buckets
-        cloud-storage/    # Cloud Storage configuration
-        container-registry/ # Artifact Registry
- .github/workflows/         # CI/CD pipelines
-    terraform-gcp-pipeline.yml      # Development deployment pipeline
-    terraform-gcp-pipeline.yml        # Security scanning pipeline
- scripts/                  # Automation scripts
-    automation/          # Deployment automation
-    integration/         # Integration testing
-    phase-testing/       # Phased deployment testing
-    utilities/           # Utility scripts
- docs/                    # Documentation
+├── infrastructure/
+│   ├── environments/
+│   │   └── dev/                    # Development environment
+│   │       ├── global/            # Global resources (VPC, IAM, KMS, etc.)
+│   │       ├── europe-west1/      # Primary region resources
+│   │       └── europe-west3/      # Secondary region resources
+│   └── modules/                   # Reusable Terraform modules
+│       ├── compute/               # Compute resources
+│       │   ├── cloud-run/        # Cloud Run services
+│       │   ├── gke/              # Google Kubernetes Engine
+│       │   ├── instances/        # Compute Engine instances
+│       │   └── load-balancer/    # Load balancer configuration
+│       ├── database/             # Database services
+│       │   ├── cloud-sql/        # Cloud SQL instances
+│       │   └── redis/            # Memorystore Redis
+│       ├── monitoring/           # Observability
+│       │   ├── cloud-monitoring/ # Monitoring dashboards
+│       │   └── cloud-logging/    # Log management
+│       ├── networking/           # Network infrastructure
+│       │   ├── vpc/              # Virtual Private Cloud
+│       │   ├── subnets/          # Subnet configuration
+│       │   ├── firewall/         # Firewall rules
+│       │   ├── cross-region/     # Cross-region networking
+│       │   ├── dns/              # DNS configuration
+│       │   └── load-balancer/    # Load balancer networking
+│       ├── security/             # Security services
+│       │   ├── iam/              # Identity and Access Management
+│       │   ├── kms/              # Key Management Service
+│       │   ├── secret-manager/   # Secret storage
+│       │   └── vpc-service-controls/ # VPC Service Controls
+│       └── storage/              # Storage services
+│           ├── buckets/          # Cloud Storage buckets
+│           ├── cloud-storage/    # Cloud Storage configuration
+│           └── container-registry/ # Artifact Registry
+├── .github/workflows/            # CI/CD pipelines
+│   ├── terraform-gcp-pipeline.yml      # Development deployment pipeline
+│   └── update-deployment-status.yml    # Status monitoring pipeline
+├── scripts/                      # Automation scripts
+│   ├── automation/              # Deployment automation
+│   ├── integration/             # Integration testing
+│   ├── phase-testing/           # Phased deployment testing
+│   ├── status/                  # Status monitoring scripts
+│   └── utilities/               # Utility scripts
+├── docs/                        # Documentation
+│   └── status/                  # Status monitoring dashboard
+├── tests/                       # Test suites
+│   ├── unit/                    # Unit tests
+│   ├── integration/             # Integration tests
+│   └── e2e/                     # End-to-end tests
+└── README.md                    # This file
 ```
 
 ## Prerequisites
@@ -419,23 +463,27 @@ To use the deployment pipelines, you need:
 
 ### Available Modules
 
-| Module | Purpose | Resources |
-|--------|---------|-----------|
-| `compute/cloud-run` | Serverless containers | Cloud Run services, IAM |
-| `compute/gke` | Kubernetes clusters | GKE cluster, node pools |
-| `compute/instances` | Virtual machines | Compute Engine, MIGs |
-| `compute/load-balancer` | Load balancing | Global load balancer |
-| `database/cloud-sql` | Managed databases | Cloud SQL, databases, users |
-| `database/redis` | Caching layer | Memorystore Redis |
-| `monitoring/cloud-monitoring` | Observability | Dashboards, alerts, SLOs |
-| `monitoring/cloud-logging` | Log management | Log sinks, metrics |
-| `networking/vpc` | Network foundation | VPC, subnets, routes |
-| `networking/firewall` | Security rules | Firewall rules, policies |
-| `security/iam` | Access control | Service accounts, roles |
-| `security/kms` | Encryption | Key rings, crypto keys |
-| `security/secret-manager` | Secret storage | Secrets, versions |
-| `storage/buckets` | Object storage | Cloud Storage buckets |
-| `storage/container-registry` | Container images | Artifact Registry |
+| Module | Purpose | Resources | Status |
+|--------|---------|-----------|--------|
+| `compute/cloud-run` | Serverless containers | Cloud Run services, IAM | ✅ Active |
+| `compute/gke` | Kubernetes clusters | GKE cluster, node pools | ✅ Active |
+| `compute/instances` | Virtual machines | Compute Engine, MIGs, health checks | ✅ Active |
+| `compute/load-balancer` | Load balancing | Global load balancer, backend services | ✅ Active |
+| `database/cloud-sql` | Managed databases | Cloud SQL, databases, users | ✅ Active |
+| `database/redis` | Caching layer | Memorystore Redis | ✅ Active |
+| `monitoring/cloud-monitoring` | Observability | Dashboards, alerts, SLOs | ✅ Active |
+| `monitoring/cloud-logging` | Log management | Log sinks, metrics | ✅ Active |
+| `networking/vpc` | Network foundation | VPC, subnets, routes | ✅ Active |
+| `networking/firewall` | Security rules | Firewall rules, policies | ✅ Active |
+| `networking/cross-region` | Cross-region connectivity | VPN tunnels, peering | ✅ Active |
+| `networking/dns` | DNS management | Managed zones, records | ✅ Active |
+| `security/iam` | Access control | Service accounts, roles, bindings | ✅ Active |
+| `security/kms` | Encryption | Key rings, crypto keys | ✅ Active |
+| `security/secret-manager` | Secret storage | Secrets, versions | ✅ Active |
+| `security/vpc-service-controls` | VPC security | Service perimeters | ✅ Active |
+| `storage/buckets` | Object storage | Cloud Storage buckets, lifecycle | ✅ Active |
+| `storage/container-registry` | Container images | Artifact Registry | ✅ Active |
+| `status/monitoring` | Status monitoring | Status checkers, badges, dashboard | ✅ Active |
 
 ## Security
 
@@ -549,6 +597,12 @@ See [SECURITY.md](SECURITY.md) for detailed security guidance and [DEPLOYMENT-CH
 ```bash
 # Re-authenticate with Google Cloud
 gcloud auth application-default login
+
+# Verify authentication
+gcloud auth list
+
+# Check service account permissions
+gcloud projects get-iam-policy $PROJECT_ID
 ```
 
 #### **API Not Enabled**
@@ -556,13 +610,131 @@ gcloud auth application-default login
 # Enable required APIs
 gcloud services enable compute.googleapis.com
 gcloud services enable run.googleapis.com
+gcloud services enable sqladmin.googleapis.com
+gcloud services enable storage.googleapis.com
+gcloud services enable monitoring.googleapis.com
+gcloud services enable logging.googleapis.com
+gcloud services enable secretmanager.googleapis.com
+gcloud services enable kms.googleapis.com
+gcloud services enable iam.googleapis.com
+
+# Check enabled APIs
+gcloud services list --enabled
 ```
 
 #### **Insufficient Quota**
 ```bash
 # Check current quotas
 gcloud compute project-info describe --project=$PROJECT_ID
+
+# Check specific quota
+gcloud compute regions describe europe-west1 --project=$PROJECT_ID
+
+# Request quota increase
+gcloud compute regions describe europe-west1 --project=$PROJECT_ID --format="value(quotas[].metric,quotas[].limit)"
 ```
+
+#### **Terraform State Issues**
+```bash
+# Check Terraform state
+terraform state list
+
+# Refresh state
+terraform refresh
+
+# Import existing resources
+terraform import google_compute_instance.example projects/$PROJECT_ID/zones/europe-west1-b/instance-name
+
+# Remove from state (if resource was deleted outside Terraform)
+terraform state rm google_compute_instance.example
+```
+
+#### **Pipeline Failures**
+```bash
+# Check GitHub Actions logs
+gh run list --workflow=terraform-gcp-pipeline.yml
+
+# View specific run details
+gh run view <run-id>
+
+# Re-run failed workflow
+gh run rerun <run-id>
+```
+
+#### **Status Monitoring Issues**
+```bash
+# Check status monitoring logs
+gh run list --workflow=update-deployment-status.yml
+
+# Manual status check
+cd scripts/status
+./check-deployment-status.sh
+
+# Generate badges manually
+node generate-badges.js
+```
+
+#### **Resource Naming Conflicts**
+```bash
+# Check existing resources
+gcloud compute instances list --project=$PROJECT_ID
+gcloud compute networks list --project=$PROJECT_ID
+gcloud sql instances list --project=$PROJECT_ID
+
+# Use different project ID or region
+export TF_VAR_project_id="your-new-project-id"
+export TF_VAR_region="europe-west3"
+```
+
+### Debug Commands
+
+#### **Terraform Debug**
+```bash
+# Enable debug logging
+export TF_LOG=DEBUG
+export TF_LOG_PATH=terraform.log
+
+# Plan with detailed output
+terraform plan -var-file=terraform.tfvars -out=tfplan
+
+# Apply with detailed output
+terraform apply tfplan
+```
+
+#### **GCP Resource Debug**
+```bash
+# Check all resources in project
+gcloud asset search-all-resources --project=$PROJECT_ID
+
+# Check specific resource
+gcloud compute instances describe instance-name --zone=europe-west1-b --project=$PROJECT_ID
+
+# Check IAM permissions
+gcloud projects get-iam-policy $PROJECT_ID --flatten="bindings[].members" --format="table(bindings.role)" --filter="bindings.members:serviceAccount:"
+```
+
+#### **Network Debug**
+```bash
+# Check VPC and subnets
+gcloud compute networks list --project=$PROJECT_ID
+gcloud compute networks subnets list --project=$PROJECT_ID
+
+# Check firewall rules
+gcloud compute firewall-rules list --project=$PROJECT_ID
+
+# Test connectivity
+gcloud compute ssh instance-name --zone=europe-west1-b --project=$PROJECT_ID
+```
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. **Check the logs**: Review GitHub Actions workflow logs
+2. **Verify prerequisites**: Ensure all required tools and permissions are set up
+3. **Check status**: Use the status monitoring dashboard to verify deployment state
+4. **Review documentation**: Check the architecture diagrams and module documentation
+5. **Create an issue**: Use the GitHub Issues page with detailed error information
 
 ## Contributing
 
@@ -591,16 +763,24 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For issues and questions:
 
 - **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-org/terraform-gcp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/terraform-gcp/discussions)
-- **Email**: platform-engineering@your-company.com
+- **Issues**: [GitHub Issues](https://github.com/catherinevee/terraform-gcp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/catherinevee/terraform-gcp/discussions)
+- **Status Dashboard**: [https://catherinevee.github.io/terraform-gcp/status/](https://catherinevee.github.io/terraform-gcp/status/)
+- **Email**: catherine@cataziza.com
+
+### Quick Links
+
+- **Architecture Diagrams**: [GCP Architecture](gcp-architecture-diagram.md) | [Technical Architecture](gcp-technical-architecture.md) | [CI/CD Pipeline](gcp-cicd-pipeline.md)
+- **Status Monitoring**: [Dynamic Badge](https://catherinevee.github.io/terraform-gcp/status/badge.svg) | [Status Dashboard](https://catherinevee.github.io/terraform-gcp/status/)
+- **Security**: [Security Status](https://github.com/catherinevee/terraform-gcp/security) | [Security Badge](https://img.shields.io/badge/Security%20Good-green)
+- **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml)
 
 ---
 
-**Last Updated**: September 2025  
-**Version**: 1.1.0  
-**Maintainer**: Platform Engineering Team  
-**Security Status**:  Passing (0 critical vulnerabilities, 0 exposed secrets)
+**Last Updated**: December 2024  
+**Version**: 1.2.0  
+**Maintainer**: Cataziza Platform Engineering Team  
+**Security Status**: Passing (0 critical vulnerabilities, 0 exposed secrets)
 #   T e s t   t r i g g e r 
  
  #   P i p e l i n e   T e s t   -   0 9 / 1 2 / 2 0 2 5   2 1 : 3 7 : 0 1 
