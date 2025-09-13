@@ -1,7 +1,7 @@
 ﻿#!/bin/bash
 
 # Configuration
-PROJECT_ID="cataziza-platform-dev"
+PROJECT_ID="acme-ecommerce-platform-dev"
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 LAST_CHECKED=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
@@ -33,29 +33,29 @@ check_resource() {
 echo "📊 Checking critical infrastructure components..."
 
 # VPC and Networking
-check_resource "VPC" "cataziza-platform-dev-vpc" "gcloud compute networks describe cataziza-platform-dev-vpc --project=$PROJECT_ID"
+check_resource "VPC" "acme-ecommerce-platform-dev-vpc" "gcloud compute networks describe acme-ecommerce-platform-dev-vpc --project=$PROJECT_ID"
 
 # Load Balancer
-check_resource "Load Balancer" "cataziza-platform-lb" "gcloud compute forwarding-rules list --global --filter='name:cataziza-platform-lb' --project=$PROJECT_ID"
+check_resource "Load Balancer" "acme-ecommerce-platform-lb" "gcloud compute forwarding-rules list --global --filter='name:acme-ecommerce-platform-lb' --project=$PROJECT_ID"
 
 # Service Accounts
 check_resource "Service Account" "terraform-github-actions" "gcloud iam service-accounts describe terraform-github-actions@$PROJECT_ID.iam.gserviceaccount.com --project=$PROJECT_ID"
 
 # KMS Keyring
-check_resource "KMS Keyring" "cataziza-platform-dev-keyring" "gcloud kms keyrings describe cataziza-platform-dev-keyring --location=global --project=$PROJECT_ID"
+check_resource "KMS Keyring" "acme-ecommerce-platform-dev-keyring" "gcloud kms keyrings describe acme-ecommerce-platform-dev-keyring --location=global --project=$PROJECT_ID"
 
 # Terraform State Bucket
-check_resource "State Bucket" "cataziza-platform-dev-terraform-state" "gsutil ls gs://cataziza-platform-dev-terraform-state"
+check_resource "State Bucket" "acme-ecommerce-platform-dev-terraform-state" "gsutil ls gs://acme-ecommerce-platform-dev-terraform-state"
 
 # Compute Instances (at least one should exist)
-check_resource "Compute Instance" "cataziza-web-server" "gcloud compute instances list --filter='name:cataziza-web-server' --project=$PROJECT_ID"
+check_resource "Compute Instance" "acme-web-server" "gcloud compute instances list --filter='name:acme-web-server' --project=$PROJECT_ID"
 
 # Cloud SQL (if exists)
-check_resource "Cloud SQL" "cataziza-database-dev" "gcloud sql instances describe cataziza-database-dev --project=$PROJECT_ID" || echo "⚠️  Cloud SQL not found (optional)"
+check_resource "Cloud SQL" "acme-database-dev" "gcloud sql instances describe acme-database-dev --project=$PROJECT_ID" || echo "⚠️  Cloud SQL not found (optional)"
 
 # Storage Buckets
-check_resource "Storage Bucket" "cataziza-customer-data-dev" "gsutil ls gs://cataziza-customer-data-dev"
-check_resource "Storage Bucket" "cataziza-application-logs-dev" "gsutil ls gs://cataziza-application-logs-dev"
+check_resource "Storage Bucket" "acme-customer-data-dev" "gsutil ls gs://acme-customer-data-dev"
+check_resource "Storage Bucket" "acme-application-logs-dev" "gsutil ls gs://acme-application-logs-dev"
 
 # Calculate status
 PERCENTAGE=$((PASSED_CHECKS * 100 / TOTAL_CHECKS))

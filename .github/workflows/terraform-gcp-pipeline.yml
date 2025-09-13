@@ -47,7 +47,7 @@ permissions:
 
 env:
   TF_VERSION: '1.9.0'
-  PROJECT_ID: 'cataziza-platform-dev'
+  PROJECT_ID: 'acme-ecommerce-platform-dev'
   TFSEC_VERSION: '1.28.1'
   TRIVY_VERSION: '0.50.0'
 

@@ -21,7 +21,7 @@ provider "google" {
 data "terraform_remote_state" "global" {
   backend = "gcs"
   config = {
-    bucket = "cataziza-platform-dev-terraform-state"
+    bucket = "acme-ecommerce-platform-dev-terraform-state"
     prefix = "terraform/state/global"
   }
 }

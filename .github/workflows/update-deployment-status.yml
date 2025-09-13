@@ -16,7 +16,7 @@ permissions:
   actions: read
 
 env:
-  PROJECT_ID: 'cataziza-platform-dev'
+  PROJECT_ID: 'acme-ecommerce-platform-dev'
   STATUS_DIR: 'docs/status'
 
 jobs:
