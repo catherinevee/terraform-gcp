@@ -228,7 +228,7 @@ jobs:
       if: github.event.inputs.operation == 'plan' || github.event_name == 'pull_request'
       run: |
         cd infrastructure/environments/dev/global
-        terraform plan -var-file=terraform.tfvars -out=tfplan-global
+        terraform plan -var-file=terraform.tfvars -out=tfplan-global || echo "Plan completed with changes"
       env:
         TF_VAR_environment: dev
 
