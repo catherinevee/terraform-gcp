@@ -1,5 +1,5 @@
-module.compute.google_compute_health_check.health_check["web-health-check"] projects/acme-ecommerce-platform-dev/global/healthChecks/cataziza-ecommerce-web-health-check
-module.firewall.google_compute_firewall.allow_internal projects/acme-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-internal
-module.firewall.google_compute_firewall.allow_ssh projects/acme-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-ssh
-module.firewall.google_compute_firewall.allow_http projects/acme-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-http
-module.firewall.google_compute_firewall.allow_https projects/acme-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-https
+module.compute.google_compute_health_check.health_check["web-health-check"] projects/cataziza-ecommerce-platform-dev/global/healthChecks/cataziza-ecommerce-web-health-check
+module.firewall.google_compute_firewall.allow_internal projects/cataziza-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-internal
+module.firewall.google_compute_firewall.allow_ssh projects/cataziza-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-ssh
+module.firewall.google_compute_firewall.allow_http projects/cataziza-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-http
+module.firewall.google_compute_firewall.allow_https projects/cataziza-ecommerce-platform-dev/global/firewalls/cataziza-ecommerce-platform-dev-vpc-allow-https
