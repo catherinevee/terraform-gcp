@@ -34,13 +34,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: 'scripts/status/package.json'
     
-    - name: Install Dependencies
-      run: |
-        cd scripts/status
-        npm install
     
     - name: Setup Google Cloud CLI
       uses: google-github-actions/setup-gcloud@v2
