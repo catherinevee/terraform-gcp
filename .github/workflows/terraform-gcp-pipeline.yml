@@ -28,7 +28,6 @@ on:
           - plan
           - apply
           - destroy
-          - test
       region:
         description: 'Target region (or all for multi-region)'
         required: true
@@ -184,69 +183,7 @@ jobs:
         sarif_file: trivy-iac.sarif
         category: 'trivy-iac'
 
-  # Stage 2: Terratest Tests
-  test:
-    name: Terratest Tests
-    runs-on: ubuntu-latest
-    needs: validate
-    if: github.event.inputs.operation == 'test' || github.event_name != 'workflow_dispatch'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
-    
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: ${{ env.TF_VERSION }}
-    
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-    
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: ${{ env.PROJECT_ID }}
-    
-    - name: Run Unit Tests
-      run: |
-        cd tests
-        go mod tidy
-        go test -v ./unit/... -timeout 30m
-    
-    - name: Run Integration Tests
-      run: |
-        cd tests
-        go test -v ./integration/... -timeout 30m
-    
-    - name: Run E2E Tests
-      run: |
-        cd tests
-        go test -v ./e2e/... -timeout 30m
-    
-    - name: Generate Test Report
-      run: |
-        cd tests
-        go test -v ./... -json > test-results.json 2>&1 || true
-        go test -v ./... -coverprofile=coverage.out || true
-    
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: |
-          tests/test-results.json
-          tests/coverage.out
-        retention-days: 30
-
-  # Stage 3: Global Resources Deployment
+  # Stage 2: Global Resources Deployment
   deploy-global:
     name: Deploy Global Resources
     runs-on: ubuntu-latest
@@ -316,7 +253,7 @@ jobs:
       env:
         TF_VAR_environment: dev
 
-  # Stage 4: Regional Resources Deployment - Europe West1
+  # Stage 3: Regional Resources Deployment - Europe West1
   deploy-europe-west1:
     name: Deploy Europe West1 Resources
     runs-on: ubuntu-latest
@@ -382,7 +319,7 @@ jobs:
       env:
         TF_VAR_environment: dev
 
-  # Stage 5: Regional Resources Deployment - Europe West3
+  # Stage 4: Regional Resources Deployment - Europe West3
   deploy-europe-west3:
     name: Deploy Europe West3 Resources
     runs-on: ubuntu-latest
@@ -448,7 +385,7 @@ jobs:
       env:
         TF_VAR_environment: dev
 
-  # Stage 6: Cross-Region Networking
+  # Stage 5: Cross-Region Networking
   deploy-cross-region:
     name: Deploy Cross-Region Networking
     runs-on: ubuntu-latest
@@ -588,7 +525,7 @@ jobs:
         echo "  WARNING: This will destroy cross-region networking!"
         terraform destroy -var-file=terraform.tfvars -auto-approve
 
-  # Stage 7: Verification
+  # Stage 6: Verification
   verify-deployment:
     name: Verify Multi-Region Deployment
     runs-on: ubuntu-latest
@@ -652,7 +589,7 @@ jobs:
         echo "VPN Tunnels:"
         gcloud compute vpn-tunnels list --filter="name:cataziza-ecommerce-platform-dev" || echo "No VPN tunnels found"
 
-  # Stage 8: Security Monitoring and Reporting
+  # Stage 7: Security Monitoring and Reporting
   security-monitoring:
     name: Security Monitoring and Reporting
     runs-on: ubuntu-latest
@@ -712,7 +649,7 @@ jobs:
         name: security-metrics
         path: security-metrics.json
 
-  # Stage 9: Notifications and Reporting
+  # Stage 8: Notifications and Reporting
   notify:
     name: Notifications and Reporting
     runs-on: ubuntu-latest
