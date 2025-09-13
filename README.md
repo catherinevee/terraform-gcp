@@ -1,6 +1,7 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
+![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
 
 ![Security Status](https://img.shields.io/badge/Security%20Good-green)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
@@ -49,6 +50,32 @@ This repository provides a complete infrastructure foundation for deploying and 
 - **Monitoring & Logging**: Comprehensive observability with Cloud Monitoring and Logging
 - **Cost Optimization**: Resource sizing and scheduling for different environments
 - **Disaster Recovery**: Backup strategies and cross-region replication
+
+## 🚀 Dynamic Deployment Status
+
+This repository includes a **dynamic status badge** that automatically shows whether the Terraform deployment is currently "LIVE" or "UNALIVE" (destroyed). The badge is updated every 15 minutes via GitHub Actions.
+
+### Status Badge
+![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
+
+### Status Meanings
+- **🟢 LIVE**: 80%+ of critical resources are deployed and accessible
+- **🟡 PARTIAL**: 50-79% of critical resources are deployed (degraded state)
+- **🔴 UNALIVE**: Less than 50% of critical resources are deployed (destroyed/error state)
+
+### Status Monitoring
+The status is determined by checking critical infrastructure components:
+- VPC and subnets
+- Terraform state bucket
+- KMS keyring
+- Compute instances
+- Storage buckets
+- Cloud SQL instances
+
+### Badge URLs
+- **Dynamic Badge**: `https://catherinevee.github.io/terraform-gcp/status/badge.svg`
+- **Status Dashboard**: `https://catherinevee.github.io/terraform-gcp/status/`
+- **Status API**: `https://catherinevee.github.io/terraform-gcp/status/deployment-status.json`
 
 ## Architecture
 
