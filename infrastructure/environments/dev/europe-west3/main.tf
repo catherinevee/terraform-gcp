@@ -21,7 +21,7 @@ provider "google" {
 data "terraform_remote_state" "global" {
   backend = "gcs"
   config = {
-    bucket = "cataziza-ecommerce-platform-dev-terraform-state"
+    bucket = "cataziza-platform-dev-terraform-state"
     prefix = "terraform/state/global"
   }
 }
@@ -33,7 +33,7 @@ locals {
   region      = var.region
 
   # Regional resource naming
-  regional_prefix = "cataziza-ecommerce-platform-${local.environment}-${local.region}"
+  regional_prefix = "cataziza-platform-${local.environment}-${local.region}"
 
   # Get global resource references
   vpc_network_name       = data.terraform_remote_state.global.outputs.vpc_network_name
@@ -54,25 +54,25 @@ module "subnets" {
 
   subnets = [
     {
-      subnet_name           = "cataziza-ecommerce-web-tier-${local.environment}"
+      subnet_name           = "cataziza-web-tier-${local.environment}"
       subnet_ip             = "10.1.1.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "cataziza-ecommerce-app-tier-${local.environment}"
+      subnet_name           = "cataziza-app-tier-${local.environment}"
       subnet_ip             = "10.1.10.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "cataziza-ecommerce-database-tier-${local.environment}"
+      subnet_name           = "cataziza-database-tier-${local.environment}"
       subnet_ip             = "10.1.20.0/24"
       subnet_region         = local.region
       subnet_private_access = true
     },
     {
-      subnet_name           = "cataziza-ecommerce-kubernetes-tier-${local.environment}"
+      subnet_name           = "cataziza-kubernetes-tier-${local.environment}"
       subnet_ip             = "10.1.30.0/24"
       subnet_region         = local.region
       subnet_private_access = true
@@ -104,7 +104,7 @@ module "compute" {
       source_image           = "projects/debian-cloud/global/images/family/debian-11"
       disk_size_gb           = var.default_disk_size_gb
       disk_type              = "pd-standard"
-      subnetwork             = module.subnets.subnets["cataziza-ecommerce-web-tier-${local.environment}"].name
+      subnetwork             = module.subnets.subnets["cataziza-web-tier-${local.environment}"].name
       enable_external_ip     = true
       service_account_email  = local.service_accounts["cataziza-orders-service-sa"]
       service_account_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -125,9 +125,9 @@ module "compute" {
 
   instance_group_managers = {
     "web-igm" = {
-      name                = "cataziza-ecommerce-web-servers"
+      name                = "cataziza-web-servers"
       description         = "Cataziza E-commerce Web Server Instance Group"
-      base_instance_name  = "cataziza-ecommerce-web-server"
+      base_instance_name  = "cataziza-web-server"
       zone                = "${local.region}-a"
       template_key        = "web-template"
       target_size         = var.instance_group_target_size
@@ -146,7 +146,7 @@ module "compute" {
 
   health_checks = {
     "web-health-check" = {
-      name                = "cataziza-ecommerce-web-health-check"
+      name                = "cataziza-web-health-check"
       description         = "Health check for web servers"
       check_interval_sec  = var.health_check_interval_sec
       timeout_sec         = var.health_check_timeout_sec
@@ -159,7 +159,7 @@ module "compute" {
 
   autoscalers = {
     "web-autoscaler" = {
-      name                       = "cataziza-ecommerce-web-autoscaler"
+      name                       = "cataziza-web-autoscaler"
       zone                       = "${local.region}-a"
       instance_group_manager_key = "web-igm"
       max_replicas               = 5
@@ -180,7 +180,7 @@ module "storage" {
 
   buckets = {
     "app-data" = {
-      name          = "cataziza-ecommerce-customer-data-${local.environment}-${local.region}"
+      name          = "cataziza-customer-data-${local.environment}-${local.region}"
       location      = "US-EAST1"
       storage_class = "STANDARD"
       force_destroy = false
@@ -213,7 +213,7 @@ module "storage" {
     }
 
     "logs" = {
-      name          = "cataziza-ecommerce-application-logs-${local.environment}-${local.region}"
+      name          = "cataziza-application-logs-${local.environment}-${local.region}"
       location      = "US-EAST1"
       storage_class = "NEARLINE"
       force_destroy = false

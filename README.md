@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
-A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for Cataziza Corporation's e-commerce platform.
+A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for Cataziza Corporation's platform.
 
 ## Architecture Overview
 

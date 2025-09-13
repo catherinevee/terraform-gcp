@@ -1,4 +1,4 @@
-# Cataziza E-commerce Platform - GCP Architecture Diagram
+# Cataziza Platform - GCP Architecture Diagram
 
 ## Complete Multi-Region Architecture
 
@@ -8,33 +8,33 @@ graph TB
     Internet[("Internet")]
     
     %% Global Load Balancer
-    LB[("Global Load Balancer<br/>cataziza-ecommerce-lb")]
+    LB[("Global Load Balancer<br/>cataziza-lb")]
     
     %% Europe West 1 Region
     subgraph EU_WEST1["Europe West 1 (Primary)"]
         %% VPC
-        subgraph VPC1["VPC: cataziza-ecommerce-platform-dev-vpc"]
+        subgraph VPC1["VPC: cataziza-platform-dev-vpc"]
             %% Web Tier
             subgraph WEB_TIER1["Web Tier"]
-                WEB1["Web Server 1<br/>cataziza-ecommerce-web-1"]
-                WEB2["Web Server 2<br/>cataziza-ecommerce-web-2"]
+                WEB1["Web Server 1<br/>cataziza-web-1"]
+                WEB2["Web Server 2<br/>cataziza-web-2"]
             end
             
             %% App Tier
             subgraph APP_TIER1["Application Tier"]
-                APP1["App Server 1<br/>cataziza-ecommerce-app-1"]
-                APP2["App Server 2<br/>cataziza-ecommerce-app-2"]
+                APP1["App Server 1<br/>cataziza-app-1"]
+                APP2["App Server 2<br/>cataziza-app-2"]
             end
             
             %% Database Tier
             subgraph DB_TIER1["Database Tier"]
-                DB1["Cloud SQL PostgreSQL<br/>cataziza-ecommerce-database-dev"]
+                DB1["Cloud SQL PostgreSQL<br/>cataziza-database-dev"]
             end
             
             %% Storage
             subgraph STORAGE1["Storage"]
-                BUCKET1["App Data Bucket<br/>cataziza-ecommerce-customer-data-dev"]
-                LOGS1["Logs Bucket<br/>cataziza-ecommerce-application-logs-dev"]
+                BUCKET1["App Data Bucket<br/>cataziza-customer-data-dev"]
+                LOGS1["Logs Bucket<br/>cataziza-application-logs-dev"]
             end
         end
         
@@ -47,28 +47,28 @@ graph TB
     %% Europe West 3 Region
     subgraph EU_WEST3["Europe West 3 (Secondary)"]
         %% VPC
-        subgraph VPC3["VPC: cataziza-ecommerce-platform-dev-vpc"]
+        subgraph VPC3["VPC: cataziza-platform-dev-vpc"]
             %% Web Tier
             subgraph WEB_TIER3["Web Tier"]
-                WEB3["Web Server 3<br/>cataziza-ecommerce-web-3"]
-                WEB4["Web Server 4<br/>cataziza-ecommerce-web-4"]
+                WEB3["Web Server 3<br/>cataziza-web-3"]
+                WEB4["Web Server 4<br/>cataziza-web-4"]
             end
             
             %% App Tier
             subgraph APP_TIER3["Application Tier"]
-                APP3["App Server 3<br/>cataziza-ecommerce-app-3"]
-                APP4["App Server 4<br/>cataziza-ecommerce-app-4"]
+                APP3["App Server 3<br/>cataziza-app-3"]
+                APP4["App Server 4<br/>cataziza-app-4"]
             end
             
             %% Database Tier
             subgraph DB_TIER3["Database Tier"]
-                DB3["Cloud SQL PostgreSQL<br/>cataziza-ecommerce-database-dev"]
+                DB3["Cloud SQL PostgreSQL<br/>cataziza-database-dev"]
             end
             
             %% Storage
             subgraph STORAGE3["Storage"]
-                BUCKET3["App Data Bucket<br/>cataziza-ecommerce-customer-data-dev"]
-                LOGS3["Logs Bucket<br/>cataziza-ecommerce-application-logs-dev"]
+                BUCKET3["App Data Bucket<br/>cataziza-customer-data-dev"]
+                LOGS3["Logs Bucket<br/>cataziza-application-logs-dev"]
             end
         end
         
@@ -88,14 +88,14 @@ graph TB
         
         %% KMS
         KMS["Cloud KMS"]
-        KEYRING["Key Ring<br/>cataziza-ecommerce-platform-dev-keyring"]
+        KEYRING["Key Ring<br/>cataziza-platform-dev-keyring"]
         ENCRYPTION_KEY["Data Encryption Key"]
         SIGNING_KEY["Signing Key"]
         
         %% Artifact Registry
         REGISTRY["Artifact Registry"]
-        APP_IMAGES["Application Images<br/>cataziza-ecommerce-platform-dev-application-images"]
-        BASE_IMAGES["Base Images<br/>cataziza-ecommerce-platform-dev-base-images"]
+        APP_IMAGES["Application Images<br/>cataziza-platform-dev-application-images"]
+        BASE_IMAGES["Base Images<br/>cataziza-platform-dev-base-images"]
         
         %% IAM
         IAM["Identity & Access Management"]
@@ -123,7 +123,7 @@ graph TB
     
     %% Health Checks
     subgraph HEALTH["Health Checks"]
-        WEB_HEALTH["Web Health Check<br/>cataziza-ecommerce-web-health-check"]
+        WEB_HEALTH["Web Health Check<br/>cataziza-web-health-check"]
         APP_HEALTH["App Health Check"]
         DB_HEALTH["DB Health Check"]
     end

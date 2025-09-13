@@ -33,13 +33,13 @@ variable "secondary_region" {
 variable "dns_zone_name" {
   description = "DNS zone name"
   type        = string
-  default     = "cataziza-ecommerce-dev-com"
+  default     = "cataziza-dev-com"
 }
 
 variable "dns_name" {
   description = "DNS name for the zone"
   type        = string
-  default     = "dev.cataziza-ecommerce.com."
+  default     = "dev.cataziza.com."
 }
 
 variable "organization" {
@@ -51,13 +51,13 @@ variable "organization" {
 variable "business_unit" {
   description = "Business unit name"
   type        = string
-  default     = "ecommerce"
+  default     = "platform"
 }
 
 variable "application" {
   description = "Application name"
   type        = string
-  default     = "ecommerce-platform"
+  default     = "platform"
 }
 
 # Configuration variables for magic numbers

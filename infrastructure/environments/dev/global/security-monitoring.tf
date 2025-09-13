@@ -194,7 +194,7 @@ resource "google_monitoring_dashboard" "security_dashboard" {
 
 # Security Log Sink for centralized logging
 resource "google_logging_project_sink" "security_logs" {
-  name = "cataziza-ecommerce-security-logs"
+  name = "cataziza-security-logs"
 
   destination = "storage.googleapis.com/${google_storage_bucket.security_logs.name}"
 
@@ -212,7 +212,7 @@ resource "google_logging_project_sink" "security_logs" {
 
 # Storage bucket for security logs
 resource "google_storage_bucket" "security_logs" {
-  name          = "cataziza-ecommerce-security-logs-${var.environment}-${random_id.bucket_suffix.hex}"
+  name          = "cataziza-security-logs-${var.environment}-${random_id.bucket_suffix.hex}"
   location      = "europe-west1"
   force_destroy = false
 
@@ -230,7 +230,7 @@ resource "google_storage_bucket" "security_logs" {
   }
 
   encryption {
-    default_kms_key_name = module.kms.crypto_keys["cataziza-ecommerce-data-encryption-key"].id
+    default_kms_key_name = module.kms.crypto_keys["cataziza-data-encryption-key"].id
   }
 }
 

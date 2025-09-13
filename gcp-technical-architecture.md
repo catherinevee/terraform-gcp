@@ -78,22 +78,22 @@ graph TB
         
         %% Compute
         subgraph COMPUTE1["Compute Engine"]
-            WEB_INSTANCES["Web Instances<br/>google_compute_instance<br/>cataziza-ecommerce-web-*"]
-            APP_INSTANCES["App Instances<br/>google_compute_instance<br/>cataziza-ecommerce-app-*"]
+            WEB_INSTANCES["Web Instances<br/>google_compute_instance<br/>cataziza-web-*"]
+            APP_INSTANCES["App Instances<br/>google_compute_instance<br/>cataziza-app-*"]
         end
         
         %% Database
         subgraph DATABASE1["Cloud SQL"]
-            SQL_INSTANCE["SQL Instance<br/>google_sql_database_instance<br/>cataziza-ecommerce-database-dev"]
+            SQL_INSTANCE["SQL Instance<br/>google_sql_database_instance<br/>cataziza-database-dev"]
             SQL_DATABASE["SQL Database<br/>google_sql_database"]
             SQL_USER["SQL User<br/>google_sql_user"]
         end
         
         %% Storage
         subgraph STORAGE1["Cloud Storage"]
-            APP_BUCKET["App Data Bucket<br/>google_storage_bucket<br/>cataziza-ecommerce-customer-data-dev"]
-            LOGS_BUCKET["Logs Bucket<br/>google_storage_bucket<br/>cataziza-ecommerce-application-logs-dev"]
-            SECURITY_LOGS["Security Logs<br/>google_storage_bucket<br/>cataziza-ecommerce-security-logs-dev"]
+            APP_BUCKET["App Data Bucket<br/>google_storage_bucket<br/>cataziza-customer-data-dev"]
+            LOGS_BUCKET["Logs Bucket<br/>google_storage_bucket<br/>cataziza-application-logs-dev"]
+            SECURITY_LOGS["Security Logs<br/>google_storage_bucket<br/>cataziza-security-logs-dev"]
         end
         
         %% Health Checks
@@ -127,22 +127,22 @@ graph TB
         
         %% Compute
         subgraph COMPUTE3["Compute Engine"]
-            WEB_INSTANCES3["Web Instances<br/>google_compute_instance<br/>cataziza-ecommerce-web-*"]
-            APP_INSTANCES3["App Instances<br/>google_compute_instance<br/>cataziza-ecommerce-app-*"]
+            WEB_INSTANCES3["Web Instances<br/>google_compute_instance<br/>cataziza-web-*"]
+            APP_INSTANCES3["App Instances<br/>google_compute_instance<br/>cataziza-app-*"]
         end
         
         %% Database
         subgraph DATABASE3["Cloud SQL"]
-            SQL_INSTANCE3["SQL Instance<br/>google_sql_database_instance<br/>cataziza-ecommerce-database-dev"]
+            SQL_INSTANCE3["SQL Instance<br/>google_sql_database_instance<br/>cataziza-database-dev"]
             SQL_DATABASE3["SQL Database<br/>google_sql_database"]
             SQL_USER3["SQL User<br/>google_sql_user"]
         end
         
         %% Storage
         subgraph STORAGE3["Cloud Storage"]
-            APP_BUCKET3["App Data Bucket<br/>google_storage_bucket<br/>cataziza-ecommerce-customer-data-dev"]
-            LOGS_BUCKET3["Logs Bucket<br/>google_storage_bucket<br/>cataziza-ecommerce-application-logs-dev"]
-            SECURITY_LOGS3["Security Logs<br/>google_storage_bucket<br/>cataziza-ecommerce-security-logs-dev"]
+            APP_BUCKET3["App Data Bucket<br/>google_storage_bucket<br/>cataziza-customer-data-dev"]
+            LOGS_BUCKET3["Logs Bucket<br/>google_storage_bucket<br/>cataziza-application-logs-dev"]
+            SECURITY_LOGS3["Security Logs<br/>google_storage_bucket<br/>cataziza-security-logs-dev"]
         end
         
         %% Health Checks

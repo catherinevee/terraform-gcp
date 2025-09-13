@@ -83,7 +83,7 @@ resource "google_compute_instance_group_manager" "instance_group_manager" {
 # Health Check - Use data source if health_checks is empty, otherwise create resource
 data "google_compute_health_check" "existing_health_check" {
   count = length(var.health_checks) == 0 ? 1 : 0
-  name  = "cataziza-ecommerce-web-health-check"
+  name  = "cataziza-web-health-check"
 }
 
 resource "google_compute_health_check" "health_check" {

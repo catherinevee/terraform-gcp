@@ -20,7 +20,7 @@ Write-Host "Region: $Region" -ForegroundColor Yellow
 Write-Host "Environment: $Environment" -ForegroundColor Yellow
 
 # Set project ID
-$ProjectId = "cataziza-ecommerce-platform-$Environment"
+$ProjectId = "cataziza-platform-$Environment"
 Write-Host "Project ID: $ProjectId" -ForegroundColor Cyan
 
 # Function to run terraform command
@@ -165,7 +165,7 @@ variable "vpn_shared_secret" {
         # Create terraform.tfvars
         @"
 project_id = "$ProjectId"
-vpn_shared_secret = "cataziza-ecommerce-vpn-secret-2024"
+vpn_shared_secret = "cataziza-vpn-secret-2024"
 "@ | Out-File -FilePath "$CrossRegionPath/terraform.tfvars" -Encoding UTF8
         
         # Create backend.tf
@@ -198,8 +198,8 @@ if ($Operation -eq "apply") {
     }
     
     Write-Host "`n🔍 Verification Commands:" -ForegroundColor Yellow
-    Write-Host "gcloud compute networks list --filter='name:cataziza-ecommerce-platform-vpc-$Environment'" -ForegroundColor Gray
-    Write-Host "gcloud compute instances list --filter='name:cataziza-ecommerce'" -ForegroundColor Gray
+    Write-Host "gcloud compute networks list --filter='name:cataziza-platform-vpc-$Environment'" -ForegroundColor Gray
+    Write-Host "gcloud compute instances list --filter='name:cataziza'" -ForegroundColor Gray
     Write-Host "gcloud run services list --filter='metadata.name:cataziza'" -ForegroundColor Gray
 }
 

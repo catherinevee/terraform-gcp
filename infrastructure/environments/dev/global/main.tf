@@ -25,7 +25,7 @@ locals {
   secondary_region = var.secondary_region
 
   # Global resource naming
-  global_prefix = "cataziza-ecommerce-platform-${local.environment}"
+  global_prefix = "cataziza-platform-${local.environment}"
 }
 
 # Global VPC Network (shared across regions)
@@ -182,14 +182,14 @@ module "kms" {
   key_ring_name = "${local.global_prefix}-keyring"
 
   crypto_keys = {
-    "cataziza-ecommerce-data-encryption-key" = {
-      name            = "cataziza-ecommerce-data-encryption-key"
+    "cataziza-data-encryption-key" = {
+      name            = "cataziza-data-encryption-key"
       purpose         = "ENCRYPT_DECRYPT"
       rotation_period = "${var.kms_rotation_period_days * 24 * 60 * 60}s"
       algorithm       = "GOOGLE_SYMMETRIC_ENCRYPTION"
     }
-    "cataziza-ecommerce-signing-key" = {
-      name      = "cataziza-ecommerce-signing-key"
+    "cataziza-signing-key" = {
+      name      = "cataziza-signing-key"
       purpose   = "ASYMMETRIC_SIGN"
       algorithm = "EC_SIGN_P256_SHA256"
     }
@@ -203,14 +203,14 @@ module "kms" {
         "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com",
         "serviceAccount:cataziza-orders-service-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
-      crypto_key_key = "cataziza-ecommerce-data-encryption-key"
+      crypto_key_key = "cataziza-data-encryption-key"
     }
     "signing-key-signer" = {
       role = "roles/cloudkms.signer"
       members = [
         "serviceAccount:cataziza-terraform-sa@${local.project_id}.iam.gserviceaccount.com"
       ]
-      crypto_key_key = "cataziza-ecommerce-signing-key"
+      crypto_key_key = "cataziza-signing-key"
     }
   }
 }
