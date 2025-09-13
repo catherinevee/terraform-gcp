@@ -1,8 +1,8 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
-![Test GCS Access](https://github.com/catherinevee/terraform-gcp/actions/workflows/test-gcs-access.yml/badge.svg)
-![Security Status](https://img.shields.io/badge/Security%20Poor-red)
+
+![Security Status](https://img.shields.io/badge/Security%20Good-green)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
@@ -138,8 +138,8 @@ terraform-gcp/
         cloud-storage/    # Cloud Storage configuration
         container-registry/ # Artifact Registry
  .github/workflows/         # CI/CD pipelines
-    dev-pipeline.yml      # Development deployment pipeline
-    trivy-scan.yml        # Security scanning pipeline
+    terraform-gcp-pipeline.yml      # Development deployment pipeline
+    terraform-gcp-pipeline.yml        # Security scanning pipeline
  scripts/                  # Automation scripts
     automation/          # Deployment automation
     integration/         # Integration testing
@@ -261,7 +261,7 @@ environment = "dev"
 The project includes two active CI/CD workflows:
 
 #### **1. Development Pipeline**  **Active & Working**
-- **File**: `dev-pipeline.yml`
+- **File**: `terraform-gcp-pipeline.yml`
 - **Status**: Fully functional and actively running
 - **Features**:
   - Terraform format and validation checks
@@ -271,7 +271,7 @@ The project includes two active CI/CD workflows:
   - Automated workflow dispatch
 
 #### **2. Trivy Security Scan**  **Active & Working**
-- **File**: `trivy-scan.yml`
+- **File**: `terraform-gcp-pipeline.yml`
 - **Status**: Fully functional with passing security scans
 - **Features**:
   - Vulnerability scanning (CRITICAL/HIGH severity)
@@ -295,19 +295,19 @@ The project includes two active CI/CD workflows:
 **Using GitHub CLI (Recommended)**:
 ```bash
 # Deploy all regions
-gh workflow run dev-pipeline.yml -f operation=apply -f region=all
+gh workflow run terraform-gcp-pipeline.yml -f operation=apply -f region=all
 
 # Deploy specific region
-gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
+gh workflow run terraform-gcp-pipeline.yml -f operation=apply -f region=europe-west1
 
 # Plan all regions
-gh workflow run dev-pipeline.yml -f operation=plan -f region=all
+gh workflow run terraform-gcp-pipeline.yml -f operation=plan -f region=all
 
 # Destroy all regions ( REMOVES ALL RESOURCES)
-gh workflow run dev-pipeline.yml -f operation=destroy -f region=all
+gh workflow run terraform-gcp-pipeline.yml -f operation=destroy -f region=all
 
 # Run security scan manually
-gh workflow run trivy-scan.yml
+gh workflow run terraform-gcp-pipeline.yml
 ```
 
 **Using Deployment Scripts**:
@@ -342,16 +342,16 @@ For backward compatibility, you can still deploy to a single region:
 
 ```bash
 # Plan infrastructure changes (safe, no changes made)
-gh workflow run dev-pipeline.yml -f operation=plan -f region=europe-west1
+gh workflow run terraform-gcp-pipeline.yml -f operation=plan -f region=europe-west1
 
 # Deploy infrastructure (creates/updates resources)
-gh workflow run dev-pipeline.yml -f operation=apply -f region=europe-west1
+gh workflow run terraform-gcp-pipeline.yml -f operation=apply -f region=europe-west1
 
 # Destroy infrastructure ( REMOVES ALL RESOURCES)
-gh workflow run dev-pipeline.yml -f operation=destroy -f region=europe-west1
+gh workflow run terraform-gcp-pipeline.yml -f operation=destroy -f region=europe-west1
 
 # Run security scan
-gh workflow run trivy-scan.yml
+gh workflow run terraform-gcp-pipeline.yml
 ```
 
 ###  Destroy Operation Warning
@@ -566,6 +566,8 @@ For issues and questions:
 **Version**: 1.1.0  
 **Maintainer**: Platform Engineering Team  
 **Security Status**:  Passing (0 critical vulnerabilities, 0 exposed secrets)
-#   T e s t   t r i g g e r  
- #   P i p e l i n e   T e s t   -   0 9 / 1 2 / 2 0 2 5   2 1 : 3 7 : 0 1  
+#   T e s t   t r i g g e r 
+ 
+ #   P i p e l i n e   T e s t   -   0 9 / 1 2 / 2 0 2 5   2 1 : 3 7 : 0 1 
+ 
  
