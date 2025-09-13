@@ -14,7 +14,7 @@ func DeployModule(t *testing.T, modulePath string, vars map[string]interface{}) 
 		TerraformDir: modulePath,
 		Vars:         vars,
 		NoColor:      true,
-		Logger:       terraform.DefaultLogger(t),
+		
 	}
 
 	// Initialize and apply Terraform
@@ -44,7 +44,7 @@ func GetOutputValue(t *testing.T, options *terraform.Options, outputName string)
 func ValidateModuleStructure(t *testing.T, modulePath string, requiredFiles []string) {
 	for _, file := range requiredFiles {
 		fullPath := modulePath + "/" + file
-		if !terraform.FileExists(t, fullPath) {
+		if !files.FileExists(fullPath) {
 			t.Errorf("Required file %s not found in module %s", file, modulePath)
 		}
 	}
@@ -60,7 +60,7 @@ func WaitForTerraformApply(t *testing.T, options *terraform.Options, timeout tim
 		select {
 		case <-ticker.C:
 			// Check if Terraform state exists and is valid
-			if terraform.IsTerraformDir(t, options.TerraformDir) {
+			if files.IsExistingDir(options.TerraformDir) {
 				return
 			}
 		case <-time.After(time.Until(deadline)):

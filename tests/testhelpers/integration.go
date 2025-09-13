@@ -43,7 +43,7 @@ func DeployGlobalResources(t *testing.T, config *IntegrationTestConfig) *terrafo
 			"project_id": config.ProjectID,
 		},
 		NoColor: true,
-		Logger:  terraform.DefaultLogger(t),
+		
 	}
 
 	terraform.InitAndApply(t, terraformOptions)
@@ -58,7 +58,7 @@ func DeployRegionalResources(t *testing.T, config *IntegrationTestConfig, region
 			"project_id": config.ProjectID,
 		},
 		NoColor: true,
-		Logger:  terraform.DefaultLogger(t),
+		
 	}
 
 	terraform.InitAndApply(t, terraformOptions)
