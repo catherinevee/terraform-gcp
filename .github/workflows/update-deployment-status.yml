@@ -65,7 +65,7 @@ jobs:
           echo "status=$STATUS" >> $GITHUB_OUTPUT
           echo "percentage=$PERCENTAGE" >> $GITHUB_OUTPUT
         else
-          echo "status=UNALIVE" >> $GITHUB_OUTPUT
+          echo "status=NOTDEPLOYED" >> $GITHUB_OUTPUT
           echo "percentage=0" >> $GITHUB_OUTPUT
         fi
     
@@ -73,11 +73,6 @@ jobs:
       run: |
         cd scripts/status
         node generate-badges.js
-        
-        # Copy generated badges to docs/status directory
-        mkdir -p ../../docs/status
-        cp *.svg ../../docs/status/
-        cp deployment-status.json ../../docs/status/
     
     - name: Update Status Dashboard
       run: |
