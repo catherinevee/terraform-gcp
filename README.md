@@ -1,6 +1,7 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
+![Status Monitoring](https://github.com/catherinevee/terraform-gcp/actions/workflows/update-deployment-status.yml/badge.svg)
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
 
 ![Security Status](https://img.shields.io/badge/Security%20Good-green)
@@ -773,7 +774,7 @@ For issues and questions:
 - **Architecture Diagrams**: [GCP Architecture](gcp-architecture-diagram.md) | [Technical Architecture](gcp-technical-architecture.md) | [CI/CD Pipeline](gcp-cicd-pipeline.md)
 - **Status Monitoring**: [Dynamic Badge](https://catherinevee.github.io/terraform-gcp/status/badge.svg) | [Status Dashboard](https://catherinevee.github.io/terraform-gcp/status/)
 - **Security**: [Security Status](https://github.com/catherinevee/terraform-gcp/security) | [Security Badge](https://img.shields.io/badge/Security%20Good-green)
-- **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml)
+- **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml) | [Status Monitoring](https://github.com/catherinevee/terraform-gcp/actions/workflows/update-deployment-status.yml)
 
 ---
 

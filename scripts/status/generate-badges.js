@@ -1,7 +1,7 @@
 ﻿const fs = require('fs');
 const path = require('path');
 
-function generateBadge(status) {
+function generateBadge(status, percentage = null) {
     const configs = {
         live: { color: '#28a745', text: 'LIVE' },
         unalive: { color: '#dc3545', text: 'UNALIVE' },
@@ -41,12 +41,34 @@ if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
 }
 
-// Generate badges
+// Read current status from deployment-status.json if it exists
+let currentStatus = 'UNALIVE';
+let currentPercentage = 0;
+
+const statusFile = path.join(__dirname, 'deployment-status.json');
+if (fs.existsSync(statusFile)) {
+    try {
+        const statusData = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+        currentStatus = statusData.status || 'UNALIVE';
+        currentPercentage = statusData.percentage || 0;
+        console.log(`📊 Current status: ${currentStatus} (${currentPercentage}%)`);
+    } catch (error) {
+        console.log('⚠️  Could not read deployment-status.json, using default status');
+    }
+}
+
+// Generate static badges for all statuses
 ['live', 'unalive', 'partial'].forEach(status => {
     const svg = generateBadge(status);
     const filePath = path.join(outputDir, status + '.svg');
     fs.writeFileSync(filePath, svg);
     console.log('Generated ' + status + '.svg');
 });
+
+// Generate dynamic badge based on current status
+const dynamicSvg = generateBadge(currentStatus, currentPercentage);
+const dynamicFilePath = path.join(outputDir, 'badge.svg');
+fs.writeFileSync(dynamicFilePath, dynamicSvg);
+console.log('Generated badge.svg (dynamic)');
 
 console.log('Badge generation completed!');
