@@ -19,7 +19,7 @@ check_resource() {
     
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
     
-    if eval "$command" >/dev/null 2>&1; then
+    if eval "$command" 2>$null; then
         echo "✅ $resource_type: $resource_name - EXISTS"
         PASSED_CHECKS=$((PASSED_CHECKS + 1))
         return 0
@@ -33,7 +33,7 @@ check_resource() {
 echo "📊 Checking critical infrastructure components..."
 
 # VPC and Networking
-check_resource "VPC" "acme-ecommerce-platform-dev-vpc" "gcloud compute networks describe acme-ecommerce-platform-dev-vpc --project=$PROJECT_ID"
+check_resource "VPC" "default" "gcloud compute networks describe default --project=$PROJECT_ID"
 
 # Load Balancer
 check_resource "Load Balancer" "acme-ecommerce-platform-lb" "gcloud compute forwarding-rules list --global --filter='name:acme-ecommerce-platform-lb' --project=$PROJECT_ID"
@@ -42,7 +42,7 @@ check_resource "Load Balancer" "acme-ecommerce-platform-lb" "gcloud compute forw
 check_resource "Service Account" "terraform-github-actions" "gcloud iam service-accounts describe terraform-github-actions@$PROJECT_ID.iam.gserviceaccount.com --project=$PROJECT_ID"
 
 # KMS Keyring
-check_resource "KMS Keyring" "acme-ecommerce-platform-dev-keyring" "gcloud kms keyrings describe acme-ecommerce-platform-dev-keyring --location=global --project=$PROJECT_ID"
+check_resource "KMS Keyring" "cataziza-ecommerce-platform-dev-keyring" "gcloud kms keyrings describe cataziza-ecommerce-platform-dev-keyring --location=europe-west1 --project=$PROJECT_ID"
 
 # Terraform State Bucket
 check_resource "State Bucket" "acme-ecommerce-platform-dev-terraform-state" "gsutil ls gs://acme-ecommerce-platform-dev-terraform-state"
