@@ -55,8 +55,7 @@ jobs:
       id: status_check
       run: |
         cd scripts/status
-        chmod +x check-deployment-status.sh
-        ./check-deployment-status.sh
+        pwsh -File check-deployment-status-simple.ps1
         
         # Read the status from the output file
         if [ -f deployment-status.json ]; then
