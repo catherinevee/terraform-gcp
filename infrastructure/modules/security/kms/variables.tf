@@ -14,6 +14,12 @@ variable "location" {
   default     = "us-central1"
 }
 
+variable "enable_iam_bindings" {
+  description = "Enable IAM bindings for KMS resources"
+  type        = bool
+  default     = true
+}
+
 variable "crypto_keys" {
   description = "Map of crypto keys to create"
   type = map(object({
