@@ -648,7 +648,7 @@ If you encounter issues not covered here:
 
 1. **Check the logs**: Review GitHub Actions workflow logs
 2. **Verify prerequisites**: Ensure all required tools and permissions are set up
-3. **Check status**: Use the status monitoring dashboard to verify deployment state
+3. **Verify deployment**: Check that all resources are deployed correctly
 4. **Review documentation**: Check the architecture diagrams and module documentation
 5. **Create an issue**: Use the GitHub Issues page with detailed error information
 
