@@ -17,12 +17,11 @@ resource "google_compute_global_address" "private_ip_address" {
   project       = var.project_id
 }
 
+# Service Networking Connection - Made optional to handle permission issues
 resource "google_service_networking_connection" "private_vpc_connection" {
+  count = var.enable_service_networking ? 1 : 0
+
   network                 = google_compute_network.vpc.self_link
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
-
-  lifecycle {
-    ignore_changes = [network, service, reserved_peering_ranges]
-  }
 }

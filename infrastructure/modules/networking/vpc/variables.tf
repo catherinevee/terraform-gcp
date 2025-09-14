@@ -29,3 +29,9 @@ variable "private_ip_google_access_prefix_length" {
     error_message = "Private IP Google access prefix length must be between 8 and 30."
   }
 }
+
+variable "enable_service_networking" {
+  description = "Enable service networking connection (requires elevated permissions)"
+  type        = bool
+  default     = false
+}
