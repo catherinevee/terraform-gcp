@@ -15,5 +15,5 @@ output "network_id" {
 
 output "private_vpc_connection" {
   description = "The private VPC connection for Cloud SQL"
-  value       = google_service_networking_connection.private_vpc_connection.id
+  value       = var.enable_service_networking ? google_service_networking_connection.private_vpc_connection[0].id : null
 }
