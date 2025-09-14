@@ -1,12 +1,12 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
-![GitHub Pages](https://github.com/catherinevee/terraform-gcp/actions/workflows/pages/pages-build-deployment/badge.svg)
+![Security Status](https://catherinevee.github.io/terraform-gcp/status/security.svg)
+![Infrastructure Health](https://catherinevee.github.io/terraform-gcp/status/health.svg)
+![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/deployment.svg)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
-![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
-
-A comprehensive, production-ready infrastructure-as-code solution for Google Cloud Platform, built with Terraform and designed for Cataziza Corporation's platform.
+![Terraform](https://catherinevee.github.io/terraform-gcp/status/terraform-version.svg)
+![GCP Provider](https://catherinevee.github.io/terraform-gcp/status/gcp-version.svg)
 
 ## Architecture Overview
 
