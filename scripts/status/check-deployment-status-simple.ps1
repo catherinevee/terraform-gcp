@@ -39,22 +39,22 @@ Write-Host "📊 Checking critical infrastructure components..." -ForegroundColo
 Check-Resource "VPC" "default" { gcloud compute networks describe default --project=$ProjectId }
 
 # Load Balancer
-Check-Resource "Load Balancer" "cataziza-ecommerce-platform-dev-lb-forwarding-rule" { gcloud compute forwarding-rules list --global --filter="name:cataziza-ecommerce-platform-dev-lb-forwarding-rule" --project=$ProjectId }
+Check-Resource "Load Balancer" "cataziza-platform-dev-lb-forwarding-rule" { gcloud compute forwarding-rules list --global --filter="name:cataziza-platform-dev-lb-forwarding-rule" --project=$ProjectId }
 
 # Service Accounts
-Check-Resource "Service Account" "terraform-github-actions" { gcloud iam service-accounts describe "terraform-github-actions@$ProjectId.iam.gserviceaccount.com" --project=$ProjectId }
+Check-Resource "Service Account" "cataziza-terraform-sa" { gcloud iam service-accounts describe "cataziza-terraform-sa@$ProjectId.iam.gserviceaccount.com" --project=$ProjectId }
 
 # KMS Keyring
-Check-Resource "KMS Keyring" "cataziza-ecommerce-platform-dev-keyring" { gcloud kms keyrings describe cataziza-ecommerce-platform-dev-keyring --location=europe-west1 --project=$ProjectId }
+Check-Resource "KMS Keyring" "cataziza-platform-dev-keyring" { gcloud kms keyrings describe cataziza-platform-dev-keyring --location=europe-west1 --project=$ProjectId }
 
 # Terraform State Bucket
 Check-Resource "State Bucket" "acme-ecommerce-platform-dev-terraform-state" { gcloud storage buckets describe gs://acme-ecommerce-platform-dev-terraform-state --project=$ProjectId }
 
 # Secret Manager
-Check-Resource "Secret Manager" "database-password" { gcloud secrets describe database-password --project=$ProjectId }
+Check-Resource "Secret Manager" "cataziza-orders-database-password" { gcloud secrets describe cataziza-orders-database-password --project=$ProjectId }
 
 # Storage Buckets
-Check-Resource "Storage Bucket" "cataziza-ecommerce-platform-dev-terraform-state" { gcloud storage buckets describe gs://cataziza-ecommerce-platform-dev-terraform-state --project=$ProjectId }
+Check-Resource "Storage Bucket" "cataziza-security-logs-dev" { gcloud storage buckets describe gs://cataziza-security-logs-dev-6b33317a --project=$ProjectId }
 
 # Calculate status
 $Percentage = [math]::Round(($PassedChecks * 100 / $TotalChecks), 0)
