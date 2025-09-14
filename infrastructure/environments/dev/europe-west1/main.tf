@@ -28,7 +28,7 @@ data "terraform_remote_state" "global" {
 
 # Data source to access database password from Secret Manager
 data "google_secret_manager_secret_version" "database_password" {
-  secret = "cataziza-orders-database-password"
+  secret = "database-password"
 }
 
 # Local values for consistent naming
