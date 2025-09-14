@@ -1,4 +1,4 @@
-﻿name: Terraform GCP Pipeline
+name: Terraform GCP Pipeline
 
 on:
   push:
@@ -482,8 +482,8 @@ jobs:
           source = "../../../modules/networking/cross-region"
 
           project_id = var.project_id
-          primary_region = "europe-west1"
-          secondary_region = "europe-west3"
+          regions = ["europe-west1", "europe-west3"]
+          
           vpn_shared_secret = var.vpn_shared_secret
         }
         EOF
