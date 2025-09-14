@@ -1,8 +1,6 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
-![Status Monitoring](https://github.com/catherinevee/terraform-gcp/actions/workflows/update-deployment-status.yml/badge.svg)
-![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
 ![GitHub Pages](https://github.com/catherinevee/terraform-gcp/actions/workflows/pages/pages-build-deployment/badge.svg)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
@@ -31,17 +29,13 @@ This project includes comprehensive architecture diagrams that visualize the com
 These diagrams show:
 - **Multi-region deployment** across Europe West 1 and Europe West 3
 - **Complete GCP service ecosystem** including VPC, Compute, Storage, Database, KMS, Secret Manager
-- **Dynamic status monitoring system** with LIVE/UNALIVE badge tracking
 - **Security architecture** with IAM, encryption, and compliance validation
 - **CI/CD pipeline flow** with GitHub Actions workflows and security scanning
 - **Monitoring and alerting** infrastructure for observability
-- **Status monitoring pipeline** with automated badge updates every 15 minutes
 
 ### **Recent Updates**
 - **Updated naming convention**: All resources now use "cataziza-platform" instead of "cataziza-ecommerce"
-- **Enhanced status monitoring**: Added comprehensive status monitoring system with dynamic badges
 - **Improved diagrams**: Updated all architecture diagrams to reflect current infrastructure state
-- **Status dashboard**: Added GitHub Pages-based status dashboard for real-time monitoring
 
 ## Overview
 
@@ -60,70 +54,6 @@ This repository provides a complete infrastructure foundation for deploying and 
 - **Cost Optimization**: Resource sizing and scheduling for different environments
 - **Disaster Recovery**: Backup strategies and cross-region replication
 
-## 🚀 Dynamic Deployment Status
-
-This repository includes a **comprehensive status monitoring system** that automatically tracks and displays the deployment status of your Terraform infrastructure. The system provides real-time visibility into whether your infrastructure is "LIVE", "PARTIAL", or "NOTDEPLOYED" (not deployed).
-
-### Status Badge
-![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
-
-### Status Meanings
-- **🟢 LIVE**: 80%+ of critical resources are deployed and accessible
-- **🟡 PARTIAL**: 50-79% of critical resources are deployed (degraded state)
-- **🔴 NOTDEPLOYED**: Less than 50% of critical resources are deployed (not deployed/error state)
-
-### Status Monitoring Components
-
-#### **Automated Status Checking**
-- **Frequency**: Every 15 minutes via GitHub Actions
-- **Manual Trigger**: Available through GitHub Actions workflow dispatch
-- **Multi-Platform**: Supports both Bash and PowerShell scripts
-- **Real-time Updates**: Status changes are reflected within 15 minutes
-
-#### **Critical Infrastructure Checks**
-The status is determined by checking these critical infrastructure components:
-- **Networking**: VPC, subnets, firewall rules, load balancers
-- **Storage**: Terraform state bucket, application data buckets, logs buckets
-- **Security**: KMS keyring, encryption keys, service accounts
-- **Compute**: VM instances, instance groups, health checks
-- **Database**: Cloud SQL instances, Redis cache
-- **Monitoring**: Alert policies, logging configurations
-
-#### **Status Dashboard**
-- **URL**: `https://catherinevee.github.io/terraform-gcp/status/`
-- **Features**: Interactive dashboard with detailed status information
-- **Real-time**: Updates automatically with latest status
-- **Mobile-friendly**: Responsive design for all devices
-
-### Badge URLs
-- **Dynamic Badge**: `https://catherinevee.github.io/terraform-gcp/status/badge.svg`
-- **Status Dashboard**: `https://catherinevee.github.io/terraform-gcp/status/`
-- **Status API**: `https://catherinevee.github.io/terraform-gcp/status/deployment-status.json`
-- **Static Badges**: 
-  - Live: `https://catherinevee.github.io/terraform-gcp/status/live.svg`
-  - Partial: `https://catherinevee.github.io/terraform-gcp/status/partial.svg`
-  - Not Deployed: `https://catherinevee.github.io/terraform-gcp/status/notdeployed.svg`
-
-### Status Monitoring Workflow
-
-The status monitoring system includes:
-
-1. **Status Checker Scripts** (`scripts/status/`):
-   - `check-deployment-status.sh` - Bash script for Linux/Mac
-   - `check-deployment-status.ps1` - PowerShell script for Windows
-   - `generate-badges.js` - Node.js script for badge generation
-
-2. **GitHub Actions Workflow** (`.github/workflows/update-deployment-status.yml`):
-   - Automated status checking every 15 minutes
-   - Manual trigger capability
-   - Badge generation and deployment
-   - Status dashboard updates
-
-3. **Status Dashboard** (`docs/status/`):
-   - Interactive HTML dashboard
-   - Real-time status display
-   - Historical status tracking
-   - Mobile-responsive design
 
 ## Architecture
 
@@ -212,15 +142,12 @@ terraform-gcp/
 │           └── container-registry/ # Artifact Registry
 ├── .github/workflows/            # CI/CD pipelines
 │   ├── terraform-gcp-pipeline.yml      # Development deployment pipeline
-│   └── update-deployment-status.yml    # Status monitoring pipeline
-├── scripts/                      # Automation scripts
+│├── scripts/                      # Automation scripts
 │   ├── automation/              # Deployment automation
 │   ├── integration/             # Integration testing
 │   ├── phase-testing/           # Phased deployment testing
-│   ├── status/                  # Status monitoring scripts
 │   └── utilities/               # Utility scripts
 ├── docs/                        # Documentation
-│   └── status/                  # Status monitoring dashboard
 ├── tests/                       # Test suites
 │   ├── unit/                    # Unit tests
 │   ├── integration/             # Integration tests
@@ -484,7 +411,6 @@ To use the deployment pipelines, you need:
 | `security/vpc-service-controls` | VPC security | Service perimeters | ✅ Active |
 | `storage/buckets` | Object storage | Cloud Storage buckets, lifecycle | ✅ Active |
 | `storage/container-registry` | Container images | Artifact Registry | ✅ Active |
-| `status/monitoring` | Status monitoring | Status checkers, badges, dashboard | ✅ Active |
 
 ## Security
 
@@ -662,17 +588,6 @@ gh run view <run-id>
 gh run rerun <run-id>
 ```
 
-#### **Status Monitoring Issues**
-```bash
-# Check status monitoring logs
-gh run list --workflow=update-deployment-status.yml
-
-# Manual status check
-cd scripts/status
-./check-deployment-status.sh
-
-# Generate badges manually
-node generate-badges.js
 ```
 
 #### **Resource Naming Conflicts**
@@ -766,15 +681,13 @@ For issues and questions:
 - **Documentation**: [docs/](docs/)
 - **Issues**: [GitHub Issues](https://github.com/catherinevee/terraform-gcp/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/catherinevee/terraform-gcp/discussions)
-- **Status Dashboard**: [https://catherinevee.github.io/terraform-gcp/status/](https://catherinevee.github.io/terraform-gcp/status/)
 - **Email**: catherine@cataziza.com
 
 ### Quick Links
 
 - **Architecture Diagrams**: [GCP Architecture](gcp-architecture-diagram.md) | [Technical Architecture](gcp-technical-architecture.md) | [CI/CD Pipeline](gcp-cicd-pipeline.md)
-- **Status Monitoring**: [Dynamic Badge](https://catherinevee.github.io/terraform-gcp/status/badge.svg) | [Status Dashboard](https://catherinevee.github.io/terraform-gcp/status/)
 - **Security**: [Security Status](https://github.com/catherinevee/terraform-gcp/security) | [Security Badge](https://img.shields.io/badge/Security%20Good-green)
-- **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml) | [Status Monitoring](https://github.com/catherinevee/terraform-gcp/actions/workflows/update-deployment-status.yml)
+- **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml)
 
 ---
 
