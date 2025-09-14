@@ -3,8 +3,8 @@
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
 ![Status Monitoring](https://github.com/catherinevee/terraform-gcp/actions/workflows/update-deployment-status.yml/badge.svg)
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/badge.svg)
+![GitHub Pages](https://github.com/catherinevee/terraform-gcp/actions/workflows/pages/pages-build-deployment/badge.svg)
 
-![Security Status](https://img.shields.io/badge/Security%20Good-green)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)
 ![Terraform](https://img.shields.io/badge/terraform-1.5.0+-blue.svg?style=for-the-badge)
 
