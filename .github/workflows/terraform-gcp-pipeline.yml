@@ -439,7 +439,7 @@ jobs:
         data "terraform_remote_state" "global" {
           backend = "gcs"
           config = {
-            bucket = "cataziza-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/global"
           }
         }
@@ -447,7 +447,7 @@ jobs:
         data "terraform_remote_state" "europe_west1" {
           backend = "gcs"
           config = {
-            bucket = "cataziza-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west1"
           }
         }
@@ -455,7 +455,7 @@ jobs:
         data "terraform_remote_state" "europe_west3" {
           backend = "gcs"
           config = {
-            bucket = "cataziza-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/europe-west3"
           }
         }
@@ -488,14 +488,14 @@ jobs:
         EOF
 
         cat > infrastructure/environments/dev/cross-region/terraform.tfvars << 'EOF'
-        project_id = "cataziza-platform-dev"
+        project_id = "acme-ecommerce-platform-dev"
         vpn_shared_secret = "cataziza-vpn-secret-2024"
         EOF
 
         cat > infrastructure/environments/dev/cross-region/backend.tf << 'EOF'
         terraform {
           backend "gcs" {
-            bucket = "cataziza-platform-dev-terraform-state"
+            bucket = "acme-ecommerce-platform-dev-terraform-state"
             prefix = "terraform/state/cross-region"
           }
         }

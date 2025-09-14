@@ -131,7 +131,7 @@ module "compute" {
       zone                = "${local.region}-a"
       template_key        = "web-template"
       target_size         = var.instance_group_target_size
-      enable_auto_healing = true
+      enable_auto_healing = false
       health_check_key    = "web-health-check"
       initial_delay_sec   = var.health_check_initial_delay_sec
       update_policy = {

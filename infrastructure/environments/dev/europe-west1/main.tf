@@ -136,7 +136,7 @@ module "compute" {
       zone                = "${local.region}-b"
       template_key        = "web-template"
       target_size         = var.instance_group_target_size
-      enable_auto_healing = true
+      enable_auto_healing = false
       health_check_key    = "web-health-check"
       initial_delay_sec   = var.health_check_initial_delay_sec
       update_policy = {
@@ -149,18 +149,18 @@ module "compute" {
     }
   }
 
-  # health_checks = {
-  #   "web-health-check" = {
-  #     name                = "cataziza-ecommerce-web-health-check"
-  #     description         = "Health check for web servers"
-  #     check_interval_sec  = var.health_check_interval_sec
-  #     timeout_sec         = var.health_check_timeout_sec
-  #     healthy_threshold   = 2
-  #     unhealthy_threshold = 3
-  #     port                = var.health_check_port
-  #     request_path        = "/"
-  #   }
-  # }
+  health_checks = {
+    "web-health-check" = {
+      name                = "cataziza-ecommerce-web-health-check"
+      description         = "Health check for web servers"
+      check_interval_sec  = var.health_check_interval_sec
+      timeout_sec         = var.health_check_timeout_sec
+      healthy_threshold   = 2
+      unhealthy_threshold = 3
+      port                = var.health_check_port
+      request_path        = "/"
+    }
+  }
 
   autoscalers = {
     "web-autoscaler" = {
