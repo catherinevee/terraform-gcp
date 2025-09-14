@@ -1,11 +1,11 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
-![Infrastructure Health](https://catherinevee.github.io/terraform-gcp/status/health.svg)
+![Infrastructure Health](https://catherinevee.github.io/terraform-gcp/status/infrastructure.svg)
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/deployment.svg)
 
-![Terraform](https://catherinevee.github.io/terraform-gcp/status/terraform-version.svg)
-![GCP Provider](https://catherinevee.github.io/terraform-gcp/status/gcp-version.svg)
+![Terraform Version](https://catherinevee.github.io/terraform-gcp/status/terraform.svg)
+![GCP Provider](https://catherinevee.github.io/terraform-gcp/status/gcp.svg)
 
 ## Architecture Overview
 
