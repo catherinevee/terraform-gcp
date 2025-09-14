@@ -1,7 +1,6 @@
 # Terraform GCP Infrastructure
 
 ![Terraform GCP Pipeline](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml/badge.svg)
-![Security Status](https://catherinevee.github.io/terraform-gcp/status/security.svg)
 ![Infrastructure Health](https://catherinevee.github.io/terraform-gcp/status/health.svg)
 ![Deployment Status](https://catherinevee.github.io/terraform-gcp/status/deployment.svg)
 
@@ -433,7 +432,6 @@ This repository includes comprehensive security scanning with **Trivy**:
 - ** Daily Automated Scans**: Continuous security monitoring
 - ** PR Security Reviews**: Automatic security comments on pull requests
 
-### Current Security Status
 
 - **Critical Vulnerabilities**: 0 found 
 - **Exposed Secrets**: 0 found 
@@ -686,7 +684,6 @@ For issues and questions:
 ### Quick Links
 
 - **Architecture Diagrams**: [GCP Architecture](gcp-architecture-diagram.md) | [Technical Architecture](gcp-technical-architecture.md) | [CI/CD Pipeline](gcp-cicd-pipeline.md)
-- **Security**: [Security Status](https://github.com/catherinevee/terraform-gcp/security) | [Security Badge](https://img.shields.io/badge/Security%20Good-green)
 - **Deployment**: [GitHub Actions](https://github.com/catherinevee/terraform-gcp/actions) | [Pipeline Status](https://github.com/catherinevee/terraform-gcp/actions/workflows/terraform-gcp-pipeline.yml)
 
 ---
@@ -694,4 +691,3 @@ For issues and questions:
 **Last Updated**: December 2024  
 **Version**: 1.2.0  
 **Maintainer**: Cataziza Platform Engineering Team  
-**Security Status**: Passing (0 critical vulnerabilities, 0 exposed secrets)
